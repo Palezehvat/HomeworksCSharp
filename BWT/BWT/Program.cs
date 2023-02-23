@@ -1,5 +1,6 @@
 ﻿namespace Sort;
 using System;
+using System.Runtime.InteropServices;
 using System.Text;
 
 enum WichStringIsBigger
@@ -43,9 +44,8 @@ class Program
             int j = i;
             while (j >= startArray + 1 && ComprassionStrings(stringToBWT, (arrayPositions[j - 1] + 1) % arrayPositions.Length, (arrayPositions[j] + 1) % arrayPositions.Length) == WichStringIsBigger.first)
             {
-                int copyElement = arrayPositions[j];
-                arrayPositions[j] = arrayPositions[j - 1];
-                arrayPositions[j - 1] = copyElement;
+                (arrayPositions[j - 1], arrayPositions[j]) = (arrayPositions[j], arrayPositions[j - 1]);
+
                 --j;
             }
         }
@@ -56,23 +56,18 @@ class Program
     {
         int pivot = arrayPositions[endArray];
         int i = startArray;
-        int copyElement = 0;
 
         for (int j = startArray; j < endArray; ++j)
         {
             WichStringIsBigger result = ComprassionStrings(stringToBWT, (arrayPositions[j] + 1) % arrayPositions.Length, (pivot + 1) % arrayPositions.Length);
             if (result == WichStringIsBigger.second || result == WichStringIsBigger.same)
             {
-                copyElement = arrayPositions[j];
-                arrayPositions[j] = arrayPositions[i];
-                arrayPositions[i] = copyElement;
+                (arrayPositions[j], arrayPositions[i]) = (arrayPositions[i], arrayPositions[j]);
+
                 ++i;
             }
         }
-
-        copyElement = arrayPositions[i];
-        arrayPositions[i] = arrayPositions[endArray];
-        arrayPositions[endArray] = copyElement;
+        (arrayPositions[i], arrayPositions[endArray]) = (arrayPositions[endArray], arrayPositions[i]);
         return i;
     }
 
@@ -99,7 +94,7 @@ class Program
     }
 
     // String compression by the Burrows-Wheeler algorithm
-    public static string CompressionBWT(string stringToBWT)
+    public static string CompressionBWT(string stringToBWT, ref int firstPosition)
     {
         var arrayPositions = new int[stringToBWT.Length];
         for (int i = 0; i < stringToBWT.Length; ++i)
@@ -114,20 +109,78 @@ class Program
         {
            stringAfterBWT[i] = stringToBWT[arrayPositions[i]];
         }
+
+        for(int i = 0; i < stringToBWT.Length; ++i)
+        {
+            if (arrayPositions[i] == stringToBWT.Length - 1)
+            {
+                firstPosition = i;
+                return stringAfterBWT.ToString();
+            }
+        }
         return stringAfterBWT.ToString(); 
+    }
+
+    // The function receives a string after the Burrows-Wheeler algorithm as input, returns a string before the Burrows-Wheeler algorithm
+    public static string Expansion(string stringAfterBWT, int firstPosition)
+    {
+        var arraySymbols = new int[256];
+        var arrayPreCalculationTable = new int[stringAfterBWT.Length];
+        for (int i = 0; i < 256; ++i)
+        {
+            arraySymbols[i] = 0;
+        }
+
+        for (int i = 0; i < stringAfterBWT.Length; ++i)
+        {
+            ++arraySymbols[stringAfterBWT[i]];
+            arrayPreCalculationTable[i] = 0;
+        }
+
+        int summary = 0;
+        for(int i = 0; i < 256; i++)
+        {
+            summary = summary + arraySymbols[i];
+            arraySymbols[i] = summary - arraySymbols[i];
+        }
+
+        for(int i = 0; i < stringAfterBWT.Length; ++i)
+        {
+            int j = i - 1;
+            while (j >= 0)
+            {
+                if (stringAfterBWT[i] == stringAfterBWT[j])
+                {
+                    arrayPreCalculationTable[i]++;
+                }
+                --j;
+            }
+        }
+        StringBuilder stringBeforeBWT = new StringBuilder(stringAfterBWT);
+        int positionForNewChar = stringBeforeBWT.Length - 1;
+        stringBeforeBWT[positionForNewChar] = stringAfterBWT[firstPosition];
+        --positionForNewChar;
+        int sum = arrayPreCalculationTable[firstPosition] + arraySymbols[stringAfterBWT[firstPosition]];
+        while(positionForNewChar >= 0)
+        {
+            stringBeforeBWT[positionForNewChar] = stringAfterBWT[sum];
+            sum = arrayPreCalculationTable[sum] + arraySymbols[stringAfterBWT[sum]];
+            --positionForNewChar;
+        }
+        return stringBeforeBWT.ToString();
     }
 
     // Checking compression and unzipping by the Burrows-Wheeler algorithm
     public static bool TestBWT()
     {
         string stringToTest = "ABACABA";
-        var stringOutToTest = CompressionBWT(stringToTest);
-        if (stringOutToTest != "BCABAAA")
+        int firstPosition = 0;
+        var stringAfterBWT = CompressionBWT(stringToTest, ref firstPosition);
+        if (stringAfterBWT != "BCABAAA")
         {
             return false;
         }
-        // return Expansion() == "ABACABA";
-        return true;
+        return Expansion(stringAfterBWT, firstPosition) == "ABACABA";
     }
 
     public static void Main(string[] args)
@@ -148,8 +201,11 @@ class Program
             Console.WriteLine("You input null string or your input is not correct");
             return;
         }
-        var returnedStringFromBWT = CompressionBWT(stringToBWT);
+        int firstPosition = 0;
+        var returnedStringFromBWT = CompressionBWT(stringToBWT, ref firstPosition);
         Console.WriteLine("String after BWT");
         Console.WriteLine(returnedStringFromBWT);
+        var stringBeforeBWT = Expansion(returnedStringFromBWT, firstPosition);
+        Console.WriteLine(stringBeforeBWT);
     }
 }
