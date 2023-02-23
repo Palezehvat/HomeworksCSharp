@@ -1,9 +1,9 @@
-﻿using System;
-namespace Sort;
+﻿namespace Sort;
+using System;
 
 class Program
 {
-    //Sorts an array using the bubble method
+    // Sorts an array using the bubble method
     public static void BubbleSort(int[] arrayOut)
     {
         for (int i = 0; i < arrayOut.Length; ++i)
@@ -18,8 +18,8 @@ class Program
         }
     }
 
-    //Test to check the correctness of bubble sorting
-    public static bool testSort()
+    // Test to check the correctness of bubble sorting
+    public static bool TestSort()
     {
         int[] arrayOut = { 5, 4, 2, 3, 1 };
         BubbleSort(arrayOut);
@@ -35,7 +35,7 @@ class Program
 
     static void Main(string[] args)
     {
-        if (testSort())
+        if (TestSort())
         {
             Console.WriteLine("Tests correct");
         }
@@ -48,12 +48,14 @@ class Program
         var inputString = Console.ReadLine();
         if (inputString == null)
         {
+            Console.WriteLine("You have entered a null string or incorrect data");
             return;
         }
-        int sizeArray = 0;
-        bool isCorrectInput = Int32.TryParse(inputString, out sizeArray);
+
+        bool isCorrectInput = Int32.TryParse(inputString, out int sizeArray);
         if (!isCorrectInput)
         {
+            Console.WriteLine("Data entered incorrectly");
             return;
         }
         var arrayOut = new int[sizeArray];
@@ -62,11 +64,13 @@ class Program
             inputString = Console.ReadLine();
             if (inputString == null)
             {
+                Console.WriteLine("You have entered a null string or incorrect data");
                 return;
             }
             isCorrectInput = Int32.TryParse(inputString, out arrayOut[i]);
             if (!isCorrectInput)
             {
+                Console.WriteLine("Data entered incorrectly");
                 return;
             }
         }
