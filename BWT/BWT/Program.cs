@@ -10,29 +10,30 @@ enum WhichStringIsBigger
     Same,
     Error
 }
-
 class Program
 {
+    public const int NumberOfCharacters = 65536;
+
     // A method of comparing two rows using indexes indicating their beginning
     public static WhichStringIsBigger CompareStrings(string stringToBWT, int positionFirst, int positionSecond)
     {
-        int i = positionFirst;
-        int j = positionSecond;
-        int counter = 0;
-        while (counter < stringToBWT.Length)
+        int cyclicalFirstStringPosition = positionFirst;
+        int cyclicalSecondStringPosition = positionSecond;
+        int comparedSymbolsCount = 0;
+        while (comparedSymbolsCount < stringToBWT.Length)
         {
-            if (stringToBWT[i % stringToBWT.Length] > stringToBWT[j % stringToBWT.Length])
+            if (stringToBWT[cyclicalFirstStringPosition % stringToBWT.Length] > stringToBWT[cyclicalSecondStringPosition % stringToBWT.Length])
             {
                 return WhichStringIsBigger.First;
             } 
-            else if (stringToBWT[i % stringToBWT.Length] < stringToBWT[j % stringToBWT.Length])
+            else if (stringToBWT[cyclicalFirstStringPosition % stringToBWT.Length] < stringToBWT[cyclicalSecondStringPosition % stringToBWT.Length])
             {
                 return WhichStringIsBigger.Second;
             }
 
-            ++i;
-            ++j;
-            ++counter;
+            ++cyclicalFirstStringPosition;
+            ++cyclicalSecondStringPosition;
+            ++comparedSymbolsCount;
         }
         return WhichStringIsBigger.Same;
     }
@@ -96,7 +97,7 @@ class Program
     }
 
     // String compression by the Burrows-Wheeler algorithm
-    public static (string result, int firstPosition) СonversionBWT(string stringToBWT)
+    public static (string result, int firstPosition) BwtConvert(string stringToBWT)
     {
         var arrayPositions = new int[stringToBWT.Length];
         for (int i = 0; i < stringToBWT.Length; ++i)
@@ -125,9 +126,9 @@ class Program
     }
 
     // The function receives a string after the Burrows-Wheeler algorithm as input, returns a string before the Burrows-Wheeler algorithm
-    public static string ReverseСonversionBWT(string stringAfterBWT, int firstPosition)
+    public static string BWTReverseСonvert(string stringAfterBWT, int firstPosition)
     {
-        var arraySymbols = new int[512];
+        var arraySymbols = new int[NumberOfCharacters];
         var arrayPreCalculationTable = new int[stringAfterBWT.Length];
 
         for (int i = 0; i < stringAfterBWT.Length; ++i)
@@ -136,7 +137,7 @@ class Program
         }
 
         int summary = 0;
-        for (int i = 0; i < 512; i++)
+        for (int i = 0; i < NumberOfCharacters; i++)
         {
             summary = summary + arraySymbols[i];
             arraySymbols[i] = summary - arraySymbols[i];
@@ -172,12 +173,12 @@ class Program
     public static bool TestBWT()
     {
         string stringToTest = "ABACABA";
-        (var stringAfterBWT, var firstPosition) = СonversionBWT(stringToTest);
+        (var stringAfterBWT, var firstPosition) = BwtConvert(stringToTest);
         if (stringAfterBWT != "BCABAAA")
         {
             return false;
         }
-        return ReverseСonversionBWT(stringAfterBWT, firstPosition) == "ABACABA";
+        return BWTReverseСonvert(stringAfterBWT, firstPosition) == "ABACABA";
     }
 
     public static void Main(string[] args)
@@ -198,10 +199,10 @@ class Program
             Console.WriteLine("You input null string or your input is not correct");
             return;
         }
-        (var returnedStringFromBWT, var firstPosition) = СonversionBWT(stringToBWT);
+        (var returnedStringFromBWT, var firstPosition) = BwtConvert(stringToBWT);
         Console.WriteLine("String after BWT");
         Console.WriteLine(returnedStringFromBWT);
-        var stringBeforeBWT = ReverseСonversionBWT(returnedStringFromBWT, firstPosition);
+        var stringBeforeBWT = BWTReverseСonvert(returnedStringFromBWT, firstPosition);
         Console.WriteLine(stringBeforeBWT);
     }
 }
