@@ -6,7 +6,7 @@ using static System.Net.Mime.MediaTypeNames;
 namespace Bor;
 
 // A container for storing strings, in the form of a suspended tree
-public class Bor
+public class BorClass
 {
     const int sizeAlphabet = 65536;
 
@@ -15,14 +15,23 @@ public class Bor
     // Adding an element
     public bool Add(string element)
     {
+        if (root == null)
+        {
+            throw new Exception();
+        }
         if (element == null && !root.isTerminal)
         {
             root.howManyStringInDictionary++;
             root.isTerminal = true;
+            return true;
         }
         if (element != null)
         {
             root.howManyStringInDictionary++;
+        }
+        if (element == null)
+        {
+            return false;
         }
         var walker = root;
         int i = 0;
@@ -32,7 +41,6 @@ public class Bor
             if (!walker.next.ContainsKey(number))
             {
                 walker.next.Add(number, new BorElement());
-                walker.next[number].key = number;
                 ++walker.sizeDictionary;
             }
             ++walker.next[number].howManyStringInDictionary;
@@ -86,11 +94,12 @@ public class Bor
     {
         if (root == null)
         {
-            if (element == null)
-            {
-                return true;
-            }
-            return false;
+            throw new Exception();
+        }
+        if (element == null)
+        {
+            root.isTerminal = false;
+            return true;
         }
         var walker = root;
         bool flag = false;
@@ -164,7 +173,6 @@ public class Bor
 
     private class BorElement
     {
-        public int key { get; set; }
         public Dictionary<int, BorElement> next { get; set; }
         public bool isTerminal { get; set; }
 
