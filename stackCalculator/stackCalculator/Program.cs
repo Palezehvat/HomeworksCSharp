@@ -25,7 +25,7 @@ var stackList = new StackList();
 (bool isCorrectWork, double result) = calculator.ConvertToAResponse(stringWithExpression, stackList);
 if (!isCorrectWork)
 {
-    Console.WriteLine("Problems with expression or you tried to divide by zero");
+    Console.WriteLine("Problems with expression or you tried to divide by zero!");
     return;
 }
 Console.WriteLine(result);
