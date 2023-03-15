@@ -1,18 +1,18 @@
 ﻿namespace StackCalculator;
 
-public class StackCalculator
+// Calculator that counts algebraic expressions in postfix form
+public class PostfixCalculator
 {
-    private double delta = 0.0000000000001;
+    private const double delta = 0.0000000000001;
 
     // Receives the input string in which the expression is written in postfix form, finds the result
-    public (bool, double) ConvertToAResponse(string stringWithExpression)
+    public (bool, double) ConvertToAResponse(string stringWithExpression, Stack stackExpression)
     {
-        Stack stackExpression = new();
         int i = 0;
         string[] expressionArray = stringWithExpression.Split(' ');
         while (i < expressionArray.Length)
         {
-            var isCorrectNumber =  Int32.TryParse(expressionArray[i], out var number);
+            var isCorrectNumber = Int32.TryParse(expressionArray[i], out var number);
             if (isCorrectNumber)
             {
                 stackExpression.AddElement(number);

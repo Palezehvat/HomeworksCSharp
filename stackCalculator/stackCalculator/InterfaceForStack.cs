@@ -1,7 +1,8 @@
 ﻿namespace StackCalculator;
 
- interface IOperationsWithStack
- {
+// Interface for the stack
+interface IOperationsWithStack
+{
     // Add element to stack
     void AddElement(double value);
 
