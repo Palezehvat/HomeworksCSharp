@@ -1,0 +1,1 @@
+﻿Console.WriteLine("Get started with Bor, a class created specifically for easy handling of strings!");
