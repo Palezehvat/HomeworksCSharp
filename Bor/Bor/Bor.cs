@@ -1,33 +1,28 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Text;
-using System.Xml.Linq;
-using static System.Net.Mime.MediaTypeNames;
-
-namespace Bor;
+﻿namespace Bor;
 
 // A container for storing strings, in the form of a suspended tree
-public class BorClass
+public class Bor
 {
-    const int sizeAlphabet = 65536;
+    private const int alphabetSize = 65536;
 
-    private BorElement? root = new BorElement();
+    private BorElement root = new BorElement();
 
     // Adding an element
     public bool Add(string element)
     {
         if (root == null)
         {
-            throw new Exception();
+            throw new InvalidOperationException();
         }
-        if (element == null && !root.isTerminal)
+        if (element == null && !root.IsTerminal)
         {
-            root.howManyStringInDictionary++;
-            root.isTerminal = true;
+            root.HowManyStringInDictionary++;
+            root.IsTerminal = true;
             return true;
         }
         if (element != null)
         {
-            root.howManyStringInDictionary++;
+            root.HowManyStringInDictionary++;
         }
         if (element == null)
         {
@@ -37,50 +32,50 @@ public class BorClass
         int i = 0;
         while (i < element.Length)
         {
-            int number = element[i];
-            if (!walker.next.ContainsKey(number))
+            int number = (int)element[i];
+            if (!walker.Next.ContainsKey(number))
             {
-                walker.next.Add(number, new BorElement());
-                ++walker.sizeDictionary;
+                walker.Next.Add(number, new BorElement());
+                ++walker.SizeDictionary;
             }
-            ++walker.next[number].howManyStringInDictionary;
-            walker = walker.next[number];
+            ++walker.Next[number].HowManyStringInDictionary;
+            walker = walker.Next[number];
             i++;
         }
-        return walker.isTerminal == false ? walker.isTerminal = true && true : false;
+        return walker.IsTerminal == false ? walker.IsTerminal = true && true : false;
     }
 
     private bool RemoveHelp(BorElement walker, string element, int position, ref bool isDeleted)
     {
         if (position == element.Length)
         {
-            if (walker.isTerminal == true)
+            if (walker.IsTerminal)
             {
-                walker.isTerminal = false;
+                walker.IsTerminal = false;
                 return true;
             }
             return false;
         }
 
-        if (walker.next.ContainsKey(element[position]))
+        if (walker.Next.ContainsKey(element[position]))
         {
-            bool isCorrect = RemoveHelp(walker.next[element[position]], element, position + 1, ref isDeleted);
+            bool isCorrect = RemoveHelp(walker.Next[element[position]], element, position + 1, ref isDeleted);
             if (!isCorrect)
             {
                 return false;
             }
-            if (walker.next[element[position]].howManyStringInDictionary == 1)
+            if (walker.Next[element[position]].HowManyStringInDictionary == 1)
             {
-                walker.next.Remove(element[position]);
+                walker.Next.Remove(element[position]);
                 isDeleted = true;
                 return true;
             }
             if (isDeleted == true)
             {
-                --walker.next[element[position]].sizeDictionary;
+                --walker.Next[element[position]].SizeDictionary;
                 isDeleted = false;
             }
-            --walker.next[element[position]].howManyStringInDictionary;
+            --walker.Next[element[position]].HowManyStringInDictionary;
         }
         else
         {
@@ -94,38 +89,21 @@ public class BorClass
     {
         if (root == null)
         {
-            throw new Exception();
+            throw new InvalidOperationException();
         }
         if (element == null)
         {
-            root.isTerminal = false;
+            root.IsTerminal = false;
             return true;
         }
         var walker = root;
         bool flag = false;
         if (RemoveHelp(walker, element, 0, ref flag))
         {
-            --root.howManyStringInDictionary;
+            --root.HowManyStringInDictionary;
             return true;
         }
         return false;
-    }
-
-    private int HowManyStartsWithPrefixHelp(BorElement walker, String prefix, int position)
-    {
-        if (position == prefix.Length)
-        {
-            return walker.howManyStringInDictionary;
-        }
-
-        if (walker.next.ContainsKey(prefix[position]))
-        {
-            return HowManyStartsWithPrefixHelp(walker.next[prefix[position]], prefix, position + 1);
-        }
-        else
-        {
-            return 0;
-        }
     }
 
     // Counts the number of rows with the same prefix
@@ -140,20 +118,17 @@ public class BorClass
             return 0;
         }
         var walker = root;
-        return HowManyStartsWithPrefixHelp(walker, prefix, 0);
-    }
-
-    private bool ContainsHelp(string element, BorElement walker, int position)
-    {
-        if (position == element.Length)
+        int i = 0;
+        while(i < prefix.Length)
         {
-            return true;
+            if (!walker.Next.ContainsKey(prefix[i]))
+            {
+                return 0;
+            }
+            walker = walker.Next[prefix[i]];
+            ++i;
         }
-        if (walker.next.ContainsKey(element[position]))
-        {
-            return ContainsHelp(element, walker.next[element[position]], position + 1);
-        }
-        return false;
+        return walker.HowManyStringInDictionary;
     }
 
     // Checks for the presence of a string
@@ -161,31 +136,34 @@ public class BorClass
     {
         if (root == null)
         {
-            if (element == null)
-            {
-                return true;
-            }
-            return false;
+            return element == null;
         }
         var walker = root;
-        return ContainsHelp(element, walker, 0);
+        int i = 0;
+        while(i < element.Length)
+        {
+            if (!walker.Next.ContainsKey(element[i]))
+            {
+                return false;
+            }
+            walker = walker.Next[element[i]];
+            ++i;
+        }
+        return true;
     }
 
     private class BorElement
     {
-        public Dictionary<int, BorElement> next { get; set; }
-        public bool isTerminal { get; set; }
+        public Dictionary<int, BorElement> Next { get; set; }
+        public bool IsTerminal { get; set; }
 
-        public int sizeDictionary { get; set; }
+        public int SizeDictionary { get; set; }
 
-        public int howManyStringInDictionary { get; set; }
+        public int HowManyStringInDictionary { get; set; }
 
         public BorElement()
         {
-            next = new Dictionary<int, BorElement>();
-            isTerminal = false;
-            sizeDictionary = 0;
-            howManyStringInDictionary = 0;
+            Next = new Dictionary<int, BorElement>();
         }
     }
 }
