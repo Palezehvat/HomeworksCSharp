@@ -56,6 +56,8 @@ public class PostfixCalculator
                         }
                         numberAfter = secondNumber / firstNumber;
                         break;
+                    default:
+                        return (false, 0);
                 }
                 stackExpression.AddElement(numberAfter);
             }
