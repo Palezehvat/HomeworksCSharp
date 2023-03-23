@@ -62,10 +62,12 @@ public class LZW
         }
     }
 
-    private bool CodeFile(string fileName)
+    private bool CodeFile(string fileName, ref double compressionRatio)
     {
         char[] newFileArray = new char[fileName.Length];
         Array.Copy(fileName.ToCharArray(), newFileArray, fileName.Length);
+        FileInfo file = new System.IO.FileInfo(fileName);
+        double sizeForCompressionRatio = file.Length;
         bool isCorrect = ChangeFileNameToZipped(ref newFileArray);
         if (!isCorrect)
         {
@@ -174,6 +176,9 @@ public class LZW
         var LastFstreamNew = new FileStream(newFile.ToString(), FileMode.Append);
         LastFstreamNew.WriteAsync(bufferOutLast, 0, bufferOutLast.Length);
         LastFstreamNew.Close();
+        file = new System.IO.FileInfo(newFile.ToString());
+        double newSizeForCompressionRatio = file.Length;
+        compressionRatio = newSizeForCompressionRatio / sizeForCompressionRatio;
         return true;
     }
 
@@ -267,19 +272,21 @@ public class LZW
         return true;
     }
 
-    public bool LzwAlgorithm(string fileName, string parametr)
+    public (bool, double) LzwAlgorithm(string fileName, string parametr)
     {
         if (parametr.Length == 2 && parametr[0] == '-' && parametr[1] == 'c')
         {
-            return CodeFile(fileName);
+            double compressionRatio = 0;
+            var isCorrect = CodeFile(fileName, ref compressionRatio);
+            return (isCorrect, compressionRatio);
         }
         else if (parametr.Length == 2 && parametr[0] == '-' && parametr[1] == 'u')
         {
-            return DecodeFile(fileName);
+            return (DecodeFile(fileName), 0);
         }
         else
         {
-            return false;
+            return (false, 0);
         }
     }
 }
