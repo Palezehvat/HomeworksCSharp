@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.IO;
-using System.Text;
-
-namespace LZW;
+﻿namespace LZW;
 
 public class LZW
 {
@@ -152,7 +147,6 @@ public class LZW
 
         var dictionaryForDecode = new Dictionary<int, char[]>();
 
-        var letter = new char[1];
         for (int j = 0; j < 256; ++j)
         {
             var stringLetter = new char[1];
@@ -218,6 +212,7 @@ public class LZW
         return true;
     }
 
+    // Encodes or decodes a file using the lzw algorithm
     public (bool, double) LzwAlgorithm(string fileName, string parametr)
     {
         if (parametr.Length == 2 && parametr[0] == '-' && parametr[1] == 'c')
