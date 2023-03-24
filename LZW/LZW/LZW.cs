@@ -1,4 +1,6 @@
-﻿namespace LZW;
+﻿using System.Diagnostics.Tracing;
+
+namespace LZW;
 
 public class LZW
 {
@@ -70,10 +72,19 @@ public class LZW
 
     private bool CodeFile(string fileName, ref double compressionRatio)
     {
-        char[] newFileArray = new char[fileName.Length];
-        Array.Copy(fileName.ToCharArray(), newFileArray, fileName.Length);
-        FileInfo file = new System.IO.FileInfo(fileName);
-        double sizeForCompressionRatio = file.Length;
+        char[] newFileArray = null;
+        double sizeForCompressionRatio = 0;
+        try
+        {
+            newFileArray = new char[fileName.Length];
+            Array.Copy(fileName.ToCharArray(), newFileArray, fileName.Length);
+            FileInfo fileFromMain = new FileInfo(fileName);
+            sizeForCompressionRatio = fileFromMain.Length;
+        }
+        catch (FileNotFoundException)
+        {
+            return false;
+        }
         bool isCorrect = ChangeFileNameToZipped(ref newFileArray);
         if (!isCorrect)
         {
@@ -84,12 +95,18 @@ public class LZW
         {
             return false;
         }
+
         File.WriteAllText(newFile.ToString(), string.Empty);
 
         var bor = new Bor();
         addAlphabetToBor(bor);
 
         byte[] bufferIn = File.ReadAllBytes(fileName);
+        if (bufferIn.Length == 0)
+        {
+            compressionRatio = 1;
+            return true;
+        }
         int j = 0;
         char[] textFromFile = new char[bufferIn.Length];
         for (int i = 0; i < bufferIn.Length; ++i)
@@ -120,7 +137,7 @@ public class LZW
         var LastFstreamNew = new FileStream(newFile.ToString(), FileMode.Append);
         LastFstreamNew.WriteAsync(bytesLast, 0, bytesLast.Length);
         LastFstreamNew.Close();
-        file = new FileInfo(newFile.ToString());
+        var file = new FileInfo(newFile.ToString());
         double newSizeForCompressionRatio = file.Length;
         compressionRatio = newSizeForCompressionRatio / sizeForCompressionRatio;
         return true;
@@ -128,7 +145,15 @@ public class LZW
 
     private bool DecodeFile(string fileName)
     {
-        byte[] bufferIn = File.ReadAllBytes(fileName);
+        byte[] bufferIn = null;
+        try
+        {
+            bufferIn = File.ReadAllBytes(fileName);
+        }
+        catch (FileNotFoundException)
+        {
+            return false;
+        }
         int i = 0;
         char[] newFileArray = new char[fileName.Length];
         Array.Copy(fileName.ToCharArray(), newFileArray, fileName.Length);
@@ -144,6 +169,11 @@ public class LZW
         }
 
         File.WriteAllText(newFile, string.Empty);
+
+        if (fileName.Length == 0) 
+        {
+            return true;
+        }
 
         var dictionaryForDecode = new Dictionary<int, char[]>();
 
