@@ -1,4 +1,4 @@
-﻿namespace LZW;
+﻿namespace Bor;
 
 // A container for storing strings, in the form of a suspended tree
 public class Bor
@@ -43,8 +43,13 @@ public class Bor
         return walker.IsTerminal == false ? (walker.IsTerminal = true && true, toFlow) : (false, toFlow);
     }
 
+    // Returns flow by letter
     public int ReturnFlowByCharArray(char[] buffer, int to, int from)
     {
+        if (buffer.Length == 0)
+        {
+            return -1;
+        }
         var walker = root;
         int i = 0;
         int pointer = from;
@@ -61,6 +66,7 @@ public class Bor
         return walker.Flow;
     }
 
+    // Returns how many strings in bor
     public int HowManyStringsInBor()
     {
         if (root == null)
