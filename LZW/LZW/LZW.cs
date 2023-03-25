@@ -1,6 +1,6 @@
-﻿using System.Diagnostics.Tracing;
+﻿namespace LZW;
 
-namespace LZW;
+using Bor;
 
 public class LZW
 {
