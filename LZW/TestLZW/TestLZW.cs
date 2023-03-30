@@ -1,4 +1,4 @@
-namespace TestsForLZW;
+namespace TestLZW;
 
 using LZW;
 using System.Reflection;
