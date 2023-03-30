@@ -1,10 +1,12 @@
 ﻿namespace ListAndUniqueList;
 
+// Container for storing values 
 public class List
 {
     public ListElement? Head;
     public ListElement? Tail;
 
+    // Adding element to list
     virtual public void AddElement(int value)
     {
         if (Head == null)
@@ -23,6 +25,7 @@ public class List
         }
     }
 
+    // Deleting element in list
     virtual public void RemoveElement(ref int item)
     {
         if (Head == null || Tail == null)
@@ -47,6 +50,7 @@ public class List
         walker.Next = null;
     }
 
+    // Print all elements in list
     virtual public void PrintTheElements()
     {
         ListElement walker = Head;
@@ -59,6 +63,7 @@ public class List
         }
     }
 
+    // Change value by position
     virtual public void ChangeValueByPosition(int position, int newValue)
     {
         if (Head == null || Tail == null)
@@ -76,11 +81,13 @@ public class List
         }
     }
 
+    // Checks if the list is empty
     virtual public bool IsEmpty()
     {
         return Head == null;
     }
 
+    // Returns the value by position
     virtual public int ReturnValueByPosition(int Position)
     {
         if (Head == null || Tail == null)
