@@ -22,7 +22,7 @@ public class Tree
                     Root.Symbol = new Multiplication(symbol);
                     break;
                 case '/':
-                    Root.Symbol = new Divisioncs(symbol);
+                    Root.Symbol = new Divider(symbol);
                     break;
             }
             Root.Symbol.Symbol = symbol;
@@ -52,7 +52,7 @@ public class Tree
                 walker.Symbol = new Multiplication(symbol);
                 break;
             case '/':
-                walker.Symbol = new Divisioncs(symbol);
+                walker.Symbol = new Divider(symbol);
                 break;
         }
         walker.Symbol.Symbol = symbol;
