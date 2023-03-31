@@ -10,7 +10,7 @@ public class Tests
     [SetUp]
     public void Setup()
     {
-        calculator= new PostfixCalculator();
+        calculator = new PostfixCalculator();
     }
 
     [TestCaseSource(nameof(Stacks))]
@@ -78,7 +78,7 @@ public class Tests
     }
 
     [TestCaseSource(nameof(Stacks))]
-    public void TheStackCalculatorShouldGiveAnErrorWhenReceivingAnemptyString (Stack stack)
+    public void TheStackCalculatorShouldGiveAnErrorWhenReceivingAnemptyString(Stack stack)
     {
         Setup();
         var (isCorrect, _) = calculator.ConvertToAResponse("", stack);
