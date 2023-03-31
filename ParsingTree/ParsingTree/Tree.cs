@@ -1,11 +1,72 @@
-﻿namespace ParsingTree;
+﻿using System.Linq.Expressions;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+
+namespace ParsingTree;
 
 // The container is a "tree" with a hierarchical structure
 public class Tree
 {
     private Node Root { get; set; }
 
-    private void AddSymbolToTree(char symbol)
+    private void AddToTree(Node root, ref bool isAdded, double value = 0, char symbol = '\0')
+    {
+        if (root != null)
+        {
+            if (root.IsEmpty && !isAdded)
+            {
+                if (symbol != '\0')
+                {
+                    switch (symbol)
+                    {
+                        case '-':
+                            root.Symbol = new Minus(symbol);
+                            break;
+                        case '+':
+                            root.Symbol = new Plus(symbol);
+                            break;
+                        case '*':
+                            root.Symbol = new Multiplication(symbol);
+                            break;
+                        case '/':
+                            root.Symbol = new Divider(symbol);
+                            break;
+                    }
+                    root.IsEmpty = false;
+                    root.Left = new Node();
+                    root.Right = new Node();
+                    root.Left.Value = new Operand(0);
+                    root.Right.Value = new Operand(0);
+                    ++Root.Size;
+                }
+                else
+                {
+                    root.Value.Number = value;
+                    root.IsEmpty = false;
+                    --Root.Size;
+
+                }
+                isAdded = true;
+            }
+            AddToTree(root.Left, ref isAdded, value, symbol);
+            AddToTree(root.Right, ref isAdded, value, symbol);
+        }
+    }
+
+    private void AddToTreeNumber(double value)
+    {
+        if (Root == null)
+        {
+            throw new InvalidExpressionException();
+        }
+        bool isAdded = false;
+        AddToTree(Root, ref isAdded, value);
+        if (!isAdded)
+        {
+            throw new InvalidExpressionException();
+        }
+    }
+
+    private void AddToTreeSymbol(char symbol)
     {
         if (Root == null)
         {
@@ -35,63 +96,12 @@ public class Tree
             Root.Size += 2;
             return;
         }
-        var walker = Root;
-        while (walker.Left != null)
-        {
-            walker = walker.Left;
-        }
-        switch (symbol)
-        {
-            case '-':
-                walker.Symbol = new Minus(symbol);
-                break;
-            case '+':
-                walker.Symbol = new Plus(symbol);
-                break;
-            case '*':
-                walker.Symbol = new Multiplication(symbol);
-                break;
-            case '/':
-                walker.Symbol = new Divider(symbol);
-                break;
-        }
-        walker.Symbol.Symbol = symbol;
-        walker.IsEmpty = false;
-        walker.Left = new Node();
-        walker.Right = new Node();
-        walker.Left.Value = new Operand(0);
-        walker.Right.Value = new Operand(0);
-        ++Root.Size;
-    }
-
-    private void InfixOrder(Node root, double number, ref bool isAdded)
-    {
-        if (root != null)
-        {
-            InfixOrder(root.Left, number, ref isAdded);
-            if (root.IsEmpty && !isAdded)
-            {
-                root.Value.Number = number;
-                root.IsEmpty = false;
-                isAdded = true;
-            } 
-            InfixOrder(root.Right, number, ref isAdded);
-        }
-    }
-
-    private void AddNumberToTree(double number)
-    {
-        if (Root == null)
-        {
-            throw new InvalidExpressionException();
-        }
         bool isAdded = false;
-        InfixOrder(Root, number, ref isAdded);
-        if (isAdded == false)
+        AddToTree(Root, ref isAdded, 0, symbol);
+        if (!isAdded)
         {
             throw new InvalidExpressionException();
         }
-        --Root.Size;
     }
 
     private bool isSymbolOperation(char symbol)
@@ -127,11 +137,11 @@ public class Tree
                 {
                     number *= -1;
                 }
-                AddNumberToTree(number);
+                AddToTreeNumber(number);
             }
             else if (isSymbolOperation(stringExpression[i]))
             {
-                AddSymbolToTree(stringExpression[i]);
+                AddToTreeSymbol(stringExpression[i]);
             }
             else if (stringExpression[i] != ' ' && stringExpression[i] != ')' && stringExpression[i] != '(')
             {
