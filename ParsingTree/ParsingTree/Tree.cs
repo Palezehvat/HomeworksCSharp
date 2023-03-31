@@ -159,14 +159,17 @@ public class Tree
         if (root.Symbol != null)
         {
             Order(root.Left);
-            if (root.Left.Symbol == null || root.Left.IsEmpty)
+            Order(root.Right);
+            if (root.Left.Symbol == null && root.Right.Symbol == null)
             {
                 root.Value.Number = root.Symbol.Calcuate(root.Left.Value.Number, root.Right.Value.Number);
-                if (root.Left.Symbol != null)
-                {
-                    root.Left.IsEmpty = false;
-                }
                 root.IsEmpty = true;
+            }
+            else
+            {
+                root.Value.Number = root.Symbol.Calcuate(root.Left.Value.Number, root.Right.Value.Number);
+                root.Left.IsEmpty = false;
+                root.Right.IsEmpty = false;
             }
         }
     }
@@ -183,34 +186,43 @@ public class Tree
         return Root.Value.Number;
     }
 
-    private void PostOrderPrint(Node root, ref bool isFirstNumber)
+    private void PostOrderPrint(Node root, ref int isPreviousNumber, ref int sizeBackStaples)
     {
         if (root != null)
         {
             if (root.Symbol == null)
             {
+                ++isPreviousNumber;
                 root.Value.Print();
-                if (!isFirstNumber)
+                if (isPreviousNumber % 2 == 0 && isPreviousNumber != 0)
                 {
                     Console.Write(") ");
+                    --sizeBackStaples;
+                    isPreviousNumber = 0;
                 }
-                isFirstNumber = false;
             }
             else
             {
+                isPreviousNumber = 0;
                 Console.Write('(');
-                Root.Symbol.Print();
+                ++sizeBackStaples;
+                root.Symbol.Print();
             }
-            PostOrderPrint(root.Left, ref isFirstNumber);
-            PostOrderPrint(root.Right, ref isFirstNumber);
+            PostOrderPrint(root.Left, ref isPreviousNumber, ref sizeBackStaples);
+            PostOrderPrint(root.Right, ref isPreviousNumber, ref sizeBackStaples);
         }
     }
 
     // Outputs the expression stored in the tree to the screen
     public void PrintExpression()
     {
-        bool isFirstNumber = true;
-        PostOrderPrint(Root, ref isFirstNumber);
+        int isPreviousNumber = 0;
+        int sizeBackStaples = 0;
+        PostOrderPrint(Root, ref isPreviousNumber, ref sizeBackStaples);
+        for (int i = 0; i < sizeBackStaples; ++i)
+        {
+            Console.Write(')');
+        }
     }
 
     private class Node

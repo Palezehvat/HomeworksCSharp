@@ -21,8 +21,8 @@ public class Tests
     [TestCaseSource(nameof(TreeForTest))]
     public void InTheNormalExampleTheTreeShouldCorrectlyCalculateTheValue(Tree tree)
     {
-        tree.TreeExpression("(* (+ 2 3) 2)");
-        Assert.True(tree.Calcuate() == 10);
+        tree.TreeExpression("(* (+ 2 3) (+ 5 7)");
+        Assert.True(tree.Calcuate() == 60);
     }
 
     [TestCaseSource(nameof(TreeForTest))]
