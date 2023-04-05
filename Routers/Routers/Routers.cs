@@ -1,17 +1,28 @@
 ﻿namespace Routers;
 
+/// <summary>
+/// A class for implementing finding a spanning tree and printing its file by retrieving data from a file
+/// </summary>
 public class Routers
 {
-
     private void WriteToFile(Graph graph, string filePath)
     {
         graph.WriteToFile(filePath);
     }
 
+    /// <summary>
+    /// Works with the file containing the initial data
+    /// </summary>
+    /// <param name="filePath">The path to the file</param>
+    /// <returns>Returns true if the graph is connected and false if not</returns>
+    /// <exception cref="InvalidFileException">Throws an exception if the entry in the file is uncorrected</exception>
     public bool WorkWithFile(string filePath)
     {
         var file = new StreamReader(filePath);
-        // Проверка на файл
+        if (file == null)
+        {
+            throw new InvalidFileException();
+        }
         string line = "\0";
         int mainVertex = 0;
         int anotherVertex = 0;

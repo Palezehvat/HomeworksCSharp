@@ -1,7 +1,8 @@
-﻿using System.Runtime.InteropServices;
+﻿namespace Routers;
 
-namespace Routers;
-
+/// <summary>
+/// A list of arcs consisting of a pair of vertices and arcs between them
+/// </summary>
 public class ListArcs
 {
     private ListElement? Head;
@@ -13,7 +14,11 @@ public class ListArcs
     }
 
 
-    // Sort List Arcs
+    /// <summary>
+    /// Sorting by the list bubble method
+    /// </summary>
+    /// <param name="sortByVertex">The parameter for selecting a comparison in the subsequent sorting is true if by vertices and false if by arcs</param>
+    /// <exception cref="NullPointerException">Throws an exception if the list is empty</exception>
     public void SortListArcs(bool sortByVertex)
     {
         if (Head == null)
@@ -41,6 +46,12 @@ public class ListArcs
         }
     }
 
+    /// <summary>
+    /// Removes arcs from the list
+    /// </summary>
+    /// <param name="fromVertex">The vertex from which the arc goes</param>
+    /// <param name="toVertex">The vertex to which the arc goes</param>
+    /// <exception cref="NullPointerException">Throws an exception if the list is empty</exception>
     private void DeleteArc(int fromVertex, int toVertex)
     {
         if (Head == null)
@@ -64,6 +75,12 @@ public class ListArcs
         }
     }
 
+    /// <summary>
+    /// Kraskal's algorithm for a minimal spanning tree
+    /// </summary>
+    /// <param name="graph">The graph in which everything is stored</param>
+    /// <returns>Returns false if the tree is not connected</returns>
+    /// <exception cref="NullPointerException">Throws an exception if the graph and its components are empty</exception>
     public bool KraskalAlgorithm(Graph graph)
     {
         if (graph == null || graph.IsEmpty())
@@ -124,7 +141,12 @@ public class ListArcs
         return !(walker == null && i <= sizeGraph);
     }
 
-    // Adding element to list
+    /// <summary>
+    /// Adds a new item to the list
+    /// </summary>
+    /// <param name="fromVertex">The vertex from which the arc originates</param>
+    /// <param name="toVertex">The vertex that the arc enters</param>
+    /// <param name="sizeWay">Arc Size</param>
     public void AddElement(int fromVertex, int toVertex, int sizeWay)
     {
         var item = new ListElement(fromVertex, toVertex, sizeWay);
@@ -140,6 +162,10 @@ public class ListArcs
         ++Head.SizeList;
     }
 
+    /// <summary>
+    /// Writing to the arc list file
+    /// </summary>
+    /// <param name="filePath">The path to the file</param>
     public void WirteToFile(string filePath)
     {
         filePath = filePath + ".new";
