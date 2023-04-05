@@ -8,9 +8,7 @@ class Program
 {
     public static void Main(string[] args)
     {
-        var graph = new Graph();
-        graph.AddStandartListWithAllVertexes(10);
-        graph.AddVertexWithBandwidthSize(2, 3, 54);
-        graph.PrintGraph();
+        var routers = new Routers();
+        routers.WorkWithFile("C:\\Users\\User\\Downloads\\graph.txt");
     }
 }

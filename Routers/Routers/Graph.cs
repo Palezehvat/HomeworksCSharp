@@ -1,67 +1,81 @@
 ﻿using System.Reflection.Metadata;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace Routers;
 
 public class Graph
 {
-    public void AddVertexWithBandwidthSize(int fromVertex, int toVertex, int bandwidthSize)
+    public void WriteToFile(string filePath)
     {
-        if (GraphByList == null || GraphByList.ListWithVertexes == null)
+        if (IsEmpty())
         {
             throw new NullPointerException();
         }
-        GraphByList.ListWithVertexes.AddAnArr(GraphByList.ListWithVertexes, fromVertex, toVertex, bandwidthSize);
+        GraphByList.Arcs.WirteToFile(filePath);
     }
 
-    public void AddStandartListWithAllVertexes(int sizeVertexes)
+    public ListArcs ReturnListArcs()
     {
-        GraphByList = new ListVertexes();
-        GraphByList.SizeGraph = sizeVertexes;
-        GraphByList.ListWithVertexes = new List();
-        for(int i = 1; i < sizeVertexes + 1; i++)
+        return !IsEmpty() ? GraphByList.Arcs : null;
+    }
+
+    public ListVertexes ReturnListVertexes()
+    {
+        return !IsEmpty() ? GraphByList.Vertexes : null;
+    }
+
+    public bool IsEmpty()
+    {
+        return GraphByList == null || GraphByList.Arcs == null || GraphByList.Vertexes == null;
+    }
+
+    public void AddArcs(int fromVertex, int toVertex, int sizeWay)
+    {
+        if(GraphByList == null)
         {
-            GraphByList.ListWithVertexes.AddElement(GraphByList.ListWithVertexes, i, 0);
+            GraphByList = new GraphElement();
+        }
+        if (GraphByList.Arcs == null)
+        {
+            GraphByList.Arcs = new ListArcs();
+        }
+        GraphByList.Arcs.AddElement(fromVertex, toVertex, sizeWay);
+    }
+
+    public void AddVertexes(int sizeGraph)
+    {
+        if (GraphByList == null)
+        {
+            GraphByList = new GraphElement();
+        }
+        if (GraphByList.Vertexes == null)
+        {
+            GraphByList.Vertexes = new ListVertexes();
+        }
+        GraphByList.sizeGraph = sizeGraph;
+        for(int i = 1; i <= sizeGraph; i++) 
+        { 
+            GraphByList.Vertexes.AddElement(i);
         }
     }
 
-    public void PrintGraph()
+    public bool KraskalAlgorithm(Graph graph)
     {
-        if (GraphByList == null || GraphByList.ListWithVertexes == null)
+        if (graph.IsEmpty())
         {
             throw new NullPointerException();
         }
-        GraphByList.ListWithVertexes.PrintGraphByList(GraphByList.ListWithVertexes);
+        return graph.GraphByList.Arcs.KraskalAlgorithm(graph);
     }
 
-    public void SortListsInGraph()
+    private class GraphElement
     {
-        ;
-    }
+        public ListVertexes? Vertexes { get; set; }
 
-    public void FloydsAlgorithm()
-    {
-        SortListsInGraph();
-        if (GraphByList == null || GraphByList.ListWithVertexes == null)
-        {
-            throw new NullPointerException();
-        }
-        int sizeGraph = GraphByList.SizeGraph;
-        for(int k = 0; k < sizeGraph; ++k)
-        {
-            for(int i = 0; i < sizeGraph; ++i)
-            {
-                for(int j = 0; j < sizeGraph; ++j)
-                {
+        public ListArcs? Arcs { get; set; }
 
-                }
-            }
-        }
+        public int sizeGraph { get; set; }
     }
-
-    private class ListVertexes
-    {
-        public List? ListWithVertexes { get; set; }
-        public int SizeGraph { get; set; }
-    }
-    private ListVertexes? GraphByList { get; set; }
+    private GraphElement? GraphByList { get; set; }
 }
