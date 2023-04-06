@@ -10,7 +10,7 @@ public class ListArcs
 
     private bool SortByVertexOrArcs(bool sortByVertex, ListElement firstListElement, ListElement secondListElement)
     {
-        return sortByVertex ? firstListElement.ToVertex > secondListElement.ToVertex : firstListElement.SizeWay < secondListElement.SizeWay;
+        return sortByVertex ? firstListElement.FromVertex > secondListElement.FromVertex : firstListElement.SizeWay < secondListElement.SizeWay;
     }
 
 
@@ -90,10 +90,9 @@ public class ListArcs
         var listArcs = graph.ReturnListArcs();
         var listVertexes = graph.ReturnListVertexes();
         listArcs.SortListArcs(false);
-        int sizeGraph = listArcs.Head.SizeList;
         var walker = listArcs.Head;
         int numberPlenty = 1;
-        int i = 1;
+        int extraPlenty = 0;
         while (walker != null)
         {
             if (walker.ToVertex != walker.FromVertex)
@@ -106,23 +105,25 @@ public class ListArcs
                     if (returnedNumberPlentyFirstVertex == 0 && returnedNumberPlentySecondVertex != 0)
                     {
                         listVertexes.ChangeOneVertexSet(walker.FromVertex, returnedNumberPlentySecondVertex);
+                        --extraPlenty;
                     }
                     else if (returnedNumberPlentyFirstVertex != 0 && returnedNumberPlentySecondVertex == 0)
                     {
                         listVertexes.ChangeOneVertexSet(walker.ToVertex, returnedNumberPlentyFirstVertex);
+                        --extraPlenty;
                     }
                     else 
                     {
                         listVertexes.ChangeNumbersSet(returnedNumberPlentyFirstVertex, returnedNumberPlentySecondVertex);
+                        --extraPlenty;
                     }
-                    ++i;
                 }
                 else if (returnedNumberPlentyFirstVertex == 0)
                 {
                     listVertexes.ChangeOneVertexSet(walker.FromVertex, numberPlenty);
                     listVertexes.ChangeOneVertexSet(walker.ToVertex, numberPlenty);
                     ++numberPlenty;
-                    i += 2;
+                    ++extraPlenty;
                 }
                 else
                 {
@@ -138,7 +139,7 @@ public class ListArcs
             walker = walker.Next;
         }
         SortListArcs(true);
-        return !(walker == null && i <= sizeGraph);
+        return !(walker == null && (extraPlenty != 1 && extraPlenty != 0));
     }
 
     /// <summary>

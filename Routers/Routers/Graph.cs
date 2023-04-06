@@ -6,6 +6,20 @@
 public class Graph
 {
     /// <summary>
+    /// Returns graph size
+    /// </summary>
+    /// <returns>Graph size</returns>
+    /// <exception cref="NullPointerException">If graph null throw exception</exception>
+    public int ReturnSizeGraph()
+    {
+        if (IsEmpty())
+        {
+            throw new NullPointerException();
+        }
+        return GraphByList.sizeGraph;
+    }
+
+    /// <summary>
     /// It is used as a wrapper for writing a graph to a file
     /// </summary>
     /// <param name="filePath">Location of the original file</param>

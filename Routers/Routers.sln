@@ -3,7 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33403.182
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Routers", "Routers\Routers.csproj", "{EB4BA75B-C03B-4E71-B21F-37AFE12F12FA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Routers", "Routers\Routers.csproj", "{EB4BA75B-C03B-4E71-B21F-37AFE12F12FA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestsForRouters", "TestsForRouters\TestsForRouters.csproj", "{FB3AE590-F3E6-4FBF-A49E-C733744BAC40}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestsFotGraph", "TestsFotGraph\TestsFotGraph.csproj", "{F3528591-4B04-43EE-A5C8-615C35C67503}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestsForTwoLists", "TestsForTwoLists\TestsForTwoLists.csproj", "{9C296729-ADA4-4900-8155-A9BE6FB52711}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +21,18 @@ Global
 		{EB4BA75B-C03B-4E71-B21F-37AFE12F12FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EB4BA75B-C03B-4E71-B21F-37AFE12F12FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EB4BA75B-C03B-4E71-B21F-37AFE12F12FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB3AE590-F3E6-4FBF-A49E-C733744BAC40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB3AE590-F3E6-4FBF-A49E-C733744BAC40}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB3AE590-F3E6-4FBF-A49E-C733744BAC40}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB3AE590-F3E6-4FBF-A49E-C733744BAC40}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3528591-4B04-43EE-A5C8-615C35C67503}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3528591-4B04-43EE-A5C8-615C35C67503}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3528591-4B04-43EE-A5C8-615C35C67503}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3528591-4B04-43EE-A5C8-615C35C67503}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C296729-ADA4-4900-8155-A9BE6FB52711}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C296729-ADA4-4900-8155-A9BE6FB52711}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C296729-ADA4-4900-8155-A9BE6FB52711}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C296729-ADA4-4900-8155-A9BE6FB52711}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
