@@ -167,10 +167,9 @@ public class ListArcs
     /// Writing to the arc list file
     /// </summary>
     /// <param name="filePath">The path to the file</param>
-    public void WirteToFile(string filePath)
+    public void WirteToFile(string fileAfter)
     {
-        filePath = filePath + ".new";
-        StreamWriter file = new StreamWriter(filePath);
+        StreamWriter file = new StreamWriter(fileAfter);
         var walker = Head;
         int previousMainVertex = 0;
         bool isFirst = true;

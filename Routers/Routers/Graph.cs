@@ -24,7 +24,7 @@ public class Graph
     /// </summary>
     /// <param name="filePath">Location of the original file</param>
     /// <exception cref="NullPointerException">An empty or unfilled graph throws an exception</exception>
-    public void WriteToFile(string filePath)
+    public void WriteToFile(string filePath, string fileAfter)
     {
         if (IsEmpty())
         {

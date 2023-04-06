@@ -4,14 +4,16 @@ using Routers;
 
 class Program
 {
-    public static void Main(string[] args)
+    public static int Main(string[] args)
     {
         var routers = new Routers();
         Console.WriteLine("Enter the file path with double slashes");
         var filePath = Console.ReadLine();
+        var fileAfter = Console.ReadLine();
+        bool isLinkedGraph = true;
         try
         {
-            routers.WorkWithFile(filePath);
+            isLinkedGraph = routers.WorkWithFile(filePath, fileAfter);
         }
         catch (NullPointerException)
         {
@@ -21,5 +23,15 @@ class Program
         {
             Console.WriteLine("Problems with the path to the file or the contents of the file");
         }
+        catch (FileNotFoundException)
+        {
+            Console.WriteLine("Problems with incorrect way to file");
+        }
+        if (!isLinkedGraph)
+        {
+            Console.WriteLine("Graph not Linked", Console.Error);
+            return -1;
+        }
+        return 0;
     }
 }

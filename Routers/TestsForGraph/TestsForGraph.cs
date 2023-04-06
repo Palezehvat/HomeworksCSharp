@@ -38,7 +38,7 @@ public class Tests
     [TestCaseSource(nameof(GraphForTest))]
     public void GraphShouldThrowExceptionAfterTryWriteInFileWhileGraphEmpty(Graph graph)
     {
-        Assert.Throws<NullPointerException>(() => graph.WriteToFile("v_v"));
+        Assert.Throws<NullPointerException>(() => graph.WriteToFile("v_v", "^_^"));
     }
 
     [TestCaseSource(nameof(GraphForTest))]

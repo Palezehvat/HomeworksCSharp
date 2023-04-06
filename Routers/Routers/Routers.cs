@@ -5,9 +5,9 @@
 /// </summary>
 public class Routers
 {
-    private void WriteToFile(Graph graph, string filePath)
+    private void WriteToFile(Graph graph, string filePath, string fileAfter)
     {
-        graph.WriteToFile(filePath);
+        graph.WriteToFile(filePath, fileAfter);
     }
 
     /// <summary>
@@ -16,7 +16,7 @@ public class Routers
     /// <param name="filePath">The path to the file</param>
     /// <returns>Returns true if the graph is connected and false if not</returns>
     /// <exception cref="InvalidFileException">Throws an exception if the entry in the file is uncorrected</exception>
-    public bool WorkWithFile(string filePath)
+    public bool WorkWithFile(string filePath, string fileAfter)
     {
         var file = new StreamReader(filePath);
         if (file == null)
@@ -154,7 +154,7 @@ public class Routers
             return false;
         }
 
-        graph.WriteToFile(filePath);
+        graph.WriteToFile(filePath, fileAfter);
 
         return true;
     }
