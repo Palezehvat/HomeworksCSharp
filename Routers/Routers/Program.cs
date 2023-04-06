@@ -9,6 +9,7 @@ class Program
         var routers = new Routers();
         Console.WriteLine("Enter the file path with double slashes");
         var filePath = Console.ReadLine();
+        Console.Write("Enter file name where to write a new graph");
         var fileAfter = Console.ReadLine();
         bool isLinkedGraph = true;
         try
