@@ -49,7 +49,7 @@ public class Queue
     {
         if (IsEmpty())
         {
-            throw new NullReferenceException();
+            throw new EmtpyQueueException();
         }
         var walker = Head.Next;
         var data = Head.Element;

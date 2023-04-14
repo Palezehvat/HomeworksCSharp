@@ -21,7 +21,7 @@ public class Tests
     [TestCaseSource(nameof(QueueForTest))]
     public void QueueShouldThrowExceptionWhenDeletingFromAnEmptyQueue(Queue queue)
     {
-        Assert.Throws<NullReferenceException>(() => queue.Dequeue());
+        Assert.Throws<EmtpyQueueException>(() => queue.Dequeue());
     }
 
     [TestCaseSource(nameof(QueueForTest))]
