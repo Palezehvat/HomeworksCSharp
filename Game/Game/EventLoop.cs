@@ -1,13 +1,27 @@
-﻿using System.IO;
-using System.Text;
+﻿namespace Game;
 
-namespace Game;
+public delegate void ArrowHandler(int startPositionLeft, int startPositionTop, WorkWithConsole data, ref List<((int, int), char)> forTests);
 
-public delegate void ArrowHandler(int startPositionLeft, int startPositionTop);
-
+/// <summary>
+/// Event handler implementation class
+/// </summary>
 public class EventLoop
 {
-    public void Run(ArrowHandler left, ArrowHandler right, ArrowHandler up, ArrowHandler down, string fileWithMap)
+    /// <summary>
+    /// Event Handler
+    /// </summary>
+    /// <param name="left">Function for moving to the left</param>
+    /// <param name="right">Function for moving to the right</param>
+    /// <param name="up">Function for moving to the up</param>
+    /// <param name="down">Function for moving to the down</param>
+    /// <param name="fileWithMap">File with map</param>
+    /// <param name="data">The selected type for testing or normal operation</param>
+    /// <param name="forTests">A list intended for entering results for tests ONLY</param>
+    /// <param name="listKeys">List of commands for tests ONLY</param>
+    /// <exception cref="InvalidMapException">Incorrectly set map</exception>
+    /// <exception cref="NullReferenceException">Checking that the read card line is not empty</exception>
+    public void Run(ArrowHandler left, ArrowHandler right, ArrowHandler up, ArrowHandler down, 
+                    string fileWithMap, WorkWithConsole data, ref List<((int, int), char)> forTests, List<Char> listKeys = null)
     {
         int sizeLong = 0;
         int sizeWidth = 0;
@@ -54,41 +68,46 @@ public class EventLoop
         {
             throw new InvalidMapException();
         }
-        Console.SetCursorPosition(sizeLong / 2, sizeWidth / 2);
-        Console.Write('@');
-        int startPositionLeft = Console.CursorLeft - 1;
-        int startPositionTop = Console.CursorTop;
-        Console.SetCursorPosition(startPositionLeft, startPositionTop);
+        data.SetCursorPosition(sizeLong / 2, sizeWidth / 2, ref forTests);
+        data.Print('@', ref forTests);
+        int startPositionLeft = sizeLong / 2;
+        int startPositionTop = sizeWidth / 2;
+        data.SetCursorPosition(startPositionLeft, startPositionTop, ref forTests);
+        var checkType = new PrintInList();
         while (true)
         {
-            var key = Console.ReadKey(true);
-            switch (key.Key)
+            if (data.GetType() == checkType.GetType() && listKeys.Count == 0)
             {
-                case ConsoleKey.LeftArrow:
+                return;
+            }
+            var key = data.Comparison(listKeys);
+            switch (key)
+            {
+                case "left":
                     if (startPositionLeft != 1)
                     {
-                        left(startPositionLeft, startPositionTop);
+                        left(startPositionLeft, startPositionTop, data, ref forTests);
                         --startPositionLeft;
                     }
                     break;
-                case ConsoleKey.RightArrow:
+                case "right":
                     if (startPositionLeft != sizeLong - 2)
                     {
-                        right(startPositionLeft, startPositionTop);
+                        right(startPositionLeft, startPositionTop, data, ref forTests);
                         ++startPositionLeft;
                     }
                     break;
-                case ConsoleKey.UpArrow:
+                case "up":
                     if (startPositionTop != 1)
                     {
-                        up(startPositionLeft, startPositionTop);
+                        up(startPositionLeft, startPositionTop, data, ref forTests);
                         --startPositionTop;
                     }
                     break;
-                case ConsoleKey.DownArrow:
+                case "down":
                     if (startPositionTop != sizeWidth - 2) 
                     {
-                        down(startPositionLeft, startPositionTop);
+                        down(startPositionLeft, startPositionTop, data, ref forTests);
                         ++startPositionTop;
                     }
                     break;

@@ -1,36 +1,67 @@
 ﻿namespace Game;
 
+/// <summary>
+/// A class that implements actions in the game
+/// </summary>
 public class Game
 {
-    public void OnLeft(int startPositionLeft, int startPositionTop)
+    /// <summary>
+    /// Move to the Left
+    /// </summary>
+    /// <param name="startPositionLeft">X coordinate</param>
+    /// <param name="startPositionTop">Y coordinate</param>
+    /// <param name="data">Selected type: testing or normal launch</param>
+    /// <param name="forTests">The list of entering results for tests ONLY</param>
+    public void OnLeft(int startPositionLeft, int startPositionTop, WorkWithConsole data, ref List<((int, int), char)> forTests)
     {
-        Console.Write(' ');
-        Console.SetCursorPosition(startPositionLeft - 1, startPositionTop);
-        Console.Write('@');
-        Console.SetCursorPosition(startPositionLeft - 1, startPositionTop);
+        data.Print(' ', ref forTests);
+        data.SetCursorPosition(startPositionLeft - 1, startPositionTop, ref forTests);
+        data.Print('@', ref forTests);
+        data.SetCursorPosition(startPositionLeft - 1, startPositionTop, ref forTests);
     }
 
-    public void OnRight(int startPositionLeft, int startPositionTop)
+    /// <summary>
+    /// Move to the Right
+    /// </summary>
+    /// <param name="startPositionLeft">X coordinate</param>
+    /// <param name="startPositionTop">Y coordinate</param>
+    /// <param name="data">Selected type: testing or normal launch</param>
+    /// <param name="forTests">The list of entering results for tests ONLY</param>
+    public void OnRight(int startPositionLeft, int startPositionTop, WorkWithConsole data, ref List<((int, int), char)> forTests)
     {
-        Console.Write(' ');
-        Console.SetCursorPosition(startPositionLeft + 1, startPositionTop);
-        Console.Write('@');
-        Console.SetCursorPosition(startPositionLeft + 1, startPositionTop);
+        data.Print(' ', ref forTests);
+        data.SetCursorPosition(startPositionLeft + 1, startPositionTop, ref forTests);
+        data.Print('@', ref forTests);
+        data.SetCursorPosition(startPositionLeft + 1, startPositionTop, ref forTests);
     }
 
-    public void OnUp(int startPositionLeft, int startPositionTop) 
+    /// <summary>
+    /// Move to the Up
+    /// </summary>
+    /// <param name="startPositionLeft">X coordinate</param>
+    /// <param name="startPositionTop">Y coordinate</param>
+    /// <param name="data">Selected type: testing or normal launch</param>
+    /// <param name="forTests">The list of entering results for tests ONLY</param>
+    public void OnUp(int startPositionLeft, int startPositionTop, WorkWithConsole data, ref List<((int, int), char)> forTests) 
     {
-        Console.Write(' ');
-        Console.SetCursorPosition(startPositionLeft, startPositionTop - 1);
-        Console.Write('@');
-        Console.SetCursorPosition(startPositionLeft, startPositionTop - 1);
+        data.Print(' ', ref forTests);
+        data.SetCursorPosition(startPositionLeft, startPositionTop - 1, ref forTests);
+        data.Print('@', ref forTests);
+        data.SetCursorPosition(startPositionLeft, startPositionTop - 1, ref forTests);
     }
 
-    public void OnDown(int startPositionLeft, int startPositionTop)
+    /// <summary>
+    /// Move to the Down
+    /// </summary>
+    /// <param name="startPositionLeft">X coordinate</param>
+    /// <param name="startPositionTop">Y coordinate</param>
+    /// <param name="data">Selected type: testing or normal launch</param>
+    /// <param name="forTests">The list of entering results for tests ONLY</param>
+    public void OnDown(int startPositionLeft, int startPositionTop, WorkWithConsole data, ref List<((int, int), char)> forTests)
     {
-        Console.Write(' ');
-        Console.SetCursorPosition(startPositionLeft, startPositionTop + 1);
-        Console.Write('@');
-        Console.SetCursorPosition(startPositionLeft, startPositionTop + 1);
+        data.Print(' ', ref forTests);
+        data.SetCursorPosition(startPositionLeft, startPositionTop + 1, ref forTests);
+        data.Print('@', ref forTests);
+        data.SetCursorPosition(startPositionLeft, startPositionTop + 1, ref forTests);
     }
 }
