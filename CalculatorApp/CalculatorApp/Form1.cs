@@ -1,7 +1,4 @@
-﻿using System.Net.WebSockets;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-
-namespace CalculatorApp;
+﻿namespace CalculatorApp;
 
 public enum ConditionCalculator
 {
@@ -36,8 +33,27 @@ public partial class Form1 : Form
 
     private void Form1_Load(object sender, EventArgs e) {}
 
+    private bool IsInfinity()
+    {
+        if (firstNumber == "∞" || firstNumber == "-∞" || secondNumber == "∞" || secondNumber == "-∞")
+        {
+            ErrorLabel.Text = "Error";
+            firstNumber = "";
+            secondNumber = "";
+            MainOutputLabel.Text = "0";
+            BackOutputLabel.Text = "";
+            conditionCalculator = ConditionCalculator.start;
+            return true;
+        }
+        return false;
+    }
+
     private void SignButton_Click(object sender, EventArgs e)
     {
+        if (IsInfinity())
+        {
+            return;
+        }
         ErrorLabel.Text = "";
         switch (conditionCalculator)
         {
@@ -108,6 +124,10 @@ public partial class Form1 : Form
 
     private void DeleteButton_Click(object sender, EventArgs e)
     {
+        if (IsInfinity())
+        {
+            return;
+        }
         ErrorLabel.Text = "";
         switch (conditionCalculator)
         {
@@ -169,6 +189,10 @@ public partial class Form1 : Form
 
     private void CommaButton_Click(object sender, EventArgs e)
     {
+        if (IsInfinity())
+        {
+            return;
+        }
         ErrorLabel.Text = "";
         switch (conditionCalculator)
         {
@@ -229,6 +253,10 @@ public partial class Form1 : Form
 
     private void CEButton_Click(object sender, EventArgs e)
     {
+        if (IsInfinity())
+        {
+            return;
+        }
         ErrorLabel.Text = "";
         MainOutputLabel.Text = "0";
         switch (conditionCalculator)
@@ -300,6 +328,10 @@ public partial class Form1 : Form
 
     private void WorkWithOperations(char symbol)
     {
+        if (IsInfinity())
+        {
+            return;
+        }
         ErrorLabel.Text = "";
         switch (conditionCalculator)
         {
@@ -386,6 +418,10 @@ public partial class Form1 : Form
 
     private void EqualButton_Click(object sender, EventArgs e)
     {
+        if (IsInfinity())
+        {
+            return;
+        }
         ErrorLabel.Text = "";
         if (conditionCalculator == ConditionCalculator.operation
          || conditionCalculator == ConditionCalculator.secondNumber
@@ -416,6 +452,10 @@ public partial class Form1 : Form
 
     private void WorkWithNumbers(char number)
     {
+        if (IsInfinity())
+        {
+            return;
+        }
         ErrorLabel.Text = "";
         switch (conditionCalculator)
         {
@@ -509,6 +549,10 @@ public partial class Form1 : Form
 
     private void ZeroButton_Click(object sender, EventArgs e)
     {
+        if (IsInfinity())
+        {
+            return;
+        }
         ErrorLabel.Text = "";
         switch (conditionCalculator)
         {
@@ -547,6 +591,10 @@ public partial class Form1 : Form
     }
     private void ProcentButton_Click(object sender, EventArgs e)
     {
+        if (IsInfinity())
+        {
+            return;
+        }
         double firstNumberDouble = 0;
         double secondNumberDouble = 0;
         ErrorLabel.Text = "";
@@ -563,6 +611,7 @@ public partial class Form1 : Form
             case ConditionCalculator.signFirstNumber:
                 MainOutputLabel.Text = "0";
                 firstNumber = "0";
+                conditionCalculator = ConditionCalculator.firstNumber;
                 break;
             case ConditionCalculator.operation:
                 firstNumberDouble = Convert.ToDouble(firstNumber);
@@ -587,6 +636,10 @@ public partial class Form1 : Form
 
     private void SquaringButtom_Click(object sender, EventArgs e)
     {
+        if (IsInfinity())
+        {
+            return;
+        }
         double firstNumberDouble = 0;
         double secondNumberDouble = 0;
         double result = 0;
@@ -633,6 +686,10 @@ public partial class Form1 : Form
 
     private void TakeRootButton_Click(object sender, EventArgs e)
     {
+        if (IsInfinity())
+        {
+            return;
+        }
         double firstNumberDouble = 0;
         double secondNumberDouble = 0;
         double result = 0;
@@ -705,6 +762,10 @@ public partial class Form1 : Form
 
     private void UnitDividedByNumberButton_Click(object sender, EventArgs e)
     {
+        if (IsInfinity())
+        {
+            return;
+        }
         double firstNumberDouble = 0;
         double secondNumberDouble = 0;
         double result = 0;
