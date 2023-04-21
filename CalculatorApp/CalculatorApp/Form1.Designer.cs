@@ -1,6 +1,6 @@
 ﻿namespace CalculatorApp
 {
-    partial class Form1
+    partial class Calculator
     {
         /// <summary>
         ///  Required designer variable.
@@ -44,7 +44,7 @@
             this.EightButton = new System.Windows.Forms.Button();
             this.NineButton = new System.Windows.Forms.Button();
             this.MultiplyButton = new System.Windows.Forms.Button();
-            this.SquaringButtom = new System.Windows.Forms.Button();
+            this.SquaringButton = new System.Windows.Forms.Button();
             this.TakeRootButton = new System.Windows.Forms.Button();
             this.ResetButton = new System.Windows.Forms.Button();
             this.DivisionButton = new System.Windows.Forms.Button();
@@ -268,18 +268,18 @@
             this.MultiplyButton.UseVisualStyleBackColor = true;
             this.MultiplyButton.Click += new System.EventHandler(this.MultiplyButton_Click);
             // 
-            // SquaringButtom
+            // SquaringButton
             // 
-            this.SquaringButtom.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.SquaringButton.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.SquaringButtom.Location = new System.Drawing.Point(98, 62);
-            this.SquaringButtom.Name = "SquaringButtom";
-            this.SquaringButtom.Size = new System.Drawing.Size(89, 53);
-            this.SquaringButtom.TabIndex = 16;
-            this.SquaringButtom.Text = "x^2";
-            this.SquaringButtom.UseVisualStyleBackColor = true;
-            this.SquaringButtom.Click += new System.EventHandler(this.SquaringButtom_Click);
+            this.SquaringButton.Location = new System.Drawing.Point(98, 62);
+            this.SquaringButton.Name = "SquaringButton";
+            this.SquaringButton.Size = new System.Drawing.Size(89, 53);
+            this.SquaringButton.TabIndex = 16;
+            this.SquaringButton.Text = "x^2";
+            this.SquaringButton.UseVisualStyleBackColor = true;
+            this.SquaringButton.Click += new System.EventHandler(this.SquaringButton_Click);
             // 
             // TakeRootButton
             // 
@@ -353,7 +353,7 @@
             this.tableLayoutPanel1.Controls.Add(this.CEButton, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.UnitDividedByNumberButton, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.TakeRootButton, 2, 1);
-            this.tableLayoutPanel1.Controls.Add(this.SquaringButtom, 1, 1);
+            this.tableLayoutPanel1.Controls.Add(this.SquaringButton, 1, 1);
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 142);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 6;
@@ -447,7 +447,7 @@
             this.ErrorLabel.Size = new System.Drawing.Size(212, 45);
             this.ErrorLabel.TabIndex = 24;
             // 
-            // Form1
+            // Calculator
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -457,8 +457,8 @@
             this.Controls.Add(this.MainOutputLabel);
             this.Controls.Add(this.tableLayoutPanel1);
             this.MinimumSize = new System.Drawing.Size(375, 550);
-            this.Name = "Form1";
-            this.Text = "Form1";
+            this.Name = "Calculator";
+            this.Text = "Calculator";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -484,7 +484,7 @@
         private Button EightButton;
         private Button NineButton;
         private Button MultiplyButton;
-        private Button SquaringButtom;
+        private Button SquaringButton;
         private Button TakeRootButton;
         private Button ResetButton;
         private Button DivisionButton;
