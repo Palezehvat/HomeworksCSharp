@@ -147,7 +147,7 @@ public class Tests
         var secondNumber = "5";
         conditionCalculator = ConditionCalculator.firstNumber;
         functional.UnitDividedByNumberButton(ref conditionCalculator, ref firstNumber, ref secondNumber, ref mainOutputLabel, ref backOutputLabel, ref errorLabel, true);
-        Assert.That(firstNumber == "0,1" && conditionCalculator == ConditionCalculator.firstNumber);
+        Assert.That(firstNumber == "0.1" && conditionCalculator == ConditionCalculator.firstNumber);
     }
     
     [Test]
@@ -157,7 +157,7 @@ public class Tests
         var secondNumber = "5";
         conditionCalculator = ConditionCalculator.secondNumber;
         functional.UnitDividedByNumberButton(ref conditionCalculator, ref firstNumber, ref secondNumber, ref mainOutputLabel, ref backOutputLabel, ref errorLabel, true);
-        Assert.That(secondNumber == "0,2" && conditionCalculator == ConditionCalculator.secondNumber);
+        Assert.That(secondNumber == "0.2" && conditionCalculator == ConditionCalculator.secondNumber);
     }
 
     [Test]
