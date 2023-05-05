@@ -1,4 +1,4 @@
-﻿namespace ListWithOmissions;
+﻿namespace SkipList;
 
 class Program
 {
