@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33403.182
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ListWithOmissions", "ListWithOmissions\ListWithOmissions.csproj", "{B8A5B7AD-4E88-408D-9DAF-4C9AEA647B80}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestsForListWithOmissions", "TestsForListWithOmissions\TestsForListWithOmissions.csproj", "{9C12CF7E-C6D4-488A-B1CF-E59FAB8B434D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B8A5B7AD-4E88-408D-9DAF-4C9AEA647B80}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8A5B7AD-4E88-408D-9DAF-4C9AEA647B80}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8A5B7AD-4E88-408D-9DAF-4C9AEA647B80}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8A5B7AD-4E88-408D-9DAF-4C9AEA647B80}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C12CF7E-C6D4-488A-B1CF-E59FAB8B434D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C12CF7E-C6D4-488A-B1CF-E59FAB8B434D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C12CF7E-C6D4-488A-B1CF-E59FAB8B434D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C12CF7E-C6D4-488A-B1CF-E59FAB8B434D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C6C44DE7-A16E-4728-A3A3-CCA5C7B266F7}
+	EndGlobalSection
+EndGlobal
