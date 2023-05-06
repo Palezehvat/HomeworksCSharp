@@ -4,7 +4,7 @@ class Program
 {
     public static void Main(string[] args)
     {
-        var list = new ListWithOmissions<int>();
+        var list = new SkipList<int>();
         list.Add(1);
         list.Add(2);
         list.Add(3);

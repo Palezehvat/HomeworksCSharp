@@ -141,7 +141,7 @@ public class SkipList<T> : IList<T> where T : IComparable<T>
     {
         if (MajorList == null || MajorList.list == null || MajorList.list.element == null)
         {
-            return false;
+            throw new NullReferenceException();
         }
 
         var walker = MajorList.list.element;
@@ -149,6 +149,10 @@ public class SkipList<T> : IList<T> where T : IComparable<T>
         {
             if (walker.level == 0)
             {
+                while (walker.next != null && item.CompareTo(walker.next.value) >= 0)
+                {
+                    walker = walker.next;
+                }
                 return item.CompareTo(walker.value) == 0;
             }
             if (walker != null && walker.next != null && item.CompareTo(walker.next.value) >= 0)
@@ -181,11 +185,30 @@ public class SkipList<T> : IList<T> where T : IComparable<T>
         }
 
         var walkerForArray = walker.list.element;
-        var listArray = new List<T>(array);
+        var listArray = new List<T>();
 
         while (walkerForArray != null)
         {
             listArray.Add(walkerForArray.value);
+            walkerForArray = walkerForArray.next;
+        }
+
+        int sizeListArray = listArray.Count;
+        if (arrayIndex > array.Length)
+        {
+            throw new IndexOutOfRangeException();
+        }
+
+        int j = 0;
+        while (j < sizeListArray)
+        {
+            if (arrayIndex >= array.Length)
+            {
+                Array.Resize(ref array, array.Length + 1);
+            }
+                array[arrayIndex] = listArray[j];
+                ++arrayIndex;
+            ++j;
         }
 
         array = listArray.ToArray();
