@@ -24,7 +24,8 @@ public class SkipList<T> : IList<T> where T : IComparable<T>
         {
             MajorList = new MainList();
             MajorList.list = new List();
-            MajorList.list.element = new ElementList(0, item, 0);
+            MajorList.list.element = new ElementList(-1, default(T), 0);
+            MajorList.list.element.next = new ElementList(0, item, 0);
             MajorList.size = 1;
             return;
         }
@@ -66,7 +67,7 @@ public class SkipList<T> : IList<T> where T : IComparable<T>
                         else
                         {
                             var newList = new List();
-                            newList.element = new ElementList(0, MajorList.list.element.value, MajorList.list.element.level + 1);
+                            newList.element = new ElementList(-1, default(T), MajorList.list.element.level + 1);
                             newList.element.next = new ElementList(walker.position + 1, item, position);
                             newList.element.next.down = previousLevelItem;
                             newList.element.down = MajorList.list.element;
@@ -159,8 +160,12 @@ public class SkipList<T> : IList<T> where T : IComparable<T>
             {
                 walker = walker.next;
             }
-            else if (walker != null && walker.next != null && item.CompareTo(walker.next.value) < 0)
+            else
             {
+                if (walker == null)
+                {
+                    throw new NullReferenceException();
+                }
                 walker = walker.down;
             }
         }
@@ -184,8 +189,14 @@ public class SkipList<T> : IList<T> where T : IComparable<T>
             throw new NullReferenceException();
         }
 
-        var walkerForArray = walker.list.element;
+
+        var walkerForArray = walker.list.element.next;
         var listArray = new List<T>();
+
+        if (walkerForArray == null)
+        {
+            throw new NullReferenceException();
+        }
 
         while (walkerForArray != null)
         {
@@ -279,12 +290,12 @@ public class SkipList<T> : IList<T> where T : IComparable<T>
         }
         var arrayValue = new T[MajorList.size];
 
-        if (walker.list == null)
+        if (walker.list == null || walker.list.element == null)
         {
             throw new NullReferenceException();
         }
 
-        var walkerList = walker.list.element;
+        var walkerList = walker.list.element.next;
         if (walkerList == null)
         {
             throw new NullReferenceException();
@@ -335,7 +346,7 @@ public class SkipList<T> : IList<T> where T : IComparable<T>
         throw new IncorrectMethodException();
     }
 
-    public bool Remove(T item)
+    public bool RemoveByIndexOrItem(T item, int index, bool byIndex)
     {
         if (MajorList == null || MajorList.list == null || MajorList.list.element == null)
         {
@@ -346,28 +357,43 @@ public class SkipList<T> : IList<T> where T : IComparable<T>
         var mainLevel = MajorList;
         while (walker != null)
         {
-            if (item.CompareTo(walker.value) == 0)
+            if (!byIndex && item.CompareTo(walker.value) == 0 || byIndex && index == walker.position)
             {
                 var copy = walker.next;
+                var copyCopy = copy;
+
+                while (copyCopy != null)
+                {
+                    --copyCopy.position;
+                    copyCopy = copyCopy.next;
+                }
+
                 if (previousWalker == null)
                 {
                     throw new NullReferenceException();
                 }
                 previousWalker.next = copy;
                 walker = walker.down;
-                previousWalker = walker;
+                previousWalker = previousWalker.down;
+                while (previousWalker != null && previousWalker.next != null 
+                   && (item.CompareTo(previousWalker.next.value) != 0 && !byIndex 
+                    || byIndex && index != previousWalker.next.position))
+                {
+                    previousWalker = previousWalker.next;
+                }
                 if (walker == null)
                 {
                     return true;
                 }
             }
-
-            if (walker != null && walker.next != null && item.CompareTo(walker.next.value) >= 0)
+            else if (walker != null && walker.next != null &&
+               (item.CompareTo(walker.next.value) >= 0 && !byIndex
+               || index >= walker.next.position && byIndex))
             {
                 previousWalker = walker;
                 walker = walker.next;
             }
-            else if (walker != null && walker.next != null && item.CompareTo(walker.next.value) < 0)
+            else
             {
                 previousWalker = walker;
                 if (mainLevel == null)
@@ -375,51 +401,24 @@ public class SkipList<T> : IList<T> where T : IComparable<T>
                     throw new NullReferenceException();
                 }
                 mainLevel = mainLevel.nextList;
+                if (walker == null)
+                {
+                    throw new NullReferenceException();
+                }
                 walker = walker.down;
             }
         }
         return false;
     }
 
+    public bool Remove(T item)
+    {
+        return RemoveByIndexOrItem(item, 0, false);
+    }
+
     public void RemoveAt(int index)
     {
-        if (MajorList == null || MajorList.list == null || MajorList.list.element == null)
-        {
-            throw new NullReferenceException();
-        }
-        var walker = MajorList.list.element;
-        var previousWalker = walker;
-        var mainLevel = MajorList;
-        while (walker != null)
-        {
-            if (index == walker.position)
-            {
-                var copy = walker.next;
-                if (previousWalker == null)
-                {
-                    throw new NullReferenceException();
-                }
-                previousWalker.next = copy;
-                walker = walker.down;
-                previousWalker = walker;
-            }
-
-            if (walker != null && walker.next != null && walker.next.position <= index)
-            {
-                previousWalker = walker;
-                walker = walker.next;
-            }
-            else if (walker != null && walker.next != null && index < walker.next.position)
-            {
-                previousWalker = walker;
-                if (mainLevel == null)
-                {
-                    throw new NullReferenceException();
-                }
-                mainLevel = mainLevel.nextList;
-                walker = walker.down;
-            }
-        }
+        RemoveByIndexOrItem(default(T), index, true);
     }
 
     private class ElementList

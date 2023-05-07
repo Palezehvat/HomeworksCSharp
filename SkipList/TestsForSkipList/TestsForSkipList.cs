@@ -63,6 +63,7 @@ public class Tests
         Assert.Throws<NullReferenceException>(() => list.Contains(3));
     }
 
+    
     [Test]
     public void ListWithMethodContainsShouldWorkCorrectly()
     {
@@ -71,7 +72,8 @@ public class Tests
         list.Add(5);
         Assert.True(list.Contains(4) && !list.Contains(7));
     }
-
+    
+    
     [Test]
     public void ListWithMethodCopyToShouldWorkCorrectly()
     {
@@ -83,7 +85,7 @@ public class Tests
         list.CopyTo(arrayToCopy, 0);
         Assert.True(arrayToCopy.SequenceEqual(arrayCheck));
     }
-
+    
     [Test]
     public void ListWithMethodRemoveShouldWorkCorrectly()
     {
@@ -100,8 +102,7 @@ public class Tests
         list.Add(3);
         list.Add(4);
         list.Add(5);
-        list.Remove(4);
+        list.RemoveAt(1);
         Assert.True(!list.Contains(4));
     }
-
 }
