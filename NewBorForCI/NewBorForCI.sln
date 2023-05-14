@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33403.182
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewBorForCI", "NewBorForCI\NewBorForCI.csproj", "{9A77CDBE-D0EE-4CED-B5B7-92B3567E6BAE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewBorForCI", "NewBorForCI\NewBorForCI.csproj", "{9A77CDBE-D0EE-4CED-B5B7-92B3567E6BAE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestsBor", "TestsBor\TestsBor.csproj", "{8ECB64A5-1B15-4C3F-85A6-34DDE66CE741}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestsTrie", "TestsBor\TestsTrie.csproj", "{8ECB64A5-1B15-4C3F-85A6-34DDE66CE741}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
