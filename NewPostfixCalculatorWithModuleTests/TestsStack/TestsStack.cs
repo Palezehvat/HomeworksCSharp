@@ -7,7 +7,7 @@ public class Tests
     [TestCaseSource(nameof(Stacks))]
     public void StackShouldNotEmptyAfterPush(Stack stack)
     {
-        stack.AddElement(1);
+        stack.Push(1);
         Assert.IsFalse(stack.IsEmpty());
     }
 
@@ -20,49 +20,49 @@ public class Tests
     [TestCaseSource(nameof(Stacks))]
     public void StackShouldCorrectlyDeleteTheValue(Stack stack)
     {
-        stack.AddElement(1);
-        var (isCorrect, _) = stack.RemoveElement();
+        stack.Push(1);
+        var (isCorrect, _) = stack.Pop();
         Assert.IsTrue(isCorrect);
     }
 
     [TestCaseSource(nameof(Stacks))]
     public void StackShouldReturnTheLastValueThatWasAddedAndThenDeleted(Stack stack)
     {
-        stack.AddElement(1);
-        var (_, number) = stack.RemoveElement();
+        stack.Push(1);
+        var (_, number) = stack.Pop();
         Assert.IsTrue(number == 1);
     }
 
     [TestCaseSource(nameof(Stacks))]
     public void WhenRemovedFromTheTopOfTheStackTheElementShouldBeErasedFromTheTop(Stack stack)
     {
-        stack.AddElement(1);
-        var (_, _) = stack.RemoveElement();
+        stack.Push(1);
+        var (_, _) = stack.Pop();
         Assert.IsTrue(stack.IsEmpty());
     }
 
     [TestCaseSource(nameof(Stacks))]
     public void DeletingFromAnEmptyStackShouldCauseAnError(Stack stack)
     {
-        var (isCorrect, _) = stack.RemoveElement();
+        var (isCorrect, _) = stack.Pop();
         Assert.IsFalse(isCorrect);
     }
 
     [TestCaseSource(nameof(Stacks))]
     public void WhenAddingConsecutiveValuesTheTopValueShouldBeTheLastOneAdded(Stack stack)
     {
-        stack.AddElement(1);
-        stack.AddElement(2);
-        var (_, number) = stack.RemoveElement();
+        stack.Push(1);
+        stack.Push(2);
+        var (_, number) = stack.Pop();
         Assert.IsTrue(number == 2);
     }
 
     [TestCaseSource(nameof(Stacks))]
     public void DeletingInAStackOfMultipleItemsShouldBeSuccessful(Stack stack)
     {
-        stack.AddElement(1);
-        stack.AddElement(2);
-        var (isCorrect, _) = stack.RemoveElement();
+        stack.Push(1);
+        stack.Push(2);
+        var (isCorrect, _) = stack.Pop();
         Assert.IsTrue(isCorrect);
     }
 

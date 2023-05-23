@@ -1,13 +1,13 @@
-﻿namespace StackCalculator;
+﻿namespace StackCalculator; //Класс оставил иначе с тестами неудобно работать
 
 //Standart stack
-abstract public class Stack : IOperationsWithStack
+abstract public class Stack : IStack
 {
     // Add element to stack
-    virtual public void AddElement(double value) { }
+    virtual public void Push(double value) { }
 
     // Remove element in stack and return deleted item
-    virtual public (bool, double) RemoveElement() { return (false, 0); }
+    virtual public (bool, double) Pop() { return (false, 0); }
 
     // Print all elements
     virtual public void PrintTheElements() { }

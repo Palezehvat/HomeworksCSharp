@@ -1,12 +1,12 @@
 ﻿namespace StackCalculator;
 
 // Calculator that counts algebraic expressions in postfix form
-public class PostfixCalculator
+public static class PostfixCalculator
 {
     private const double delta = 0.0000000000001;
 
     // Receives the input string in which the expression is written in postfix form, finds the result
-    public (bool, double) ConvertToAResponse(string stringWithExpression, Stack stackExpression)
+    public static (bool, double) Calculate(string stringWithExpression, Stack stackExpression)
     {
         int i = 0;
         string[] expressionArray = stringWithExpression.Split(' ');
@@ -15,7 +15,7 @@ public class PostfixCalculator
             var isCorrectNumber = Int32.TryParse(expressionArray[i], out var number);
             if (isCorrectNumber)
             {
-                stackExpression.AddElement(number);
+                stackExpression.Push(number);
             }
             else
             {
@@ -24,14 +24,14 @@ public class PostfixCalculator
                     return (false, 0);
                 }
                 double numberAfter = 0;
-                (var isCorrect, var firstNumber) = stackExpression.RemoveElement();
+                (var isCorrect, var firstNumber) = stackExpression.Pop();
 
                 if (!isCorrect)
                 {
                     return (false, 0);
                 }
 
-                (isCorrect, var secondNumber) = stackExpression.RemoveElement();
+                (isCorrect, var secondNumber) = stackExpression.Pop();
 
                 if (!isCorrect)
                 {
@@ -59,11 +59,11 @@ public class PostfixCalculator
                     default:
                         return (false, 0);
                 }
-                stackExpression.AddElement(numberAfter);
+                stackExpression.Push(numberAfter);
             }
             ++i;
         }
-        (var isCorrectExpression, var result) = stackExpression.RemoveElement();
+        (var isCorrectExpression, var result) = stackExpression.Pop();
         if (!isCorrectExpression)
         {
             return (false, 0);

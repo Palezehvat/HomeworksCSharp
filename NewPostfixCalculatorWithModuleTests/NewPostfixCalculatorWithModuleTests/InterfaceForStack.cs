@@ -1,13 +1,13 @@
 ﻿namespace StackCalculator;
 
 // Interface for the stack
-interface IOperationsWithStack
+interface IStack
 {
     // Add element to stack
-    void AddElement(double value);
+    void Push(double value);
 
     // Remove element in stack and return deleted item
-    (bool, double) RemoveElement();
+    (bool, double) Pop();
 
     // Print all elements
     void PrintTheElements();

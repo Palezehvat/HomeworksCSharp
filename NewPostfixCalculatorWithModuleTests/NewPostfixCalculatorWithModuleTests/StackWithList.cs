@@ -3,9 +3,9 @@
 // Stack implemented on list
 public class StackList : Stack
 {
-    private StackElement headStack;
+    private StackElement? headStack;
 
-    public override void AddElement(double value)
+    public override void Push(double value)
     {
         var item = new StackElement(value);
         if (headStack == null)
@@ -20,7 +20,7 @@ public class StackList : Stack
         }
     }
 
-    public override (bool, double) RemoveElement()
+    public override (bool, double) Pop()
     {
         if (headStack == null)
         {
@@ -49,7 +49,6 @@ public class StackList : Stack
         public StackElement(double value)
         {
             ValueStack = value;
-            Next = null;
         }
 
         public double ValueStack { get; set; }

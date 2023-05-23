@@ -12,7 +12,7 @@ public class StackWithArray : Stack
         stackArray = new double[sizeStack];
     }
 
-    public bool ChangeStackSize(int size)
+    private bool ChangeStackSize(int size)
     {
         if (size < sizeStack)
         {
@@ -22,7 +22,7 @@ public class StackWithArray : Stack
         return true;
     }
 
-    public override void AddElement(double value)
+    public override void Push(double value)
     {
         if (numberOfElements == sizeStack)
         {
@@ -32,7 +32,7 @@ public class StackWithArray : Stack
         ++numberOfElements;
     }
 
-    public override (bool, double) RemoveElement()
+    public override (bool, double) Pop()
     {
         if (numberOfElements == 0)
         {
