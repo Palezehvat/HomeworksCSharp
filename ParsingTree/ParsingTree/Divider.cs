@@ -3,7 +3,7 @@
 // A class that implements division
 public class Divider : Operator
 {
-    double delta = 0.0000001;
+    private double delta = 0.0000001;
 
     // Keeps the division sign in itself
     public Divider(char symbol) : base(symbol) {}
@@ -19,8 +19,5 @@ public class Divider : Operator
     }
 
     // Displays a division sign with two spaces on the screen
-    public override void Print()
-    {
-        Console.Write(" / ");
-    }
+    public override void Print() => Console.Write(" / ");
 }

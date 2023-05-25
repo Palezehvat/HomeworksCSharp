@@ -1,7 +1,4 @@
-﻿using System.Linq.Expressions;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-
-namespace ParsingTree;
+﻿namespace ParsingTree;
 
 // The container is a "tree" with a hierarchical structure
 public class Tree

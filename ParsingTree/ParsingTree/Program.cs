@@ -12,6 +12,10 @@ class Program
         string? stringExpression = Console.ReadLine();
         try
         {
+            if (stringExpression == null) 
+            {
+                throw new ArgumentNullException(nameof(stringExpression));
+            }
             tree.TreeExpression(stringExpression);
             Console.WriteLine(tree.Calcuate());
         }
