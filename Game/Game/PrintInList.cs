@@ -33,13 +33,13 @@ public class PrintInList:WorkWithConsole
         listKeys.RemoveAt(0);
         switch (key)
         {
-            case (char)37:
+            case '%':
                 return "left";
-            case (char)38:
+            case '&':
                 return "up";
-            case (char)39:
+            case '\'':
                 return "right";
-            case (char)40:
+            case '(':
                 return "down";
         }
         return "another";

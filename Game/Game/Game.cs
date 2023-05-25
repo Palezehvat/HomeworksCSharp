@@ -3,7 +3,7 @@
 /// <summary>
 /// A class that implements actions in the game
 /// </summary>
-public class Game
+public static class Game
 {
     /// <summary>
     /// Move to the Left
@@ -12,7 +12,7 @@ public class Game
     /// <param name="startPositionTop">Y coordinate</param>
     /// <param name="data">Selected type: testing or normal launch</param>
     /// <param name="forTests">The list of entering results for tests ONLY</param>
-    public void OnLeft(int startPositionLeft, int startPositionTop, WorkWithConsole data, ref List<((int, int), char)> forTests)
+    public static void OnLeft(int startPositionLeft, int startPositionTop, WorkWithConsole data, ref List<((int, int), char)> forTests)
     {
         data.Print(' ', ref forTests);
         data.SetCursorPosition(startPositionLeft - 1, startPositionTop, ref forTests);
@@ -27,7 +27,7 @@ public class Game
     /// <param name="startPositionTop">Y coordinate</param>
     /// <param name="data">Selected type: testing or normal launch</param>
     /// <param name="forTests">The list of entering results for tests ONLY</param>
-    public void OnRight(int startPositionLeft, int startPositionTop, WorkWithConsole data, ref List<((int, int), char)> forTests)
+    public  static void OnRight(int startPositionLeft, int startPositionTop, WorkWithConsole data, ref List<((int, int), char)> forTests)
     {
         data.Print(' ', ref forTests);
         data.SetCursorPosition(startPositionLeft + 1, startPositionTop, ref forTests);
@@ -42,7 +42,7 @@ public class Game
     /// <param name="startPositionTop">Y coordinate</param>
     /// <param name="data">Selected type: testing or normal launch</param>
     /// <param name="forTests">The list of entering results for tests ONLY</param>
-    public void OnUp(int startPositionLeft, int startPositionTop, WorkWithConsole data, ref List<((int, int), char)> forTests) 
+    public static void OnUp(int startPositionLeft, int startPositionTop, WorkWithConsole data, ref List<((int, int), char)> forTests) 
     {
         data.Print(' ', ref forTests);
         data.SetCursorPosition(startPositionLeft, startPositionTop - 1, ref forTests);
@@ -57,7 +57,7 @@ public class Game
     /// <param name="startPositionTop">Y coordinate</param>
     /// <param name="data">Selected type: testing or normal launch</param>
     /// <param name="forTests">The list of entering results for tests ONLY</param>
-    public void OnDown(int startPositionLeft, int startPositionTop, WorkWithConsole data, ref List<((int, int), char)> forTests)
+    public static void OnDown(int startPositionLeft, int startPositionTop, WorkWithConsole data, ref List<((int, int), char)> forTests)
     {
         data.Print(' ', ref forTests);
         data.SetCursorPosition(startPositionLeft, startPositionTop + 1, ref forTests);

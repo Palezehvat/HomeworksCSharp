@@ -3,7 +3,7 @@
 /// <summary>
 /// Implements an interface for tests
 /// </summary>
-public class PrintInConsole:WorkWithConsole
+public class PrintInConsole : WorkWithConsole
 {
     public override void Print(char symbol, ref List<((int, int), char)> forTests)
     {
@@ -30,6 +30,5 @@ public class PrintInConsole:WorkWithConsole
                 return "down";
         }
         return "another";
-
     }
 }

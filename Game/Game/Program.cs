@@ -4,19 +4,18 @@ public class Program
 {
     public static void Main()
     {
-        var game = new Game();
-        var eventLoop = new EventLoop();
+        char symbol = (char)38;
         Console.WriteLine("Input your string with file path");
         var filePath = Console.ReadLine();
         Console.Clear();
         List<((int, int), char)> list = new List<((int, int), char)>();
         try 
         {
-            eventLoop.Run(
-                new ArrowHandler(game.OnLeft),
-                new ArrowHandler(game.OnRight),
-                new ArrowHandler(game.OnUp),
-                new ArrowHandler(game.OnDown),
+            EventLoop.Run(
+                new ArrowHandler(Game.OnLeft),
+                new ArrowHandler(Game.OnRight),
+                new ArrowHandler(Game.OnUp),
+                new ArrowHandler(Game.OnDown),
                 filePath,
                 new PrintInConsole(),
                 ref list

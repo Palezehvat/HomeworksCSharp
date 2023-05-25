@@ -5,34 +5,23 @@ using System.Linq;
 
 public class Tests
 {
-    Game game;
-
-    [SetUp]
-    public void Setup()
+    [Test]
+    public void TheIncorrectMapWithIncorrectSymbolShouldThrowException()
     {
-        game = new Game();
-    }
-
-    [TestCaseSource(nameof(GameForTest))]
-    public void TheIncorrectMapWithIncorrectSymbolShouldThrowException(Game game)
-    {
-        EventLoop eventLoop = new EventLoop();
         var forTests = new List<((int, int), char)>();
-        Assert.Throws<InvalidMapException>(() => eventLoop.Run(game.OnLeft, game.OnRight, game.OnUp, game.OnDown, Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForGame", "IncorrectMapWithIncorrectSymbol.txt"), new PrintInList(), ref forTests));
+        Assert.Throws<InvalidMapException>(() => EventLoop.Run(Game.OnLeft, Game.OnRight, Game.OnUp, Game.OnDown, Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForGame", "IncorrectMapWithIncorrectSymbol.txt"), new PrintInList(), ref forTests));
     }
 
-    [TestCaseSource(nameof(GameForTest))]
-    public void TheIncorrectMapWithTooSmallSizeShouldThrowException(Game game)
+    [Test]
+    public void TheIncorrectMapWithTooSmallSizeShouldThrowException()
     {
-        EventLoop eventLoop = new EventLoop();
         var forTests = new List<((int, int), char)>();
-        Assert.Throws<InvalidMapException>(() => eventLoop.Run(game.OnLeft, game.OnRight, game.OnUp, game.OnDown, Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForGame", "IncorrectMapWithToSmallSize.txt"), new PrintInList(), ref forTests));
+        Assert.Throws<InvalidMapException>(() => EventLoop.Run(Game.OnLeft, Game.OnRight, Game.OnUp, Game.OnDown, Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForGame", "IncorrectMapWithToSmallSize.txt"), new PrintInList(), ref forTests));
     }
 
-    [TestCaseSource(nameof(GameForTest))]
-    public void TheCharacterMustWalkCorrectlyToTheLeft(Game game)
+    [Test]
+    public void TheCharacterMustWalkCorrectlyToTheLeft()
     {
-        EventLoop eventLoop = new EventLoop();
         var printInList = new PrintInList();
         var forTests = new List<((int, int), char)>();
         var listChar = new List<char>();
@@ -45,16 +34,15 @@ public class Tests
         listCheck.Add(((7, 3), '\0'));
         listCheck.Add(((-1, -1), '@'));
         listCheck.Add(((7, 3), '\0'));
-        eventLoop.Run(game.OnLeft, game.OnRight, game.OnUp, game.OnDown,
+        EventLoop.Run(Game.OnLeft, Game.OnRight, Game.OnUp, Game.OnDown,
                       Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForGame", "NormalMap.txt"),
                       printInList, ref forTests, listChar); 
         Assert.True(forTests.SequenceEqual(listCheck));
     }
 
-    [TestCaseSource(nameof(GameForTest))]
-    public void TheCharacterMustWalkCorrectlyToTheUp(Game game)
+    [Test]
+    public void TheCharacterMustWalkCorrectlyToTheUp()
     {
-        EventLoop eventLoop = new EventLoop();
         var printInList = new PrintInList();
         var forTests = new List<((int, int), char)>();
         var listChar = new List<char>();
@@ -67,16 +55,15 @@ public class Tests
         listCheck.Add(((8, 2), '\0'));
         listCheck.Add(((-1, -1), '@'));
         listCheck.Add(((8, 2), '\0'));
-        eventLoop.Run(game.OnLeft, game.OnRight, game.OnUp, game.OnDown,
+        EventLoop.Run(Game.OnLeft, Game.OnRight, Game.OnUp, Game.OnDown,
                       Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForGame", "NormalMap.txt"),
                       printInList, ref forTests, listChar); 
         Assert.True(forTests.SequenceEqual(listCheck));
     }
 
-    [TestCaseSource(nameof(GameForTest))]
-    public void TheCharacterMustWalkCorrectlyToTheRight(Game game)
+    [Test]
+    public void TheCharacterMustWalkCorrectlyToTheRight()
     {
-        EventLoop eventLoop = new EventLoop();
         var printInList = new PrintInList();
         var forTests = new List<((int, int), char)>();
         var listChar = new List<char>();
@@ -89,16 +76,15 @@ public class Tests
         listCheck.Add(((9, 3), '\0'));
         listCheck.Add(((-1, -1), '@'));
         listCheck.Add(((9, 3), '\0'));
-        eventLoop.Run(game.OnLeft, game.OnRight, game.OnUp, game.OnDown,
+        EventLoop.Run(Game.OnLeft, Game.OnRight, Game.OnUp, Game.OnDown,
                       Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForGame", "NormalMap.txt"),
                       printInList, ref forTests, listChar);
         Assert.True(forTests.SequenceEqual(listCheck));
     }
 
-    [TestCaseSource(nameof(GameForTest))]
-    public void TheCharacterMustWalkCorrectlyToTheDown(Game game)
+    [Test]
+    public void TheCharacterMustWalkCorrectlyToTheDown()
     {
-        EventLoop eventLoop = new EventLoop();
         var printInList = new PrintInList();
         var forTests = new List<((int, int), char)>();
         var listChar = new List<char>();
@@ -111,16 +97,15 @@ public class Tests
         listCheck.Add(((8, 4), '\0'));
         listCheck.Add(((-1, -1), '@'));
         listCheck.Add(((8, 4), '\0'));
-        eventLoop.Run(game.OnLeft, game.OnRight, game.OnUp, game.OnDown,
+        EventLoop.Run(Game.OnLeft, Game.OnRight, Game.OnUp, Game.OnDown,
                       Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForGame", "NormalMap.txt"),
                       printInList, ref forTests, listChar); 
         Assert.True(forTests.SequenceEqual(listCheck));
     }
 
-    [TestCaseSource(nameof(GameForTest))]
-    public void TheCharacterMustNotWalkIfPressedIncorrectKey(Game game)
+    [Test]
+    public void TheCharacterMustNotWalkIfPressedIncorrectKey()
     {
-        EventLoop eventLoop = new EventLoop();
         var printInList = new PrintInList();
         var forTests = new List<((int, int), char)>();
         var listChar = new List<char>();
@@ -129,16 +114,15 @@ public class Tests
         listCheck.Add(((8, 3), '\0'));
         listCheck.Add(((-1, -1), '@'));
         listCheck.Add(((8, 3), '\0'));
-        eventLoop.Run(game.OnLeft, game.OnRight, game.OnUp, game.OnDown,
+        EventLoop.Run(Game.OnLeft, Game.OnRight, Game.OnUp, Game.OnDown,
                       Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForGame", "NormalMap.txt"),
                       printInList, ref forTests, listChar); 
         Assert.True(forTests.SequenceEqual(listCheck));
     }
 
-    [TestCaseSource(nameof(GameForTest))]
-    public void TheCharacterMustNotWalkIfItRestsAgainstTheWallWhenWalkingToTheLeft(Game game)
+    [Test]
+    public void TheCharacterMustNotWalkIfItRestsAgainstTheWallWhenWalkingToTheLeft()
     {
-        EventLoop eventLoop = new EventLoop();
         var printInList = new PrintInList();
         var forTests = new List<((int, int), char)>();
         var listChar = new List<char>();
@@ -147,16 +131,15 @@ public class Tests
         listCheck.Add(((1, 1), '\0'));
         listCheck.Add(((-1, -1), '@'));
         listCheck.Add(((1, 1), '\0'));
-        eventLoop.Run(game.OnLeft, game.OnRight, game.OnUp, game.OnDown,
+        EventLoop.Run(Game.OnLeft, Game.OnRight, Game.OnUp, Game.OnDown,
                       Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForGame", "MapWithCloseWalls.txt"),
                       printInList, ref forTests, listChar);
         Assert.True(forTests.SequenceEqual(listCheck));
     }
 
-    [TestCaseSource(nameof(GameForTest))]
-    public void TheCharacterMustNotWalkIfItRestsAgainstTheWallWhenWalkingToTheUp(Game game)
+    [Test]
+    public void TheCharacterMustNotWalkIfItRestsAgainstTheWallWhenWalkingToTheUp()
     {
-        EventLoop eventLoop = new EventLoop();
         var printInList = new PrintInList();
         var forTests = new List<((int, int), char)>();
         var listChar = new List<char>();
@@ -165,16 +148,15 @@ public class Tests
         listCheck.Add(((1, 1), '\0'));
         listCheck.Add(((-1, -1), '@'));
         listCheck.Add(((1, 1), '\0'));
-        eventLoop.Run(game.OnLeft, game.OnRight, game.OnUp, game.OnDown,
+        EventLoop.Run(Game.OnLeft, Game.OnRight, Game.OnUp, Game.OnDown,
               Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForGame", "MapWithCloseWalls.txt"),
               printInList, ref forTests, listChar); 
         Assert.True(forTests.SequenceEqual(listCheck));
     }
 
-    [TestCaseSource(nameof(GameForTest))]
-    public void TheCharacterMustNotWalkIfItRestsAgainstTheWallWhenWalkingToTheRight(Game game)
+    [Test]
+    public void TheCharacterMustNotWalkIfItRestsAgainstTheWallWhenWalkingToTheRight()
     {
-        EventLoop eventLoop = new EventLoop();
         var printInList = new PrintInList();
         var forTests = new List<((int, int), char)>();
         var listChar = new List<char>();
@@ -183,17 +165,16 @@ public class Tests
         listCheck.Add(((1, 1), '\0'));
         listCheck.Add(((-1, -1), '@'));
         listCheck.Add(((1, 1), '\0'));
-        eventLoop.Run(game.OnLeft, game.OnRight, game.OnUp, game.OnDown,
+        EventLoop.Run(Game.OnLeft, Game.OnRight, Game.OnUp, Game.OnDown,
               Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForGame", "MapWithCloseWalls.txt"),
               printInList, ref forTests, listChar); 
         Assert.True(forTests.SequenceEqual(listCheck));
     }
 
 
-    [TestCaseSource(nameof(GameForTest))]
-    public void TheCharacterMustNotWalkIfItRestsAgainstTheWallWhenWalkingToTheDown(Game game)
+    [Test]
+    public void TheCharacterMustNotWalkIfItRestsAgainstTheWallWhenWalkingToTheDown()
     {
-        EventLoop eventLoop = new EventLoop();
         var printInList = new PrintInList();
         var forTests = new List<((int, int), char)>();
         var listChar = new List<char>();
@@ -202,15 +183,9 @@ public class Tests
         listCheck.Add(((1, 1), '\0'));
         listCheck.Add(((-1, -1), '@'));
         listCheck.Add(((1, 1), '\0'));
-        eventLoop.Run(game.OnLeft, game.OnRight, game.OnUp, game.OnDown,
+        EventLoop.Run(Game.OnLeft, Game.OnRight, Game.OnUp, Game.OnDown,
               Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForGame", "MapWithCloseWalls.txt"),
               printInList, ref forTests, listChar); 
         Assert.True(forTests.SequenceEqual(listCheck));
     }
-
-    private static IEnumerable<TestCaseData> GameForTest
-    => new TestCaseData[]
-    {
-        new TestCaseData(new Game())
-    };
 }

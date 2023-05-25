@@ -5,7 +5,7 @@ public delegate void ArrowHandler(int startPositionLeft, int startPositionTop, W
 /// <summary>
 /// Event handler implementation class
 /// </summary>
-public class EventLoop
+public static class EventLoop
 {
     /// <summary>
     /// Event Handler
@@ -20,58 +20,58 @@ public class EventLoop
     /// <param name="listKeys">List of commands for tests ONLY</param>
     /// <exception cref="InvalidMapException">Incorrectly set map</exception>
     /// <exception cref="NullReferenceException">Checking that the read card line is not empty</exception>
-    public void Run(ArrowHandler left, ArrowHandler right, ArrowHandler up, ArrowHandler down, 
+    public static void Run(ArrowHandler left, ArrowHandler right, ArrowHandler up, ArrowHandler down, 
                     string fileWithMap, WorkWithConsole data, ref List<((int, int), char)> forTests, List<Char> listKeys = null)
     {
-        int sizeLong = 0;
-        int sizeWidth = 0;
+        int length = 0;
+        int width = 0;
         var file = new StreamReader(fileWithMap);
-        int sizeDogSymbols = 0;
+        int sizeAtSymbols = 0;
         int sizeSpaces = 0;
         bool isFirst = true;
         while (!file.EndOfStream)
         {
             if (!isFirst)
             {
-                if (sizeWidth == 1 && sizeDogSymbols != sizeLong)
+                if (width == 1 && sizeAtSymbols != length)
                 {
                     throw new InvalidMapException();
                 }
-                else if (sizeWidth != 1 && sizeDogSymbols != 2 || sizeSpaces != sizeLong - sizeDogSymbols)
+                else if (width != 1 && sizeAtSymbols != 2 || sizeSpaces != length - sizeAtSymbols)
                 {
                     throw new InvalidMapException();
                 }
             }
             var line = file.ReadLine();
-            ++sizeWidth;
-            int size = line.Count(x => x == '@');
+            ++width;
             if (line == null)
             {
-                throw new NullReferenceException();
+                throw new ArgumentException();
             }
-            if (sizeLong != 0 && sizeLong != line.Length)
+            int size = line.Count(x => x == '@');
+            if (length != 0 && length != line.Length)
             {
                 throw new InvalidMapException();
             }
-            sizeLong = line.Length;
-            sizeDogSymbols = line.Count(x => x == '@');
+            length = line.Length;
+            sizeAtSymbols = line.Count(x => x == '@');
             sizeSpaces = line.Count(x => x == ' ');
             isFirst = false;
             Console.WriteLine(line);
         }
-        if (sizeDogSymbols != sizeLong)
+        if (sizeAtSymbols != length)
         {
             throw new InvalidMapException();
         }
 
-        if (sizeWidth < 3 || sizeLong < 3)
+        if (width < 3 || length < 3)
         {
             throw new InvalidMapException();
         }
-        data.SetCursorPosition(sizeLong / 2, sizeWidth / 2, ref forTests);
+        data.SetCursorPosition(length / 2, width / 2, ref forTests);
         data.Print('@', ref forTests);
-        int startPositionLeft = sizeLong / 2;
-        int startPositionTop = sizeWidth / 2;
+        int startPositionLeft = length / 2;
+        int startPositionTop = width / 2;
         data.SetCursorPosition(startPositionLeft, startPositionTop, ref forTests);
         var checkType = new PrintInList();
         while (true)
@@ -91,7 +91,7 @@ public class EventLoop
                     }
                     break;
                 case "right":
-                    if (startPositionLeft != sizeLong - 2)
+                    if (startPositionLeft != length - 2)
                     {
                         right(startPositionLeft, startPositionTop, data, ref forTests);
                         ++startPositionLeft;
@@ -105,7 +105,7 @@ public class EventLoop
                     }
                     break;
                 case "down":
-                    if (startPositionTop != sizeWidth - 2) 
+                    if (startPositionTop != width - 2) 
                     {
                         down(startPositionLeft, startPositionTop, data, ref forTests);
                         ++startPositionTop;
