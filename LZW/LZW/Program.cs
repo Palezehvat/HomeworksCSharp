@@ -6,8 +6,7 @@ class Program
 {
     public static void Main(string[] args)
     {
-        var lzw = new LZW();
-        var (isCorrect, compressionRatio) = lzw.LzwAlgorithm(args[0], args[1]);
+        var (isCorrect, compressionRatio) = LZWAlgorithm.LzwAlgorithm(args[0], args[1]);
         if (!isCorrect)
         {
             Console.WriteLine("Problems...");

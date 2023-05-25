@@ -1,79 +1,63 @@
 namespace TestLZW;
 
 using LZW;
-using System.Reflection;
 
 public class Tests
 {
-    LZW lzw;
-    [SetUp]
-    public void Setup()
+    [Test]
+    public void TheLZWShouldWorkCorrectlyToReturnTheCorrectValueOnASimpleExample()
     {
-        lzw = new LZW();
-    }
-
-    [TestCaseSource(nameof(LZW))]
-    public void TheLZWShouldWorkCorrectlyToReturnTheCorrectValueOnASimpleExample(LZW lzw)
-    {
-        Setup();
-        var (isCorrect, _) = lzw.LzwAlgorithm(Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForLZW", "testAnElementaryExample.txt"), "-c");
+        var (isCorrect, _) = LZWAlgorithm.LzwAlgorithm(Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForLZW", "testAnElementaryExample.txt"), "-c");
         if (!isCorrect )
         {
-            Assert.Fail();
+            Assert.That(false, Is.EqualTo(!isCorrect));
         }
-        (isCorrect, var _) = lzw.LzwAlgorithm(Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForLZW", "testAnElementaryExample.zipped"), "-u");
+        (isCorrect, var _) = LZWAlgorithm.LzwAlgorithm(Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForLZW", "testAnElementaryExample.txt.zipped"), "-u");
         if (!isCorrect)
         {
-            Assert.Fail();
+            Assert.That(false, Is.EqualTo(!isCorrect));
         }
-        string correctText = File.ReadAllText(Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForLZW", "testAnElementaryExample.txt"));
-        string fromLZWText = File.ReadAllText(Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForLZW", "testAnElementaryExample.exe"));
-        Assert.True(correctText == fromLZWText);
+        string correctText = File.ReadAllText(Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForLZW", "correctTestAnElementaryExample.txt"));
+        string fromLZWText = File.ReadAllText(Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForLZW", "testAnElementaryExample.txt"));
+        Assert.That(correctText, Is.EqualTo(fromLZWText));
     }
 
-    [TestCaseSource(nameof(LZW))]
-    public void LZWCodeingShouldReturnFalseWhenReceivingAFileWithAnIncorrectName(LZW lzw)
+    [Test]
+    public void LZWCodeingShouldReturnFalseWhenReceivingAFileWithAnIncorrectName()
     {
-        var (isCorrect, _) = lzw.LzwAlgorithm("ds", "-c");
+        var (isCorrect, _) = LZWAlgorithm.LzwAlgorithm("ds", "-c");
         Assert.False(isCorrect);
     }
 
-    [TestCaseSource(nameof(LZW))]
-    public void LZWDecodeingShouldReturnFalseWhenReceivingAFileWithAnIncorrectName(LZW lzw)
+    [Test]
+    public void LZWDecodeingShouldReturnFalseWhenReceivingAFileWithAnIncorrectName()
     {
-        var (isCorrect, _) = lzw.LzwAlgorithm("ds", "-u");
+        var (isCorrect, _) = LZWAlgorithm.LzwAlgorithm("ds", "-u");
         Assert.False(isCorrect);
     }
 
-    [TestCaseSource(nameof(LZW))]
-    public void LZWShouldReturnFalseWhenReceivingAFileWithAnIncorrectParametr(LZW lzw)
+    [Test]
+    public void LZWShouldReturnFalseWhenReceivingAFileWithAnIncorrectParametr()
     {
-        var (isCorrect, _) = lzw.LzwAlgorithm("ds", "-e");
+        var (isCorrect, _) = LZWAlgorithm.LzwAlgorithm("ds", "-e");
         Assert.False(isCorrect);
     }
 
-    [TestCaseSource(nameof(LZW))]
-    public void TheLZWShouldReturnAnEmptyFileEmpty(LZW lzw)
+    [Test]
+    public void TheLZWShouldReturnAnEmptyFileEmpty()
     {
-        Setup();
-        var (isCorrect, _) = lzw.LzwAlgorithm(Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForLZW", "emptyFile.txt"), "-c");
+        var (isCorrect, _) = LZWAlgorithm.LzwAlgorithm(Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForLZW", "emptyFile.txt"), "-c");
         if (!isCorrect)
         {
-            Assert.Fail();
+            Assert.That(false, Is.EqualTo(!isCorrect));
         }
-        (isCorrect, var _) = lzw.LzwAlgorithm(Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForLZW", "emptyFile.zipped"), "-u");
+        (isCorrect, var _) = LZWAlgorithm.LzwAlgorithm(Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForLZW", "emptyFile.txt.zipped"), "-u");
         if (!isCorrect)
         {
-            Assert.Fail();
+            Assert.That(false, Is.EqualTo(!isCorrect));
         }
-        string correctText = File.ReadAllText(Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForLZW", "emptyFile.txt"));
-        string fromLZWText = File.ReadAllText(Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForLZW", "emptyFile.exe"));
-        Assert.True(correctText == fromLZWText);
+        string fromLZWText = File.ReadAllText(Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForLZW", "emptyFile.txt"));
+        string correctText = File.ReadAllText(Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForLZW", "correctEmptyFile.txt"));
+        Assert.That(correctText, Is.EqualTo(fromLZWText));
     }
-
-    private static IEnumerable<TestCaseData> LZW
-    => new TestCaseData[]
-    {
-        new TestCaseData(new LZW()),
-    };
 }

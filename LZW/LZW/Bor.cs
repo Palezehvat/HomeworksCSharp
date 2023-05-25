@@ -1,14 +1,23 @@
 ﻿namespace Bor;
 
-// A container for storing strings, in the form of a suspended tree
+/// <summary>
+/// String Parsing Tree
+/// </summary>
 public class Bor
 {
-    private BorElement root = new BorElement();
+    private BorElement root = new();
 
-    // Adding an element
-    public (bool, int) Add(Bor bor, char[] buffer, int from, int to)
+    /// <summary>
+    /// Adding an element to a Trie
+    /// </summary>
+    public (bool, int) Add(char[] buffer, int from = 0, int to = 0)
     {
-        if (root == null || buffer == null)
+        if (buffer == null)
+        {
+            throw new ArgumentNullException(nameof(buffer));
+        }
+
+        if (root == null)
         {
             throw new InvalidOperationException();
         }
@@ -16,7 +25,7 @@ public class Bor
         int i = 0;
         int pointer = from;
         int toFlow = -1;
-        bool isStringInBor = bor.Contains(buffer, from, to);
+        bool isStringInBor = Contains(buffer, from, to);
         while (i < to - from + 1)
         {
             int number = (int)buffer[pointer];
@@ -34,17 +43,28 @@ public class Bor
             pointer++;
             i++;
         }
-        if (walker.IsTerminal == false)
+        if (!walker.IsTerminal)
         {
             walker.Flow = root.HowManyStringInDictionary;
             root.HowManyStringInDictionary++;
         }
 
-        return walker.IsTerminal == false ? (walker.IsTerminal = true && true, toFlow) : (false, toFlow);
+        if (!walker.IsTerminal)
+        {
+            walker.IsTerminal = true;
+            return (true, toFlow);
+        }
+        else
+        {
+            return (true, toFlow);
+        }
+
     }
 
-    // Returns flow by letter
-    public int ReturnFlowByCharArray(char[] buffer, int to, int from)
+    /// <summary>
+    /// Returns a stream by letter
+    /// </summary>
+    public int ReturnFlowByCharArray(char[] buffer, int to = 0, int from = 0)
     {
         if (buffer.Length == 0)
         {
@@ -66,7 +86,9 @@ public class Bor
         return walker.Flow;
     }
 
-    // Returns how many strings in bor
+    /// <summary>
+    /// Returns how many strings in a Trie
+    /// </summary>
     public int HowManyStringsInBor()
     {
         if (root == null)
@@ -76,8 +98,10 @@ public class Bor
         return root.HowManyStringInDictionary;
     }
 
-    // Checks for the presence of a string
-    public bool Contains(char[] buffer, int from, int to)
+    /// <summary>
+    /// Checks whether the string in the Trie contains
+    /// </summary>
+    public bool Contains(char[] buffer, int from = 0 , int to = 0)
     {
         if (root == null)
         {

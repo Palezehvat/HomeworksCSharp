@@ -2,104 +2,69 @@
 
 using Bor;
 
-public class LZW
+/// <summary>
+/// A class for compressing and decompressing data using the LZW algorithm
+/// </summary>
+public static class LZWAlgorithm
 {
-    private bool ChangeFileNameToTxt(ref char[] newFile)
+    private static void ChangeFileNameToTheOriginalName(ref char[] newFile)
     {
         if (newFile.Length < 8)
         {
-            return false;
+            throw new ArgumentException();
         }
-        if (newFile[newFile.Length - 1] == 'd'
-         && newFile[newFile.Length - 2] == 'e'
-         && newFile[newFile.Length - 3] == 'p'
-         && newFile[newFile.Length - 4] == 'p'
-         && newFile[newFile.Length - 5] == 'i'
-         && newFile[newFile.Length - 6] == 'z'
-         && newFile[newFile.Length - 7] == '.')
-        {
-            Array.Resize(ref newFile, newFile.Length - 3);
-            newFile[newFile.Length - 1] = 'e';
-            newFile[newFile.Length - 2] = 'x';
-            newFile[newFile.Length - 3] = 'e';
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        Array.Resize(ref newFile, newFile.Length - 7);
     }
 
-    private bool ChangeFileNameToZipped(ref char[] newFile)
+    private static void ChangeFileNameToZipped(ref char[] newFile)
     {
-        if (newFile.Length < 5)
-        {
-            return false;
-        }
-        if (newFile[newFile.Length - 1] == 't'
-         && newFile[newFile.Length - 2] == 'x'
-         && newFile[newFile.Length - 3] == 't'
-         && newFile[newFile.Length - 4] == '.'
-         || newFile[newFile.Length - 1] == 'e'
-         && newFile[newFile.Length - 2] == 'x'
-         && newFile[newFile.Length - 3] == 'e'
-         && newFile[newFile.Length - 4] == '.')
-        {
-            Array.Resize(ref newFile, newFile.Length + 3);
-            newFile[newFile.Length - 1] = 'd';
-            newFile[newFile.Length - 2] = 'e';
-            newFile[newFile.Length - 3] = 'p';
-            newFile[newFile.Length - 4] = 'p';
-            newFile[newFile.Length - 5] = 'i';
-            newFile[newFile.Length - 6] = 'z';
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        int sizeNewFile = newFile.Length;
+        Array.Resize(ref newFile, sizeNewFile + 7);
+        newFile[sizeNewFile] = '.';
+        newFile[sizeNewFile + 1] = 'z';
+        newFile[sizeNewFile + 2] = 'i';
+        newFile[sizeNewFile + 3] = 'p';
+        newFile[sizeNewFile + 4] = 'p';
+        newFile[sizeNewFile + 5] = 'e';
+        newFile[sizeNewFile + 6] = 'd';
     }
 
-    private void addAlphabetToBor(Bor bor)
+    private static void AddAlphabetToBor(Bor bor)
     {
         var letter = new char[1];
         for (int i = 0; i < 256; ++i)
         {
             letter[0] = (char)i;
-            bor.Add(bor, letter, 0, 0);
+            bor.Add(letter, 0, 0);
         }
     }
 
-    private bool CodeFile(string fileName, ref double compressionRatio)
+    private static bool CodeFile(string fileName, ref double compressionRatio)
     {
-        char[] newFileArray = null;
+        char[]? newFileArray = null;
         double sizeForCompressionRatio = 0;
         try
         {
             newFileArray = new char[fileName.Length];
             Array.Copy(fileName.ToCharArray(), newFileArray, fileName.Length);
-            FileInfo fileFromMain = new FileInfo(fileName);
+            FileInfo fileFromMain = new(fileName);
             sizeForCompressionRatio = fileFromMain.Length;
         }
         catch (FileNotFoundException)
         {
             return false;
         }
-        bool isCorrect = ChangeFileNameToZipped(ref newFileArray);
-        if (!isCorrect)
-        {
-            return false;
-        }
+        ChangeFileNameToZipped(ref newFileArray);
         string? newFile = new string(newFileArray);
         if (newFile == null)
         {
             return false;
         }
 
-        File.WriteAllText(newFile.ToString(), string.Empty);
+        File.WriteAllText(newFile, string.Empty);
 
         var bor = new Bor();
-        addAlphabetToBor(bor);
+        AddAlphabetToBor(bor);
 
         byte[] bufferIn = File.ReadAllBytes(fileName);
         if (bufferIn.Length == 0)
@@ -108,7 +73,7 @@ public class LZW
             return true;
         }
         int j = 0;
-        char[] textFromFile = new char[bufferIn.Length];
+        var textFromFile = new char[bufferIn.Length];
         for (int i = 0; i < bufferIn.Length; ++i)
         {
             textFromFile[j] = Convert.ToChar(bufferIn[i]);
@@ -118,32 +83,30 @@ public class LZW
         // Добавление потоков в файл
         int walker = 0;
         int sizeText = textFromFile.Length;
+        var fstreamNew = new FileStream(newFile, FileMode.Append);
         for (int i = 0; i < textFromFile.Length; i++)
         {
             if (!bor.Contains(textFromFile, walker, i))
             {
-                var (_, flow) = bor.Add(bor, textFromFile, walker, i);
+                var (_, flow) = bor.Add(textFromFile, walker, i);
                 walker = i;
                 byte[] bytes = BitConverter.GetBytes(flow);
-                var fstreamNew = new FileStream(newFile, FileMode.Append);
                 fstreamNew.WriteAsync(bytes, 0, bytes.Length);
-                fstreamNew.Close();
             }
         }
 
         // Добавление последнего потока в файл
         var flowLast = bor.ReturnFlowByCharArray(textFromFile, bufferIn.Length - 1, bufferIn.Length - 1);
         byte[] bytesLast = BitConverter.GetBytes(flowLast);
-        var LastFstreamNew = new FileStream(newFile.ToString(), FileMode.Append);
-        LastFstreamNew.WriteAsync(bytesLast, 0, bytesLast.Length);
-        LastFstreamNew.Close();
+        fstreamNew.WriteAsync(bytesLast, 0, bytesLast.Length);
+        fstreamNew.Close();
         var file = new FileInfo(newFile.ToString());
         double newSizeForCompressionRatio = file.Length;
         compressionRatio = newSizeForCompressionRatio / sizeForCompressionRatio;
         return true;
     }
 
-    private bool DecodeFile(string fileName)
+    private static bool DecodeFile(string fileName)
     {
         byte[] bufferIn = null;
         try
@@ -155,13 +118,9 @@ public class LZW
             return false;
         }
         int i = 0;
-        char[] newFileArray = new char[fileName.Length];
+        var newFileArray = new char[fileName.Length];
         Array.Copy(fileName.ToCharArray(), newFileArray, fileName.Length);
-        bool isCorrect = ChangeFileNameToTxt(ref newFileArray);
-        if (!isCorrect)
-        {
-            return false;
-        }
+        ChangeFileNameToTheOriginalName(ref newFileArray);
         string? newFile = new string(newFileArray);
         if (newFile == null)
         {
@@ -190,7 +149,6 @@ public class LZW
         bool isFirst = true;
         while (i < bufferIn.Length)
         {
-
             var symbolFromArray = new byte[4];
             int pointerForSymbolsFromOneArray = 0;
             int size = i + 4;
@@ -242,16 +200,20 @@ public class LZW
         return true;
     }
 
-    // Encodes or decodes a file using the lzw algorithm
-    public (bool, double) LzwAlgorithm(string fileName, string parametr)
+    /// <summary>
+    /// Function for accepting data
+    /// </summary>
+    /// <param name="parameter">Shows decompression or compression</param>
+    /// <returns>Returns whether it was executed correctly and what is the compression percentage</returns>
+    public static (bool, double) LzwAlgorithm(string fileName, string parameter)
     {
-        if (parametr.Length == 2 && parametr[0] == '-' && parametr[1] == 'c')
+        if (parameter.Length == 2 && parameter[0] == '-' && parameter[1] == 'c')
         {
             double compressionRatio = 0;
             var isCorrect = CodeFile(fileName, ref compressionRatio);
             return (isCorrect, compressionRatio);
         }
-        else if (parametr.Length == 2 && parametr[0] == '-' && parametr[1] == 'u')
+        else if (parameter.Length == 2 && parameter[0] == '-' && parameter[1] == 'u')
         {
             return (DecodeFile(fileName), 0);
         }
