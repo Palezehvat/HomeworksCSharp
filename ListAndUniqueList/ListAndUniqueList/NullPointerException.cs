@@ -1,3 +1,6 @@
 ﻿namespace ListAndUniqueList;
 
-public class NullPointerException : Exception {}
+/// <summary>
+/// Throw exception when list is empty
+/// </summary>
+public class NullListException : Exception {}
