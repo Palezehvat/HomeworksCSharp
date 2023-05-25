@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33403.182
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FilterFoldMap", "FilterFoldMap\FilterFoldMap.csproj", "{340904FA-0366-4E8A-B2EB-015B49CCCC73}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FilterFoldMap", "FilterFoldMap\FilterFoldMap.csproj", "{340904FA-0366-4E8A-B2EB-015B49CCCC73}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestsForMapFilterFold", "TestsForMapFilterFold\TestsForMapFilterFold.csproj", "{5CB90C1B-AAB3-4ECF-B454-C1EDE5F501B0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{340904FA-0366-4E8A-B2EB-015B49CCCC73}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{340904FA-0366-4E8A-B2EB-015B49CCCC73}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{340904FA-0366-4E8A-B2EB-015B49CCCC73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5CB90C1B-AAB3-4ECF-B454-C1EDE5F501B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5CB90C1B-AAB3-4ECF-B454-C1EDE5F501B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5CB90C1B-AAB3-4ECF-B454-C1EDE5F501B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5CB90C1B-AAB3-4ECF-B454-C1EDE5F501B0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
