@@ -1,19 +1,16 @@
-﻿namespace Trie;
+﻿using System.Xml.Linq;
+
+namespace Trie;
 
 // A container for storing strings, in the form of a suspended tree
 public class Trie
 {
-    private const int alphabetSize = 65536;
-
     private TrieElement root = new();
 
     // Adding an element
     public bool Add(string element)
     {
-        if (element == null)
-        {
-            throw new ArgumentNullException();
-        }
+        ArgumentNullException.ThrowIfNull(element);
         root.NumberOfLinesInTheDictionary++;
         var walker = root;
         int i = 0;
@@ -23,13 +20,12 @@ public class Trie
             if (!walker.Next.ContainsKey(number))
             {
                 walker.Next.Add(number, new TrieElement());
-                ++walker.DictionarySize;
             }
             ++walker.Next[number].NumberOfLinesInTheDictionary;
             walker = walker.Next[number];
             i++;
         }
-        if (walker.IsTerminal == false)
+        if (!walker.IsTerminal)
         {
             walker.IsTerminal = true;
             return true;
@@ -64,16 +60,12 @@ public class Trie
             }
             if (isDeleted)
             {
-                --walker.Next[element[position]].DictionarySize;
                 isDeleted = false;
             }
             --walker.Next[element[position]].NumberOfLinesInTheDictionary;
+            return true;
         }
-        else
-        {
-            return false;
-        }
-        return true;
+        return false;
     }
 
     // Deleting an element in the tree
@@ -85,12 +77,17 @@ public class Trie
         }
         if (element == null)
         {
+            throw new ArgumentNullException();
+        }
+
+        if (element == "")
+        {
             root.IsTerminal = false;
             return true;
         }
         var walker = root;
-        bool flag = false;
-        if (RemoveHelp(walker, element, 0, ref flag))
+        bool isDeleted = false;
+        if (RemoveHelp(walker, element, 0, ref isDeleted))
         {
             --root.NumberOfLinesInTheDictionary;
             return true;
@@ -101,10 +98,8 @@ public class Trie
     // Counts the number of rows with the same prefix
     public int HowManyStartsWithPrefix(string prefix)
     {
-        if (root == null)
-        {
-            return prefix == null ? 1 : 0;
-        }
+        ArgumentNullException.ThrowIfNull(root);
+
         var walker = root;
         int i = 0;
         while (i < prefix.Length)
@@ -122,10 +117,8 @@ public class Trie
     // Checks for the presence of a string
     public bool Contains(string element)
     {
-        if (root == null)
-        {
-            return element == null;
-        }
+        ArgumentNullException.ThrowIfNull(root);
+
         var walker = root;
         int i = 0;
         while (i < element.Length)
@@ -145,7 +138,6 @@ public class Trie
         public Dictionary<char, TrieElement> Next { get; set; }
         public bool IsTerminal { get; set; }
 
-        public int DictionarySize { get; set; }
 
         public int NumberOfLinesInTheDictionary { get; set; }
 

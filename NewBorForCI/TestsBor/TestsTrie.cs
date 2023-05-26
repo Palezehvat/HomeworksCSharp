@@ -4,14 +4,11 @@ public class Tests
 {
     private Trie? trie;
 
-    [Test]
+    [SetUp]
     public void TestInitialize()
     {
         trie = new();
-        if (trie == null)
-        {
-            throw new NullReferenceException();
-        }
+        Assert.IsNotNull(trie);
     }
 
     [Test]
