@@ -13,7 +13,10 @@ public static class FilterFoldMap
     /// <param name="accumulatedValue">Cumulative value with the selected type</param>
     /// <param name="function">A function for accumulating a value, takes an accumulating value and a list item</param>
     /// <returns>Accumulated value</returns>
-    public static TypeForResult Fold<TypeForResult, TypeOfValue>(List<TypeOfValue>? list, TypeForResult accumulatedValue, Func<TypeOfValue, TypeForResult, TypeForResult> function)
+    public static TypeForResult Fold<TypeForResult, TypeOfValue>(
+        List<TypeOfValue>? list, 
+        TypeForResult accumulatedValue, 
+        Func<TypeOfValue, TypeForResult, TypeForResult> function)
     {
         ArgumentNullException.ThrowIfNull(list);
         foreach (var item in list)
