@@ -7,28 +7,6 @@ using Bor;
 /// </summary>
 public static class LZWAlgorithm
 {
-    private static void ChangeFileNameToTheOriginalName(ref char[] newFile)
-    {
-        if (newFile.Length < 8)
-        {
-            throw new ArgumentException();
-        }
-        Array.Resize(ref newFile, newFile.Length - 7);
-    }
-
-    private static void ChangeFileNameToZipped(ref char[] newFile)
-    {
-        int sizeNewFile = newFile.Length;
-        Array.Resize(ref newFile, sizeNewFile + 7);
-        newFile[sizeNewFile] = '.';
-        newFile[sizeNewFile + 1] = 'z';
-        newFile[sizeNewFile + 2] = 'i';
-        newFile[sizeNewFile + 3] = 'p';
-        newFile[sizeNewFile + 4] = 'p';
-        newFile[sizeNewFile + 5] = 'e';
-        newFile[sizeNewFile + 6] = 'd';
-    }
-
     private static void AddAlphabetToBor(Bor bor)
     {
         var letter = new char[1];
@@ -41,12 +19,9 @@ public static class LZWAlgorithm
 
     private static bool CodeFile(string fileName, ref double compressionRatio)
     {
-        char[]? newFileArray = null;
         double sizeForCompressionRatio = 0;
         try
         {
-            newFileArray = new char[fileName.Length];
-            Array.Copy(fileName.ToCharArray(), newFileArray, fileName.Length);
             FileInfo fileFromMain = new(fileName);
             sizeForCompressionRatio = fileFromMain.Length;
         }
@@ -54,12 +29,7 @@ public static class LZWAlgorithm
         {
             return false;
         }
-        ChangeFileNameToZipped(ref newFileArray);
-        string? newFile = new string(newFileArray);
-        if (newFile == null)
-        {
-            return false;
-        }
+        string newFile = fileName + ".zipped";
 
         File.WriteAllText(newFile, string.Empty);
 
@@ -82,8 +52,7 @@ public static class LZWAlgorithm
 
         // Добавление потоков в файл
         int walker = 0;
-        int sizeText = textFromFile.Length;
-        var fstreamNew = new FileStream(newFile, FileMode.Append);
+        using var archivedFile = new FileStream(newFile, FileMode.Append);
         for (int i = 0; i < textFromFile.Length; i++)
         {
             if (!bor.Contains(textFromFile, walker, i))
@@ -91,15 +60,15 @@ public static class LZWAlgorithm
                 var (_, flow) = bor.Add(textFromFile, walker, i);
                 walker = i;
                 byte[] bytes = BitConverter.GetBytes(flow);
-                fstreamNew.WriteAsync(bytes, 0, bytes.Length);
+                archivedFile.WriteAsync(bytes, 0, bytes.Length);
             }
         }
 
         // Добавление последнего потока в файл
-        var flowLast = bor.ReturnFlowByCharArray(textFromFile, bufferIn.Length - 1, bufferIn.Length - 1);
+        var flowLast = bor.ReturnSymbolCodeByCharArray(textFromFile, bufferIn.Length - 1, bufferIn.Length - 1);
         byte[] bytesLast = BitConverter.GetBytes(flowLast);
-        fstreamNew.WriteAsync(bytesLast, 0, bytesLast.Length);
-        fstreamNew.Close();
+        archivedFile.WriteAsync(bytesLast, 0, bytesLast.Length);
+        archivedFile.Close();
         var file = new FileInfo(newFile.ToString());
         double newSizeForCompressionRatio = file.Length;
         compressionRatio = newSizeForCompressionRatio / sizeForCompressionRatio;
@@ -118,14 +87,7 @@ public static class LZWAlgorithm
             return false;
         }
         int i = 0;
-        var newFileArray = new char[fileName.Length];
-        Array.Copy(fileName.ToCharArray(), newFileArray, fileName.Length);
-        ChangeFileNameToTheOriginalName(ref newFileArray);
-        string? newFile = new string(newFileArray);
-        if (newFile == null)
-        {
-            return false;
-        }
+        string newFile = fileName.Remove(fileName.Length - 7);
 
         File.WriteAllText(newFile, string.Empty);
 
@@ -191,7 +153,7 @@ public static class LZWAlgorithm
                 var stringByIndex = dictionaryForDecode[input];
                 previousString = stringByIndex;
                 isFirst = false;
-                FileStream file = File.Open(newFile, FileMode.Append);
+                using FileStream file = File.Open(newFile, FileMode.Append);
                 foreach (var symbol in stringByIndex)
                 {
                     file.WriteByte((byte)symbol);

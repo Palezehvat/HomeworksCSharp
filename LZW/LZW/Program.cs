@@ -1,17 +1,10 @@
-﻿namespace LZW;
+﻿using LZW;
 
-using System;
 
-class Program
+var (isCorrect, compressionRatio) = LZWAlgorithm.LzwAlgorithm(args[0], args[1]);
+if (!isCorrect)
 {
-    public static void Main(string[] args)
-    {
-        var (isCorrect, compressionRatio) = LZWAlgorithm.LzwAlgorithm(args[0], args[1]);
-        if (!isCorrect)
-        {
-            Console.WriteLine("Problems...");
-            return;
-        }
-        Console.WriteLine(compressionRatio);
-    }
+    Console.WriteLine("Problems...");
+    return;
 }
+Console.WriteLine(compressionRatio);

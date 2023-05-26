@@ -24,7 +24,7 @@ public class Bor
         var walker = root;
         int i = 0;
         int pointer = from;
-        int toFlow = -1;
+        int toSymbolCode = -1;
         bool isStringInBor = Contains(buffer, from, to);
         while (i < to - from + 1)
         {
@@ -38,25 +38,25 @@ public class Bor
             {
                 ++walker.Next[number].HowManyStringInDictionary;
             }
-            toFlow = walker.Flow;
+            toSymbolCode = walker.SymbolCode;
             walker = walker.Next[number];
             pointer++;
             i++;
         }
         if (!walker.IsTerminal)
         {
-            walker.Flow = root.HowManyStringInDictionary;
+            walker.SymbolCode = root.HowManyStringInDictionary;
             root.HowManyStringInDictionary++;
         }
 
         if (!walker.IsTerminal)
         {
             walker.IsTerminal = true;
-            return (true, toFlow);
+            return (true, toSymbolCode);
         }
         else
         {
-            return (true, toFlow);
+            return (true, toSymbolCode);
         }
 
     }
@@ -64,7 +64,7 @@ public class Bor
     /// <summary>
     /// Returns a stream by letter
     /// </summary>
-    public int ReturnFlowByCharArray(char[] buffer, int to = 0, int from = 0)
+    public int ReturnSymbolCodeByCharArray(char[] buffer, int to = 0, int from = 0)
     {
         if (buffer.Length == 0)
         {
@@ -83,7 +83,7 @@ public class Bor
             walker = walker.Next[number];
             ++i;
         }
-        return walker.Flow;
+        return walker.SymbolCode;
     }
 
     /// <summary>
@@ -132,12 +132,12 @@ public class Bor
 
         public int HowManyStringInDictionary { get; set; }
 
-        public int Flow { get; set; }
+        public int SymbolCode { get; set; }
 
         public BorElement()
         {
             Next = new Dictionary<int, BorElement>();
-            Flow = -1;
+            SymbolCode = -1;
         }
     }
 }

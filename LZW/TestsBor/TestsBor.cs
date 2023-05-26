@@ -35,7 +35,7 @@ public class TestsForBor
         Setup();
         bor.Add("a".ToCharArray(), 0, 0);
         bor.Add("b".ToCharArray(), 0, 0);
-        Assert.True(bor.ReturnFlowByCharArray("b".ToCharArray(), 0, 0) == 1, "Problems with the prefix test!");
+        Assert.True(bor.ReturnSymbolCodeByCharArray("b".ToCharArray(), 0, 0) == 1, "Problems with the prefix test!");
     }
 
     [Test]
@@ -48,7 +48,7 @@ public class TestsForBor
     [Test]
     public void ThereShouldBeNoThreadsInTheCreatedBor()
     {
-        Assert.True(bor.ReturnFlowByCharArray("".ToCharArray(), 0, 0) == -1, "Problems with the prefix test!");
+        Assert.True(bor.ReturnSymbolCodeByCharArray("".ToCharArray(), 0, 0) == -1, "Problems with the prefix test!");
     }
 
 }
