@@ -1,6 +1,8 @@
 ﻿namespace ParsingTree;
 
-// The container is a "tree" with a hierarchical structure
+/// <summary>
+/// The container is a "tree" with a hierarchical structure
+/// </summary>
 public class Tree
 {
     private Node Root { get; set; }
@@ -109,7 +111,10 @@ public class Tree
             || symbol == '/';
     }
 
-    // Builds an expression tree by expression
+    /// <summary>
+    /// Builds an expression tree by expression
+    /// </summary>
+    /// <exception cref="InvalidExpressionException">Throws an exception if the string is not correct</exception>
     public void TreeExpression(string stringExpression)
     {
         for (int i = 0; i < stringExpression.Length; i++)
@@ -171,7 +176,11 @@ public class Tree
         }
     }
 
-    // Counts an expression in the tree
+    /// <summary>
+    /// Counts an expression in the tree
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="NullReferenceException">Throws an exception if the tree is empty</exception>
     public double Calcuate()
     {
         if (Root == null)
@@ -210,7 +219,9 @@ public class Tree
         }
     }
 
-    // Outputs the expression stored in the tree to the screen
+    /// <summary>
+    /// Outputs the expression stored in the tree to the screen
+    /// </summary>
     public void PrintExpression()
     {
         int isPreviousNumber = 0;

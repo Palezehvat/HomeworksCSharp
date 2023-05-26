@@ -1,20 +1,25 @@
 ﻿namespace ParsingTree;
 
-// A class that implements subtraction
+/// <summary>
+/// Subtracts from one number another
+/// </summary>
 public class Minus : Operator
 {
-    // Keeps a minus in itself
+    /// <summary>
+    /// Inherits the method of the ancestor operator
+    /// </summary>
     public Minus(char symbol) : base(symbol) {}
 
-    // Counts the difference of two numbers
+    /// <summary>
+    /// Calculates the difference
+    /// </summary>
     public override double Calcuate(double firstValue, double secondValue)
     {
         return secondValue - firstValue;
     }
 
-    // Prints a minus sign with spaces
-    public override void Print()
-    {
-        Console.Write(" - ");
-    }
+    /// <summary>
+    /// Prints the minus sign
+    /// </summary>
+    public override void Print() => Console.Write(" - ");
 }

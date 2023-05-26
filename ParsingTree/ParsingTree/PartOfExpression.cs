@@ -1,11 +1,17 @@
 ﻿namespace ParsingTree;
 
-// Interface for implementing different parts of expressions
+/// <summary>
+/// Interface for implementing different parts of expressions
+/// </summary>
 public interface PartOfExpression
 {
-    // Counts two numbers
+    /// <summary>
+    /// Counts two numbers
+    /// </summary>
     public double Calcuate(double firstValue, double secondValue);
 
-    // Prints a character or number
+    /// <summary>
+    /// Prints a character or number
+    /// </summary>
     public void Print();
 }

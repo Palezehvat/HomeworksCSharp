@@ -1,4 +1,6 @@
 ﻿namespace ParsingTree;
 
-// Class exceptions are thrown when the expression is incorrect
+/// <summary>
+/// Throws an exception in case of an invalid expression
+/// </summary>
 public class InvalidExpressionException : Exception {}

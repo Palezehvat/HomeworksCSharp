@@ -1,14 +1,23 @@
 ﻿namespace ParsingTree;
 
-// A class that includes multiply divide add and subtract
+/// <summary>
+/// A class that includes multiply divide add and subtract
+/// </summary>
 abstract public class Operator : PartOfExpression
 {
-    // Abstract type for an action account
+    /// <summary>
+    /// Abstract type for an action account
+    /// </summary>
     public abstract double Calcuate(double firstValue, double secondValue);
 
-    // Abstract type for printing characters
+    /// <summary>
+    /// Abstract type for printing characters
+    /// </summary>
     public abstract void Print();
 
+    /// <summary>
+    /// Stores a symbol in itself
+    /// </summary>
     public Operator(char symbol)
     {
         Symbol = symbol;

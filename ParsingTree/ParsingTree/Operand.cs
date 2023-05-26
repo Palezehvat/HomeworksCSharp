@@ -1,21 +1,26 @@
 ﻿namespace ParsingTree;
 
-// A class of numbers for the expression tree
+/// <summary>
+/// A class based on numbers
+/// </summary>
 public class Operand : PartOfExpression
 {
-    // Returns the passed number
+    /// <summary>
+    /// Returns a stored number
+    /// </summary>
     public double Calcuate(double firstValue, double secondValue)
     {
         return Number;
     }
 
-    // Prints a number
-    public void Print()
-    {
-        Console.Write(Number);
-        Console.Write(' ');
-    }
-
+    /// <summary>
+    /// Prints a number
+    /// </summary>
+    public void Print() => Console.Write(Number + ' ');
+    
+    /// <summary>
+    /// saves a number
+    /// </summary>
     public Operand(double number) 
     {
         Number = number;

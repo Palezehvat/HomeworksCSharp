@@ -11,73 +11,67 @@ public class Tests
         tree = new Tree();
     }
 
-    [TestCaseSource(nameof(TreeForTest))]
-    public void InTheUsualExampleTheTreeShouldCorrectlyCalculateTheValue(Tree tree)
+    [Test]
+    public void InTheUsualExampleTheTreeShouldCorrectlyCalculateTheValue()
     {
         tree.TreeExpression("+ 2 3");
         Assert.True(tree.Calcuate() == 5);
     }
 
-    [TestCaseSource(nameof(TreeForTest))]
-    public void InTheNormalExampleTheTreeShouldCorrectlyCalculateTheValue(Tree tree)
+    [Test]
+    public void InTheNormalExampleTheTreeShouldCorrectlyCalculateTheValue()
     {
         tree.TreeExpression("(* (+ 2 3) (+ 5 7)");
         Assert.True(tree.Calcuate() == 60);
     }
 
-    [TestCaseSource(nameof(TreeForTest))]
-    public void WhenAnEmptyStrinIsReceivedTheTreeShouldThrowAnException(Tree tree)
+    [Test]
+    public void WhenAnEmptyStrinIsReceivedTheTreeShouldThrowAnException()
     {
         Assert.Throws<NullReferenceException>(() => tree.TreeExpression(""));
     }
 
-    [TestCaseSource(nameof(TreeForTest))]
-    public void WhenReceivingAnIncorrectStringWithTheAbsenceOfASignTheTreeShouldThrowAnException(Tree tree)
+    [Test]
+    public void WhenReceivingAnIncorrectStringWithTheAbsenceOfASignTheTreeShouldThrowAnException()
     {
         Assert.Throws<InvalidExpressionException>(() => tree.TreeExpression(" 1 2"));
     }
 
-    [TestCaseSource(nameof(TreeForTest))]
-    public void WhenReceivingAnIncorrectMoreDifficultStringWithTheAbsenceOfASignTheTreeShouldThrowAnException(Tree tree)
+    [Test]
+    public void WhenReceivingAnIncorrectMoreDifficultStringWithTheAbsenceOfASignTheTreeShouldThrowAnException()
     {
         Assert.Throws<InvalidExpressionException>(() => tree.TreeExpression("(* (4 5) 2)"));
     }
 
-    [TestCaseSource(nameof(TreeForTest))]
-    public void WhenReceivingAnIncorrectStringWithTheTheAbsenceOfANumberTheTreeShouldThrowAnException(Tree tree)
+    [Test]
+    public void WhenReceivingAnIncorrectStringWithTheTheAbsenceOfANumberTheTreeShouldThrowAnException()
     {
         Assert.Throws<InvalidExpressionException>(() => tree.TreeExpression("+ 2"));
     }
 
-    [TestCaseSource(nameof(TreeForTest))]
-    public void WhenReceivingAnIncorrectMoreDifficultStringWithTheTheAbsenceOfANumberTheTreeShouldThrowAnException(Tree tree)
+    [Test]
+    public void WhenReceivingAnIncorrectMoreDifficultStringWithTheTheAbsenceOfANumberTheTreeShouldThrowAnException()
     {
         Assert.Throws<InvalidExpressionException>(() => tree.TreeExpression("(* (+ 2 3) )"));
     }
 
-    [TestCaseSource(nameof(TreeForTest))]
-    public void WhenReceivingAnDifficultStringWithInvalidCharactersTheTreeShouldThrowAnException(Tree tree)
+    [Test]
+    public void WhenReceivingAnDifficultStringWithInvalidCharactersTheTreeShouldThrowAnException()
     {
         Assert.Throws<InvalidExpressionException>(() => tree.TreeExpression("(* (+ 2 3) p 2)"));
     }
 
-    [TestCaseSource(nameof(TreeForTest))]
-    public void WhenTryingToDivideByZeroTheTreeShouldThrowAnException(Tree tree)
+    [Test]
+    public void WhenTryingToDivideByZeroTheTreeShouldThrowAnException()
     {
         tree.TreeExpression("/ 2 0");
         Assert.Throws<ArgumentException>(() => tree.Calcuate());
     }
 
-    [TestCaseSource(nameof(TreeForTest))]
-    public void TheTreeShouldWorkCorrectlyWithNegativeNumbers(Tree tree)
+    [Test]
+    public void TheTreeShouldWorkCorrectlyWithNegativeNumbers()
     {
         tree.TreeExpression("+ 2 -3");
         Assert.True(tree.Calcuate() == -1);
     }
-
-    private static IEnumerable<TestCaseData> TreeForTest
-    => new TestCaseData[]
-    {
-        new TestCaseData(new Tree()),
-    };
 }

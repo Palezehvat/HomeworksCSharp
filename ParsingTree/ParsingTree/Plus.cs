@@ -1,20 +1,23 @@
 ﻿namespace ParsingTree;
 
-// A class that implements amount
+/// <summary>
+/// A class that implements amount
+/// </summary>
 public class Plus : Operator
 {
-    // Keeps a plus in itself
+    /// <summary>
+    /// Inherits the method of the ancestor of the operator
+    /// </summary>
+    /// <param name="symbol"></param>
     public Plus(char symbol) : base(symbol) {}
 
-    // Counts the Amount of two numbers
-    public override double Calcuate(double firstValue, double secondValue)
-    {
-        return secondValue + firstValue;
-    }
+    /// <summary>
+    /// Counts the Amount of two numbers
+    /// </summary>
+    public override double Calcuate(double firstValue, double secondValue) => secondValue + firstValue;
 
-    // Prints a plus sign with spaces
-    public override void Print()
-    {
-        Console.Write(" + ");
-    }
+    /// <summary>
+    /// Prints a plus sign with spaces
+    /// </summary>
+    public override void Print() => Console.Write(" + ");
 }

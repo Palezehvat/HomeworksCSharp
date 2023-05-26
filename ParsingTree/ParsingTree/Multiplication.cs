@@ -1,20 +1,25 @@
 ﻿namespace ParsingTree;
 
-// A class that implements multiplication
+/// <summary>
+/// Counts the multiplication of two numbers
+/// </summary>
 public class Multiplication : Operator
 {
-    // Keeps a multiplication sign in itself
+    /// <summary>
+    /// Inherits the method of the ancestor operator
+    /// </summary>
     public Multiplication(char symbol) : base(symbol) {}
 
-    // Counts multiplication of two numbers
+    /// <summary>
+    /// Multiplies two numbers by each other
+    /// </summary>
     public override double Calcuate(double firstValue, double secondValue)
     {
         return firstValue * secondValue;
     }
 
-    // Displays the multiplication sign with two spaces
-    public override void Print()
-    {
-        Console.Write(" * ");
-    }
+    /// <summary>
+    /// Prints the multiply sign
+    /// </summary>
+    public override void Print() => Console.Write(" * ");
 }
