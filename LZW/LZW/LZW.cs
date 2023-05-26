@@ -108,7 +108,7 @@ public static class LZWAlgorithm
 
     private static bool DecodeFile(string fileName)
     {
-        byte[] bufferIn = null;
+        byte[]? bufferIn = null;
         try
         {
             bufferIn = File.ReadAllBytes(fileName);
@@ -145,7 +145,7 @@ public static class LZWAlgorithm
 
         int index = 256;
         int input = 0;
-        char[] previousString = null;
+        char[]? previousString = null;
         bool isFirst = true;
         while (i < bufferIn.Length)
         {
@@ -164,6 +164,7 @@ public static class LZWAlgorithm
             {
                 if (!dictionaryForDecode.ContainsKey(input))
                 {
+                    ArgumentNullException.ThrowIfNull(previousString);
                     Array.Resize(ref previousString, previousString.Length + 1);
                     previousString[previousString.Length - 1] = previousString[0];
                     dictionaryForDecode.Add(index, previousString);
@@ -171,6 +172,7 @@ public static class LZWAlgorithm
                 var stringByIndex = dictionaryForDecode[input];
                 if (index != input)
                 {
+                    ArgumentNullException.ThrowIfNull(previousString);
                     Array.Resize(ref previousString, previousString.Length + 1);
                     previousString[previousString.Length - 1] = stringByIndex[0];
                     dictionaryForDecode.Add(index, previousString);

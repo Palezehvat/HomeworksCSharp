@@ -8,15 +8,9 @@ public class Tests
     public void TheLZWShouldWorkCorrectlyToReturnTheCorrectValueOnASimpleExample()
     {
         var (isCorrect, _) = LZWAlgorithm.LzwAlgorithm(Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForLZW", "testAnElementaryExample.txt"), "-c");
-        if (!isCorrect )
-        {
-            Assert.That(false, Is.EqualTo(!isCorrect));
-        }
+        Assert.That(!isCorrect, Is.EqualTo(false));
         (isCorrect, var _) = LZWAlgorithm.LzwAlgorithm(Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForLZW", "testAnElementaryExample.txt.zipped"), "-u");
-        if (!isCorrect)
-        {
-            Assert.That(false, Is.EqualTo(!isCorrect));
-        }
+        Assert.That(!isCorrect, Is.EqualTo(false));
         string correctText = File.ReadAllText(Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForLZW", "correctTestAnElementaryExample.txt"));
         string fromLZWText = File.ReadAllText(Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForLZW", "testAnElementaryExample.txt"));
         Assert.That(correctText, Is.EqualTo(fromLZWText));
@@ -47,15 +41,9 @@ public class Tests
     public void TheLZWShouldReturnAnEmptyFileEmpty()
     {
         var (isCorrect, _) = LZWAlgorithm.LzwAlgorithm(Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForLZW", "emptyFile.txt"), "-c");
-        if (!isCorrect)
-        {
-            Assert.That(false, Is.EqualTo(!isCorrect));
-        }
+        Assert.That(!isCorrect, Is.EqualTo(false));
         (isCorrect, var _) = LZWAlgorithm.LzwAlgorithm(Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForLZW", "emptyFile.txt.zipped"), "-u");
-        if (!isCorrect)
-        {
-            Assert.That(false, Is.EqualTo(!isCorrect));
-        }
+        Assert.That(!isCorrect, Is.EqualTo(false));
         string fromLZWText = File.ReadAllText(Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForLZW", "emptyFile.txt"));
         string correctText = File.ReadAllText(Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForLZW", "correctEmptyFile.txt"));
         Assert.That(correctText, Is.EqualTo(fromLZWText));
