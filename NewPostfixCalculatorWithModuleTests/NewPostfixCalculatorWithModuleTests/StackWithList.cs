@@ -1,40 +1,30 @@
 ﻿namespace StackCalculator;
 
 // Stack implemented on list
-public class StackList : Stack
+public class StackWithList : IStack
 {
     private StackElement? headStack;
 
-    public override void Push(double value)
+    public void Push(double value)
     {
-        var item = new StackElement(value);
-        if (headStack == null)
-        {
-            headStack = item;
-        }
-        else
-        {
-            StackElement copy = headStack;
-            headStack = item;
-            headStack.Next = copy;
-        }
+        headStack = new StackElement(value, headStack);
     }
 
-    public override (bool, double) Pop()
+    public (bool, double) Pop()
     {
         if (headStack == null)
         {
             return (false, 0);
         }
         double item = headStack.ValueStack;
-        StackElement copy = headStack.Next;
+        StackElement? copy = headStack.Next;
         headStack = copy;
         return (true, item);
     }
 
-    public override void PrintTheElements()
+    public void PrintTheElements()
     {
-        StackElement walker = headStack;
+        StackElement? walker = headStack;
         while (walker != null)
         {
             Console.WriteLine(walker.ValueStack);
@@ -42,16 +32,17 @@ public class StackList : Stack
         }
     }
 
-    public override bool IsEmpty() => headStack == null;
+    public bool IsEmpty() => headStack == null;
 
     private class StackElement
     {
-        public StackElement(double value)
+        public StackElement(double value, StackElement? next)
         {
             ValueStack = value;
+            Next = next;
         }
 
         public double ValueStack { get; set; }
-        public StackElement Next { get; set; }
+        public StackElement? Next { get; set; }
     }
 }

@@ -5,20 +5,20 @@ using StackCalculator;
 public class Tests
 {
     [TestCaseSource(nameof(Stacks))]
-    public void StackShouldNotEmptyAfterPush(Stack stack)
+    public void StackShouldNotEmptyAfterPush(IStack stack)
     {
         stack.Push(1);
         Assert.IsFalse(stack.IsEmpty());
     }
 
     [TestCaseSource(nameof(Stacks))]
-    public void StackShouldEmptyWhenCreated(Stack stack)
+    public void StackShouldEmptyWhenCreated(IStack stack)
     {
         Assert.IsTrue(stack.IsEmpty());
     }
 
     [TestCaseSource(nameof(Stacks))]
-    public void StackShouldCorrectlyDeleteTheValue(Stack stack)
+    public void StackShouldCorrectlyDeleteTheValue(IStack stack)
     {
         stack.Push(1);
         var (isCorrect, _) = stack.Pop();
@@ -26,15 +26,15 @@ public class Tests
     }
 
     [TestCaseSource(nameof(Stacks))]
-    public void StackShouldReturnTheLastValueThatWasAddedAndThenDeleted(Stack stack)
+    public void StackShouldReturnTheLastValueThatWasAddedAndThenDeleted(IStack stack)
     {
         stack.Push(1);
         var (_, number) = stack.Pop();
-        Assert.That(1, Is.EqualTo(number));
+        Assert.That(number, Is.EqualTo(1));
     }
 
     [TestCaseSource(nameof(Stacks))]
-    public void WhenRemovedFromTheTopOfTheStackTheElementShouldBeErasedFromTheTop(Stack stack)
+    public void WhenRemovedFromTheTopOfTheStackTheElementShouldBeErasedFromTheTop(IStack stack)
     {
         stack.Push(1);
         var (_, _) = stack.Pop();
@@ -42,23 +42,23 @@ public class Tests
     }
 
     [TestCaseSource(nameof(Stacks))]
-    public void DeletingFromAnEmptyStackShouldCauseAnError(Stack stack)
+    public void DeletingFromAnEmptyStackShouldCauseAnError(IStack stack)
     {
         var (isCorrect, _) = stack.Pop();
         Assert.IsFalse(isCorrect);
     }
 
     [TestCaseSource(nameof(Stacks))]
-    public void WhenAddingConsecutiveValuesTheTopValueShouldBeTheLastOneAdded(Stack stack)
+    public void WhenAddingConsecutiveValuesTheTopValueShouldBeTheLastOneAdded(IStack stack)
     {
         stack.Push(1);
         stack.Push(2);
         var (_, number) = stack.Pop();
-        Assert.That(2, Is.EqualTo(number));
+        Assert.That(number, Is.EqualTo(2));
     }
 
     [TestCaseSource(nameof(Stacks))]
-    public void DeletingInAStackOfMultipleItemsShouldBeSuccessful(Stack stack)
+    public void DeletingInAStackOfMultipleItemsShouldBeSuccessful(IStack stack)
     {
         stack.Push(1);
         stack.Push(2);
@@ -70,6 +70,6 @@ public class Tests
     => new TestCaseData[]
     {
         new TestCaseData(new StackWithArray()),
-        new TestCaseData(new StackList()),
+        new TestCaseData(new StackWithList()),
     };
 }

@@ -8,7 +8,7 @@ if (stringWithExpression == null)
     return;
 }
 
-var stackList = new StackList();
+var stackList = new StackWithList();
 (bool isCorrectWork, double result) = PostfixCalculator.Calculate(stringWithExpression, stackList);
 if (!isCorrectWork)
 {

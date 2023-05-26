@@ -6,7 +6,7 @@ public static class PostfixCalculator
     private const double delta = 0.0000000000001;
 
     // Receives the input string in which the expression is written in postfix form, finds the result
-    public static (bool, double) Calculate(string stringWithExpression, Stack stackExpression)
+    public static (bool, double) Calculate(string stringWithExpression, IStack stackExpression)
     {
         int i = 0;
         string[] expressionArray = stringWithExpression.Split(' ');

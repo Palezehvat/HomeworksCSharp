@@ -1,7 +1,7 @@
 ﻿namespace StackCalculator;
 
 // Stack implemented on an array
-public class StackWithArray : Stack
+public class StackWithArray : IStack
 {
     private double[] stackArray;
     private int numberOfElements;
@@ -22,7 +22,7 @@ public class StackWithArray : Stack
         return true;
     }
 
-    public override void Push(double value)
+    public void Push(double value)
     {
         if (numberOfElements == sizeStack)
         {
@@ -32,7 +32,7 @@ public class StackWithArray : Stack
         ++numberOfElements;
     }
 
-    public override (bool, double) Pop()
+    public (bool, double) Pop()
     {
         if (numberOfElements == 0)
         {
@@ -43,7 +43,7 @@ public class StackWithArray : Stack
         return (true, result);
     }
 
-    public override void PrintTheElements()
+    public void PrintTheElements()
     {
         for (int i = 0; i < numberOfElements; i++)
         {
@@ -51,6 +51,6 @@ public class StackWithArray : Stack
         }
     }
 
-    public override bool IsEmpty()
+    public bool IsEmpty()
         => numberOfElements == 0;
 }

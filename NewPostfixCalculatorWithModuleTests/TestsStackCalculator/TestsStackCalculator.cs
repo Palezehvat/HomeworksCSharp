@@ -9,62 +9,62 @@ public class Tests
 
 
     [TestCaseSource(nameof(Stacks))]
-    public void TheCalculatorShouldWorkCorrectlyToReturnTheCorrectValueOnASimpleExample(Stack stack)
+    public void TheCalculatorShouldWorkCorrectlyToReturnTheCorrectValueOnASimpleExample(IStack stack)
     {
         var (isCorrect, number) = PostfixCalculator.Calculate("1 2 +", stack);
-        Assert.That(true, Is.EqualTo(isCorrect));
-        Assert.That(3, Is.EqualTo(number));
+        Assert.True(isCorrect);
+        Assert.That(number, Is.EqualTo(3));
     }
 
     [TestCaseSource(nameof(Stacks))]
-    public void OnTheWrongLineTheCalculatorShouldReturnAnError(Stack stack)
+    public void OnTheWrongLineTheCalculatorShouldReturnAnError(IStack stack)
     {
         var (isCorrect, _) = PostfixCalculator.Calculate("1 2", stack);
         Assert.IsFalse(isCorrect);
     }
 
     [TestCaseSource(nameof(Stacks))]
-    public void TheFirstValueIsPositiveTheSecondIsNegativeTheCalculatorShouldReturnTheCorrectValue(Stack stack)
+    public void TheFirstValueIsPositiveTheSecondIsNegativeTheCalculatorShouldReturnTheCorrectValue(IStack stack)
     {
         var (isCorrect, number) = PostfixCalculator.Calculate("1 -2 +", stack);
         Assert.That(isCorrect);
-        Assert.That(-1, Is.EqualTo(number));
+        Assert.That(number, Is.EqualTo(-1));
     }
 
     [TestCaseSource(nameof(Stacks))]
-    public void TheSecondValueIsPositiveTheFirstIsNegativeTheCalculatorShouldReturnTheCorrectValue(Stack stack)
+    public void TheSecondValueIsPositiveTheFirstIsNegativeTheCalculatorShouldReturnTheCorrectValue(IStack stack)
     {
         var (isCorrect, number) = PostfixCalculator.Calculate("-1 2 +", stack);
         Assert.That(isCorrect);
-        Assert.That(1, Is.EqualTo(number));
+        Assert.That(number, Is.EqualTo(1));
     }
 
     [TestCaseSource(nameof(Stacks))]
-    public void TheSecondValueIsNegativeTheFirstIsNegativeTheCalculatorShouldReturnTheCorrectValue(Stack stack)
+    public void TheSecondValueIsNegativeTheFirstIsNegativeTheCalculatorShouldReturnTheCorrectValue(IStack stack)
     {
         var (isCorrect, number) = PostfixCalculator.Calculate("-1 -2 +", stack);
         Assert.That(isCorrect);
-        Assert.That(-3, Is.EqualTo(number));
+        Assert.That(number, Is.EqualTo(-3));
     }
 
     [TestCaseSource(nameof(Stacks))]
-    public void TheStackCalculatorShouldWorkCorrectlyWithTheDifference(Stack stack)
+    public void TheStackCalculatorShouldWorkCorrectlyWithTheDifference(IStack stack)
     {
         var (isCorrect, number) = PostfixCalculator.Calculate("1 2 -", stack);
         Assert.That(isCorrect);
-        Assert.That(-1, Is.EqualTo(number));
+        Assert.That(number, Is.EqualTo(-1));
     }
 
     [TestCaseSource(nameof(Stacks))]
-    public void TheStackCalculatorShouldWorkCorrectlyWithTheMultiplication(Stack stack)
+    public void TheStackCalculatorShouldWorkCorrectlyWithTheMultiplication(IStack stack)
     {
         var (isCorrect, number) = PostfixCalculator.Calculate("2 3 *", stack);
         Assert.That(isCorrect);
-        Assert.That(6, Is.EqualTo(number));
+        Assert.That(number, Is.EqualTo(6));
     }
 
     [TestCaseSource(nameof(Stacks))]
-    public void TheStackCalculatorShouldWorkCorrectlyWithTheDivision(Stack stack)
+    public void TheStackCalculatorShouldWorkCorrectlyWithTheDivision(IStack stack)
     {
         var (isCorrect, number) = PostfixCalculator.Calculate("5 2 /", stack);
         Assert.That(isCorrect);
@@ -72,22 +72,22 @@ public class Tests
     }
 
     [TestCaseSource(nameof(Stacks))]
-    public void TheStackCalculatorShouldGiveAnErrorWhenReceivingAnemptyString(Stack stack)
+    public void TheStackCalculatorShouldGiveAnErrorWhenReceivingAnemptyString(IStack stack)
     {
         var (isCorrect, _) = PostfixCalculator.Calculate("", stack);
         Assert.IsFalse(isCorrect);
     }
 
     [TestCaseSource(nameof(Stacks))]
-    public void TheStackÑalculatorShouldCorrectlyCalculateComplexExpressions(Stack stack)
+    public void TheStackÑalculatorShouldCorrectlyCalculateComplexExpressions(IStack stack)
     {
         var (isCorrect, number) = PostfixCalculator.Calculate("1 2 + 3 *", stack);
         Assert.That(isCorrect);
-        Assert.That(9, Is.EqualTo(number));
+        Assert.That(number, Is.EqualTo(9));
     }
 
     [TestCaseSource(nameof(Stacks))]
-    public void TheStackCalculatorShouldGiveAnErrorWhenReceivingAStringWithCharactersThatWereNotExpected(Stack stack)
+    public void TheStackCalculatorShouldGiveAnErrorWhenReceivingAStringWithCharactersThatWereNotExpected(IStack stack)
     {
         var (isCorrect, _) = PostfixCalculator.Calculate("1 2 ` 3 *", stack);
         Assert.IsFalse(isCorrect);
@@ -97,6 +97,6 @@ public class Tests
     => new TestCaseData[]
     {
         new TestCaseData(new StackWithArray()),
-        new TestCaseData(new StackList()),
+        new TestCaseData(new StackWithList()),
     };
 }
