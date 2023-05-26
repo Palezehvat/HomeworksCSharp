@@ -108,7 +108,7 @@ public class List
 
         int counter = 0;
         var walker = Head;
-        while (walker != null && walker.Next.Next != null && counter != position - 1)
+        while (walker != null && walker.Next != null && walker.Next.Next != null && counter != position - 1)
         {
             walker = walker.Next;
             counter++;
@@ -128,7 +128,7 @@ public class List
     /// </summary>
     virtual public void PrintTheElements()
     {
-        ListElement walker = Head;
+        ListElement? walker = Head;
         int counter = 0;
         while (walker != null)
         {
@@ -220,7 +220,7 @@ public class List
         }
         public int Value { get; set; }
 
-        public ListElement Next { get; set; }
+        public ListElement? Next { get; set; }
 
         public int SizeList { get; set; }
     }

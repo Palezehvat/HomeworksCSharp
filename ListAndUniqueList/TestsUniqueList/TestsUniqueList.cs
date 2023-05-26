@@ -17,8 +17,7 @@ public class Tests
     {
         uniqueList.AddElement(0, 15);
         uniqueList.AddElement(1, 10);
-        uniqueList.AddElement(2, 15);
-        Assert.Throws<InvalidPositionException>(() => uniqueList.ReturnValueByPosition(2));
+        Assert.Throws<InvalidItemException>(() => uniqueList.AddElement(2, 15));
     }
 
     [Test]
@@ -28,5 +27,22 @@ public class Tests
         uniqueList.AddElement(1, 10);
 
         Assert.That(uniqueList.ReturnValueByPosition(1), Is.EqualTo(10));
+    }
+
+    [Test]
+    public void ChangeValueByPositionWhenValueWithChangeValueShouldWorkCorrectly()
+    {
+        uniqueList.AddElement(0, 15);
+        uniqueList.AddElement(1, 10);
+        uniqueList.ChangeValueByPosition(1, 10);
+    }
+
+    [Test]
+    public void ChangeValueByPositionWhenValueWithChangeValueShouldThrowException()
+    {
+        uniqueList.AddElement(0, 15);
+        uniqueList.AddElement(1, 10);
+        uniqueList.ChangeValueByPosition(1, 10);
+        Assert.Throws<InvalidItemException>(() => uniqueList.ChangeValueByPosition(0, 10));
     }
 }

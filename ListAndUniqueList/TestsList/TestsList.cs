@@ -33,7 +33,7 @@ public class Tests
         list.AddElement(1, 10);
         list.AddElement(2, 12);
         int item = list.RemoveElement(1);
-        Assert.That(10, Is.EqualTo(item));
+        Assert.That(item, Is.EqualTo(10));
     }
 
     [TestCaseSource(nameof(ListForTest))]
@@ -43,7 +43,7 @@ public class Tests
         list.AddElement(1, 10);
         list.ChangeValueByPosition(1, 15);
         int item = list.RemoveElement(1);
-        Assert.That(15, Is.EqualTo(item));
+        Assert.That(item, Is.EqualTo(15));
     }
 
     [TestCaseSource(nameof(ListForTest))]
@@ -76,7 +76,7 @@ public class Tests
     {
         list.AddElement(0, 15);
         int item = list.ReturnValueByPosition(0);
-        Assert.That(15, Is.EqualTo(item));
+        Assert.That(item, Is.EqualTo(15));
     }
 
     private static IEnumerable<TestCaseData> ListForTest
