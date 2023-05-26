@@ -13,12 +13,9 @@ public static class FilterFoldMap
     /// <param name="accumulatedValue">Cumulative value with the selected type</param>
     /// <param name="function">A function for accumulating a value, takes an accumulating value and a list item</param>
     /// <returns>Accumulated value</returns>
-    public static TypeForResult Fold<TypeForResult, TypeOfValue>(List<TypeOfValue> list, TypeForResult accumulatedValue, Func<TypeOfValue, TypeForResult, TypeForResult> function)
+    public static TypeForResult Fold<TypeForResult, TypeOfValue>(List<TypeOfValue>? list, TypeForResult accumulatedValue, Func<TypeOfValue, TypeForResult, TypeForResult> function)
     {
-        if (list == null)
-        {
-            throw new NullReferenceException();
-        }
+        ArgumentNullException.ThrowIfNull(list);
         foreach (var item in list)
         {
             accumulatedValue = function(item, accumulatedValue);
@@ -33,12 +30,9 @@ public static class FilterFoldMap
     /// <param name="list">A list with the selected type</param>
     /// <param name="function">The function for filtering a list item returns a boolean value if the list item matches the filter</param>
     /// <returns>New list after filter</returns>
-    public static List<TypeOfValue> Filter<TypeOfValue>(List<TypeOfValue> list, Func<TypeOfValue, bool> function)
+    public static List<TypeOfValue> Filter<TypeOfValue>(List<TypeOfValue>? list, Func<TypeOfValue, bool> function)
     {
-        if (list == null)
-        {
-            throw new NullReferenceException();
-        }
+        ArgumentNullException.ThrowIfNull(list);
         List<TypeOfValue> newList = new();
         foreach (var item in list)
         {
@@ -57,12 +51,9 @@ public static class FilterFoldMap
     /// <param name="list">A list with the selected data type</param>
     /// <param name="function">Function for conversion</param>
     /// <returns>A new list obtained using the function and the original list</returns>
-    public static List<TypeForResult> Map<TypeForResult, TypeOfValue>(List<TypeOfValue> list, Func<TypeOfValue, TypeForResult> function)
+    public static List<TypeForResult> Map<TypeForResult, TypeOfValue>(List<TypeOfValue>? list, Func<TypeOfValue, TypeForResult> function)
     {
-        if (list == null)
-        {
-            throw new NullReferenceException();
-        }
+        ArgumentNullException.ThrowIfNull(list);
         List<TypeForResult> newList = new();
         foreach (var item in list)
         {
