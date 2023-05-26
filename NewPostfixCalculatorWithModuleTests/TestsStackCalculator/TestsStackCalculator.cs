@@ -12,7 +12,8 @@ public class Tests
     public void TheCalculatorShouldWorkCorrectlyToReturnTheCorrectValueOnASimpleExample(Stack stack)
     {
         var (isCorrect, number) = PostfixCalculator.Calculate("1 2 +", stack);
-        Assert.IsTrue(isCorrect && number == 3);
+        Assert.That(true, Is.EqualTo(isCorrect));
+        Assert.That(3, Is.EqualTo(number));
     }
 
     [TestCaseSource(nameof(Stacks))]
@@ -27,7 +28,7 @@ public class Tests
     {
         var (isCorrect, number) = PostfixCalculator.Calculate("1 -2 +", stack);
         Assert.That(isCorrect);
-        Assert.That(number == -1);
+        Assert.That(-1, Is.EqualTo(number));
     }
 
     [TestCaseSource(nameof(Stacks))]
@@ -35,7 +36,7 @@ public class Tests
     {
         var (isCorrect, number) = PostfixCalculator.Calculate("-1 2 +", stack);
         Assert.That(isCorrect);
-        Assert.That(number == 1);
+        Assert.That(1, Is.EqualTo(number));
     }
 
     [TestCaseSource(nameof(Stacks))]
@@ -43,7 +44,7 @@ public class Tests
     {
         var (isCorrect, number) = PostfixCalculator.Calculate("-1 -2 +", stack);
         Assert.That(isCorrect);
-        Assert.That(number == -3);
+        Assert.That(-3, Is.EqualTo(number));
     }
 
     [TestCaseSource(nameof(Stacks))]
@@ -51,7 +52,7 @@ public class Tests
     {
         var (isCorrect, number) = PostfixCalculator.Calculate("1 2 -", stack);
         Assert.That(isCorrect);
-        Assert.That(number == -1);
+        Assert.That(-1, Is.EqualTo(number));
     }
 
     [TestCaseSource(nameof(Stacks))]
@@ -59,7 +60,7 @@ public class Tests
     {
         var (isCorrect, number) = PostfixCalculator.Calculate("2 3 *", stack);
         Assert.That(isCorrect);
-        Assert.That(number == 6);
+        Assert.That(6, Is.EqualTo(number));
     }
 
     [TestCaseSource(nameof(Stacks))]
@@ -82,7 +83,7 @@ public class Tests
     {
         var (isCorrect, number) = PostfixCalculator.Calculate("1 2 + 3 *", stack);
         Assert.That(isCorrect);
-        Assert.That(number == 9);
+        Assert.That(9, Is.EqualTo(number));
     }
 
     [TestCaseSource(nameof(Stacks))]

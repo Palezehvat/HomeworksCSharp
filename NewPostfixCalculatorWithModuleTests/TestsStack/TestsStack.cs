@@ -30,7 +30,7 @@ public class Tests
     {
         stack.Push(1);
         var (_, number) = stack.Pop();
-        Assert.IsTrue(number == 1);
+        Assert.That(1, Is.EqualTo(number));
     }
 
     [TestCaseSource(nameof(Stacks))]
@@ -54,7 +54,7 @@ public class Tests
         stack.Push(1);
         stack.Push(2);
         var (_, number) = stack.Pop();
-        Assert.IsTrue(number == 2);
+        Assert.That(2, Is.EqualTo(number));
     }
 
     [TestCaseSource(nameof(Stacks))]
