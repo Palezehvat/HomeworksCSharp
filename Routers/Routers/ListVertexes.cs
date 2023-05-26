@@ -1,12 +1,12 @@
-﻿namespace Routers;
+﻿namespace RoutersByGraph;
 
 /// summary
 /// Container for storing vertices and their belonging to a certain set
 /// </summary>
 public class ListVertexes
 {
-    private ListElement? Head;
-    private ListElement? Tail;
+    private ListElement? head;
+    private ListElement? tail;
 
     /// <summary>
     ///  Change number set for all vertexes with previous number set in list
@@ -15,8 +15,8 @@ public class ListVertexes
     /// <param name="numberPreviousSet">Number previous set</param>
     public void ChangeNumbersSet(int numberNewSet, int numberPreviousSet)
     {
-        var walker = Head;
-        while(walker != null)
+        var walker = head;
+        while (walker != null)
         {
             if (walker.InWichSet == numberPreviousSet)
             {
@@ -33,7 +33,7 @@ public class ListVertexes
     /// <param name="numberSet">New set number</param>
     public void ChangeOneVertexSet(int vertex, int numberSet)
     {
-        var walker = Head;
+        var walker = head;
         while(walker != null)
         {
             if (walker.Vertex == vertex)
@@ -49,9 +49,9 @@ public class ListVertexes
     /// </summary>
     /// <param name="vertex">The vertex for which we return</param>
     /// <returns>Return -1 if not found and the set number if found</returns>
-    public int FromWichSet(int vertex)
+    public int SearchForASuitableSet(int vertex)
     {
-        var walker = Head;
+        var walker = head;
         while(walker != null)
         {
             if (walker.Vertex == vertex)
@@ -69,17 +69,17 @@ public class ListVertexes
     /// <param name="vertex">The number of the vertex to be added to the list</param>
     virtual public void AddElement(int vertex)
     {
-        if (Head == null)
+        if (head == null)
         {
             var item = new ListElement(vertex);
-            Head = item;
-            Tail = item;
+            head = item;
+            tail = item;
         }
         else
         {
             var item = new ListElement(vertex);
-            Tail.Next = item;
-            Tail = item;
+            tail.Next = item;
+            tail = item;
         }
     }
 

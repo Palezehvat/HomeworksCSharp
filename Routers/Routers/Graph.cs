@@ -1,4 +1,4 @@
-﻿namespace Routers;
+﻿namespace RoutersByGraph;
 
 /// <summary>
 /// A container consisting of two lists List Arcs, ListVertexes and its own size
@@ -9,15 +9,8 @@ public class Graph
     /// Returns graph size
     /// </summary>
     /// <returns>Graph size</returns>
-    /// <exception cref="NullPointerException">If graph null throw exception</exception>
-    public int ReturnSizeGraph()
-    {
-        if (IsEmpty())
-        {
-            throw new NullPointerException();
-        }
-        return GraphByList.sizeGraph;
-    }
+    /// <exception cref="NullPointerException">If the graph is empty throw exception</exception>
+    public int Size() => sizeGraph;
 
     /// <summary>
     /// It is used as a wrapper for writing a graph to a file
@@ -26,30 +19,25 @@ public class Graph
     /// <exception cref="NullPointerException">An empty or unfilled graph throws an exception</exception>
     public void WriteToFile(string filePath, string fileAfter)
     {
-        if (IsEmpty())
+        if (edges == null || vertexes == null)
         {
-            throw new NullPointerException();
+            throw new NullGraphOrGraphComponentsException();
         }
-        GraphByList.Arcs.WirteToFile(filePath);
+        edges.WirteToFile(filePath);
     }
 
     /// <summary>
     /// Function to return ListArcs
     /// </summary>
     /// <returns>ListArcs in Graph</returns>
-    public ListArcs ReturnListArcs()
-    {
-        return !IsEmpty() ? GraphByList.Arcs : null;
-    }
+    public ListEdges? ReturnListArcs() => edges;
+
 
     /// <summary>
     /// Function to return ListVertexes
     /// </summary>
     /// <returns>ListVertexes</returns>
-    public ListVertexes ReturnListVertexes()
-    {
-        return !IsEmpty() ? GraphByList.Vertexes : null;
-    }
+    public ListVertexes? ReturnListVertexes() => vertexes;
 
     /// <summary>
     /// Checks that the graph and its components are filled
@@ -57,7 +45,7 @@ public class Graph
     /// <returns>Returns true if the graph or its components are filled otherwise false</returns>
     public bool IsEmpty()
     {
-        return GraphByList == null || GraphByList.Arcs == null || GraphByList.Vertexes == null;
+        return edges == null || vertexes == null;
     }
 
     /// <summary>
@@ -68,35 +56,28 @@ public class Graph
     /// <param name="sizeWay">Path Size</param>
     public void AddArcs(int fromVertex, int toVertex, int sizeWay)
     {
-        if(GraphByList == null)
+
+        if (edges == null)
         {
-            GraphByList = new GraphElement();
+            edges = new ListEdges();
         }
-        if (GraphByList.Arcs == null)
-        {
-            GraphByList.Arcs = new ListArcs();
-        }
-        GraphByList.Arcs.AddElement(fromVertex, toVertex, sizeWay);
+        edges.AddElement(fromVertex, toVertex, sizeWay);
     }
 
     /// <summary>
     /// Initializes the list of vertices in the graph
     /// </summary>
-    /// <param name="sizeGraph">The size of the future graph</param>
-    public void AddVertexes(int sizeGraph)
+    /// <param name="size">The size of the future graph</param>
+    public void AddVertexes(int size)
     {
-        if (GraphByList == null)
+        if (vertexes == null)
         {
-            GraphByList = new GraphElement();
+            vertexes = new ListVertexes();
         }
-        if (GraphByList.Vertexes == null)
-        {
-            GraphByList.Vertexes = new ListVertexes();
-        }
-        GraphByList.sizeGraph = sizeGraph;
+        sizeGraph = size;
         for(int i = 1; i <= sizeGraph; i++) 
         { 
-            GraphByList.Vertexes.AddElement(i);
+            vertexes.AddElement(i);
         }
     }
 
@@ -108,20 +89,17 @@ public class Graph
     /// <exception cref="NullPointerException">Throws an exception if the graph or its components are empty</exception>
     public bool KraskalAlgorithm(Graph graph)
     {
-        if (graph.IsEmpty())
+        if (edges == null)
         {
-            throw new NullPointerException();
+            throw new NullGraphOrGraphComponentsException();
         }
-        return graph.GraphByList.Arcs.KraskalAlgorithm(graph);
+        return edges.KraskalAlgorithm(graph);
     }
 
-    private class GraphElement
-    {
-        public ListVertexes? Vertexes { get; set; }
+    private ListVertexes? vertexes { get; set; }
 
-        public ListArcs? Arcs { get; set; }
+    private ListEdges? edges { get; set; }
 
-        public int sizeGraph { get; set; }
-    }
-    private GraphElement? GraphByList { get; set; }
+    private int sizeGraph { get; set; }
+
 }

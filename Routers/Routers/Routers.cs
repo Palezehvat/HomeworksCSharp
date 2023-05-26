@@ -1,4 +1,4 @@
-﻿namespace Routers;
+﻿namespace RoutersByGraph;
 
 /// <summary>
 /// A class for implementing finding a spanning tree and printing its file by retrieving data from a file
@@ -18,7 +18,7 @@ public class Routers
     /// <exception cref="InvalidFileException">Throws an exception if the entry in the file is uncorrected</exception>
     public bool WorkWithFile(string filePath, string fileAfter)
     {
-        var file = new StreamReader(filePath);
+        using var file = new StreamReader(filePath);
         if (file == null)
         {
             throw new InvalidFileException();
@@ -41,7 +41,9 @@ public class Routers
                     ++i;
                     while (Char.IsDigit(line[i]))
                     {
-                        mainVertex = mainVertex * 10 + line[i] - 48;
+                        int result = 0;
+                        bool isCorrect = int.TryParse(line[i].ToString(), out result);
+                        mainVertex = mainVertex * 10 +
                         ++i;
                     }
 

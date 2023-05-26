@@ -1,9 +1,10 @@
 namespace TestsFotGraph;
 
-using Routers;
+using RoutersByGraph;
+
 public class Tests
 {
-    Graph graph;
+    private Graph graph;
 
     [SetUp]
     public void Setup()
@@ -11,61 +12,55 @@ public class Tests
         graph = new Graph();
     }
 
-    [TestCaseSource(nameof(GraphForTest))]
-    public void EmptyGraphShouldBeEmpty(Graph graph)
+    [Test]
+    public void EmptyGraphShouldBeEmpty()
     {
         Assert.True(graph.IsEmpty());
     }
 
-    [TestCaseSource(nameof(GraphForTest))]
-    public void GraphShouldThrowExceptionAfterTryGetSizeWhileItEmpty(Graph graph)
+    [Test]
+    public void GraphShouldThrowExceptionAfterTryGetSizeWhileItEmpty()
     {
-        Assert.Throws<NullPointerException>(() => graph.ReturnSizeGraph());
+        Assert.That(graph.Size(), Is.EqualTo(0));
     }
 
-    [TestCaseSource(nameof(GraphForTest))]
-    public void GraphShouldReturnNullAfterTryGetListArcsWhileItEmpty(Graph graph)
+    [Test]
+    public void GraphShouldReturnNullAfterTryGetListArcsWhileItEmpty()
     {
-        Assert.True(graph.ReturnListArcs() == null);
+        Assert.That(graph.ReturnListArcs(), Is.EqualTo(null));
     }
 
-    [TestCaseSource(nameof(GraphForTest))]
-    public void GraphShouldReturnNullAfterTryGetListVertexesWhileItEmpty(Graph graph)
+    [Test]
+    public void GraphShouldReturnNullAfterTryGetListVertexesWhileItEmpty()
     {
-        Assert.True(graph.ReturnListVertexes() == null);
+        Assert.That(graph.ReturnListVertexes(), Is.EqualTo(null));
     }
 
-    [TestCaseSource(nameof(GraphForTest))]
-    public void GraphShouldThrowExceptionAfterTryWriteInFileWhileGraphEmpty(Graph graph)
+    [Test]
+    public void GraphShouldThrowExceptionAfterTryWriteInFileWhileGraphEmpty()
     {
-        Assert.Throws<NullPointerException>(() => graph.WriteToFile("v_v", "^_^"));
+        Assert.Throws<NullGraphOrGraphComponentsException>(() => graph.WriteToFile("v_v", "^_^"));
     }
 
-    [TestCaseSource(nameof(GraphForTest))]
-    public void GraphShouldThrowExceptionAfterTryUseKraskalAlgorithmWhileGraphEmpty(Graph graph)
+    [Test]
+    public void GraphShouldThrowExceptionAfterTryUseKraskalAlgorithmWhileGraphEmpty()
     {
-        Assert.Throws<NullPointerException>(() => graph.KraskalAlgorithm(graph));
+        Assert.Throws<NullGraphOrGraphComponentsException>(() => graph.KraskalAlgorithm(graph));
     }
 
-    [TestCaseSource(nameof(GraphForTest))]
-    public void GraphShouldReturnCorrectSizeAfterAddding(Graph graph)
+    [Test]
+    public void GraphShouldReturnCorrectSizeAfterAddding()
     {
         graph.AddArcs(1, 2, 3);
         graph.AddVertexes(2);
-        Assert.True(graph.ReturnSizeGraph() == 2);
+        Assert.That(2, Is.EqualTo(graph.Size()));
     }
 
-    [TestCaseSource(nameof(GraphForTest))]
-    public void GraphShouldBeNotEmptyAfterAddding(Graph graph)
+    [Test]
+    public void GraphShouldBeNotEmptyAfterAddding()
     {
         graph.AddArcs(1, 2, 3);
         graph.AddVertexes(2);
         Assert.False(graph.IsEmpty());
     }
-
-    private static IEnumerable<TestCaseData> GraphForTest
-    => new TestCaseData[]
-    {
-        new TestCaseData(new Graph()),
-    };
 }

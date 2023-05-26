@@ -1,10 +1,10 @@
 namespace TestsForRouters;
 
-using Routers;
+using RoutersByGraph;
 
 public class Tests
 {
-    Routers routers;
+    private Routers routers;
 
     [SetUp]
     public void Setup()
@@ -12,62 +12,62 @@ public class Tests
         routers = new Routers();
     }
 
-    [TestCaseSource(nameof(RoutersForTest))]
-    public void RoutersShouldThrowAnExceptionIfThereIsAnInvalidCharacterInTheFile(Routers routers)
+    [Test]
+    public void RoutersShouldThrowAnExceptionIfThereIsAnInvalidCharacterInTheFile()
     {
         Assert.Throws<InvalidFileException>(() => routers.WorkWithFile(Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForRouters", "fileWithInvalidSymbol.txt"), "dsd"));
     }
 
-    [TestCaseSource(nameof(RoutersForTest))]
-    public void RoutersShouldThrowAnExceptionIfFirstSymbolIsNotNumberInTheFile(Routers routers)
+    [Test]
+    public void RoutersShouldThrowAnExceptionIfFirstSymbolIsNotNumberInTheFile()
     {
         Assert.Throws<InvalidFileException>(() => routers.WorkWithFile(Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForRouters", "fileWithInvalidFirstSymbol.txt"), "sdsd"));
     }
 
-    [TestCaseSource(nameof(RoutersForTest))]
-    public void RoutersShouldThrowAnExceptionIfSpaceNotAferNotMainVertexInTheFile(Routers routers)
+    [Test]
+    public void RoutersShouldThrowAnExceptionIfSpaceNotAferNotMainVertexInTheFile()
     {
         Assert.Throws<InvalidFileException>(() => routers.WorkWithFile(Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForRouters", "fileWithoutSpaceAfterVertexNotMain.txt"), "dsds"));
     }
 
-    [TestCaseSource(nameof(RoutersForTest))]
-    public void RoutersShouldThrowAnExceptionIfColonAbsentAfterMainVertexInTheFile(Routers routers)
+    [Test]
+    public void RoutersShouldThrowAnExceptionIfColonAbsentAfterMainVertexInTheFile()
     {
         Assert.Throws<InvalidFileException>(() => routers.WorkWithFile(Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForRouters", "fileWithoutColonAfterMainVertex.txt"), "sddsd"));
     }
 
-    [TestCaseSource(nameof(RoutersForTest))]
-    public void RoutersShouldThrowAnExceptionIfSpaceAbsentAfterColonInTheFile(Routers routers)
+    [Test]
+    public void RoutersShouldThrowAnExceptionIfSpaceAbsentAfterColonInTheFile()
     {
         Assert.Throws<InvalidFileException>(() => routers.WorkWithFile(Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForRouters", "fileWithoutSpaceAfterColon.txt"), "sdsd"));
     }
 
-    [TestCaseSource(nameof(RoutersForTest))]
-    public void RoutersShouldThrowAnExceptionIfOpeningParenthesisAbsentAfterVertexWithSpaceInTheFile(Routers routers)
+    [Test]
+    public void RoutersShouldThrowAnExceptionIfOpeningParenthesisAbsentAfterVertexWithSpaceInTheFile()
     {
         Assert.Throws<InvalidFileException>(() => routers.WorkWithFile(Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForRouters", "fileWithoutOpeningParenthesis.txt"), "sdsd"));
     }
 
-    [TestCaseSource(nameof(RoutersForTest))]
-    public void RoutersShouldThrowAnExceptionIfNotNumberAfteropeningParenthesisInTheFile(Routers routers)
+    [Test]
+    public void RoutersShouldThrowAnExceptionIfNotNumberAfteropeningParenthesisInTheFile()
     {
         Assert.Throws<InvalidFileException>(() => routers.WorkWithFile(Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForRouters", "fileWithoutNumberAfterOpeningParenthesis.txt"), "sdsd"));
     }
 
-    [TestCaseSource(nameof(RoutersForTest))]
-    public void RoutersShouldThrowAnExceptionIfCloseingParenthesisAbsentInTheFile(Routers routers)
+    [Test]
+    public void RoutersShouldThrowAnExceptionIfCloseingParenthesisAbsentInTheFile()
     {
         Assert.Throws<InvalidFileException>(() => routers.WorkWithFile(Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForRouters", "fileWithoutCloseingParenthesis.txt"), "sdsd"));
     }
 
-    [TestCaseSource(nameof(RoutersForTest))]
-    public void RoutersShouldThrowAnExceptionIfAfterCloseingParenthesisCommaAbsentInTheFile(Routers routers)
+    [Test]
+    public void RoutersShouldThrowAnExceptionIfAfterCloseingParenthesisCommaAbsentInTheFile()
     {
         Assert.Throws<InvalidFileException>(() => routers.WorkWithFile(Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForRouters", "fileWithoutCommaAfterCloseingParenthesis.txt"), "sdsd"));
     }
 
-    [TestCaseSource(nameof(RoutersForTest))]
-    public void RoutersShouldWorkCorrectlyWithSimpleExpression(Routers routers)
+    [Test]
+    public void RoutersShouldWorkCorrectlyWithSimpleExpression()
     {
         bool isLink = routers.WorkWithFile(Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForRouters", "fileWithFirstCorrect.txt"), Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForRouters", "fileWithFirstCorrect.txt.new"));
         if (!isLink)
@@ -76,23 +76,23 @@ public class Tests
         }
         string afterAlgorithm = File.ReadAllText(Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForRouters", "fileWithFirstCorrect.txt.new"));
         string correctResult = File.ReadAllText(Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForRouters", "fileWithFirstCorrect.txt"));
-        Assert.True(afterAlgorithm == correctResult);
+        Assert.That(correctResult, Is.EqualTo(afterAlgorithm));
     }
 
-    [TestCaseSource(nameof(RoutersForTest))]
-    public void RoutersShouldWorkCorrectlyWithSimpleExpressionWhereGraphNotLinked(Routers routers)
+    [Test]
+    public void RoutersShouldWorkCorrectlyWithSimpleExpressionWhereGraphNotLinked()
     {
         Assert.False(routers.WorkWithFile(Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForRouters", "fileWithNotLinkedGraph.txt"), Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForRouters", "fileWithNotLinkedGraph.txt.new")));
     }
 
-    [TestCaseSource(nameof(RoutersForTest))]
-    public void RoutersShouldWorkCorrectlyWithDificultExpressionWhereGraphNotLinked(Routers routers)
+    [Test]
+    public void RoutersShouldWorkCorrectlyWithDificultExpressionWhereGraphNotLinked()
     {
         Assert.False(routers.WorkWithFile(Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForRouters", "fileWithNotLinkedGraphMoreDificult.txt"), "sdsd"));
     }
 
-    [TestCaseSource(nameof(RoutersForTest))]
-    public void RoutersShouldWorkCorrectlyWithDificultExpression(Routers routers)
+    [Test]
+    public void RoutersShouldWorkCorrectlyWithDificultExpression()
     {
         bool isLink = routers.WorkWithFile(Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForRouters", "fileWithMoreDifficultExpression.txt"), Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForRouters", "fileWithMoreDifficultExpression.txt.new"));
         if (!isLink)
@@ -101,12 +101,6 @@ public class Tests
         }
         string afterAlgorithm = File.ReadAllText(Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForRouters", "fileWithMoreDifficultExpression.txt.new"));
         string correctResult = File.ReadAllText(Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsForRouters", "fileWithCorrectExpressionForMoreDifficultExpression.txt"));
-        Assert.True(afterAlgorithm == correctResult);
+        Assert.That(correctResult, Is.EqualTo(afterAlgorithm));
     }
-
-    private static IEnumerable<TestCaseData> RoutersForTest
-    => new TestCaseData[]
-    {
-        new TestCaseData(new Routers()),
-    };
 }

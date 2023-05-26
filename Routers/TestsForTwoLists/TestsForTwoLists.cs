@@ -1,10 +1,10 @@
 namespace TestsFotGraph;
 
-using NuGet.Frameworks;
-using Routers;
+using RoutersByGraph;
+
 public class Tests
 {
-    ListVertexes list;
+    private ListVertexes list;
 
     [SetUp]
     public void Setup()
@@ -12,8 +12,8 @@ public class Tests
         list = new ListVertexes();
     }
 
-    [TestCaseSource(nameof(ListForTest))]
-    public void InStartNumberSetForAllVertexesShouldZero(ListVertexes list)
+    [Test]
+    public void InStartNumberSetForAllVertexesShouldZero()
     {
         Graph graph = new Graph();
         graph.AddVertexes(3);
@@ -23,33 +23,29 @@ public class Tests
         var anotherList = graph.ReturnListVertexes();
         for (int i = 1; i <= 3; ++i)
         {
-            if (anotherList.FromWichSet(i) != 0)
-            {
-                Assert.Fail();
-            }
+            Assert.AreEqual(anotherList.SearchForASuitableSet(i), 0);
         }
-        Assert.True(true);
     }
 
-    [TestCaseSource(nameof(ListForTest))]
-    public void EmptyListVertexesShouldReturnMinusOneAfterTryToReturnNumberSetIfVertexNotInList(ListVertexes list)
+    [Test]
+    public void EmptyListVertexesShouldReturnMinusOneAfterTryToReturnNumberSetIfVertexNotInList()
     {
-        Assert.True(list.FromWichSet(1) == -1);
+        Assert.True(list.SearchForASuitableSet(1) == -1);
     }
 
-    [TestCaseSource(nameof(ListForTest))]
-    public void ListVertexesShouldChangedNumberSet(ListVertexes list)
+    [Test]
+    public void ListVertexesShouldChangedNumberSet()
     {
         Graph graph = new Graph();
         graph.AddVertexes(3);
         graph.AddArcs(1, 2, 3);
         var anotherList = graph.ReturnListVertexes();
         anotherList.ChangeOneVertexSet(2, 10);
-        Assert.True(anotherList.FromWichSet(2) == 10);
+        Assert.AreEqual(anotherList.SearchForASuitableSet(2), 10);
     }
 
-    [TestCaseSource(nameof(ListForTest))]
-    public void ListVertexesShouldChangedAllVertexesNumberSet(ListVertexes list)
+    [Test]
+    public void ListVertexesShouldChangedAllVertexesNumberSet()
     {
         Graph graph = new Graph();
         graph.AddVertexes(3);
@@ -58,24 +54,14 @@ public class Tests
         anotherList.ChangeNumbersSet(10, 0);
         for (int i = 1; i <= 3; ++i)
         {
-            if (anotherList.FromWichSet(i) != 10)
-            {
-                Assert.Fail();
-            }
+            Assert.AreEqual(anotherList.SearchForASuitableSet(i), 10);
         }
-        Assert.True(true);
     }
 
     [Test]
     public void ListArcsShouldThrowExceptionIfTryToSortNullPointer()
     {
-        var list = new ListArcs();
-        Assert.Throws<NullPointerException>(() => list.SortListArcs(true));
+        var list = new ListEdges();
+        Assert.Throws< NullGraphOrGraphComponentsException>(() => list.SortListArcs(true));
     }
-
-    private static IEnumerable<TestCaseData> ListForTest
-    => new TestCaseData[]
-    {
-        new TestCaseData(new ListVertexes()),
-    };
 }

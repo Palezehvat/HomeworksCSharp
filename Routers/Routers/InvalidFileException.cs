@@ -1,4 +1,4 @@
-﻿namespace Routers;
+﻿namespace RoutersByGraph;
 
 /// <summary>
 /// Exception if there is a problem with the path to the file or there is an incorrect sequence inside the file
