@@ -162,7 +162,7 @@
             this.PlusButton.TabIndex = 7;
             this.PlusButton.Text = "+";
             this.PlusButton.UseVisualStyleBackColor = true;
-            this.PlusButton.Click += new System.EventHandler(this.PlusButton_Click);
+            this.PlusButton.Click += new System.EventHandler(this.OperationButton_Click);
             // 
             // FourButton
             // 
@@ -214,7 +214,7 @@
             this.SubtractButton.TabIndex = 11;
             this.SubtractButton.Text = "-";
             this.SubtractButton.UseVisualStyleBackColor = true;
-            this.SubtractButton.Click += new System.EventHandler(this.SubtractButton_Click);
+            this.SubtractButton.Click += new System.EventHandler(this.OperationButton_Click);
             // 
             // SevenButton
             // 
@@ -264,9 +264,9 @@
             this.MultiplyButton.Name = "MultiplyButton";
             this.MultiplyButton.Size = new System.Drawing.Size(89, 53);
             this.MultiplyButton.TabIndex = 15;
-            this.MultiplyButton.Text = "x";
+            this.MultiplyButton.Text = "*";
             this.MultiplyButton.UseVisualStyleBackColor = true;
-            this.MultiplyButton.Click += new System.EventHandler(this.MultiplyButton_Click);
+            this.MultiplyButton.Click += new System.EventHandler(this.OperationButton_Click);
             // 
             // SquaringButton
             // 
@@ -318,7 +318,7 @@
             this.DivisionButton.TabIndex = 19;
             this.DivisionButton.Text = "/";
             this.DivisionButton.UseVisualStyleBackColor = true;
-            this.DivisionButton.Click += new System.EventHandler(this.DivisionButton_Click);
+            this.DivisionButton.Click += new System.EventHandler(this.OperationButton_Click);
             // 
             // tableLayoutPanel1
             // 
@@ -462,7 +462,7 @@
             this.Load += new System.EventHandler(this.Form1_Load);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
-
+            
         }
 
 

@@ -117,24 +117,9 @@ public partial class Calculator : Form
                                ref ErrorLabel, false, symbol);
     }
 
-    private void PlusButton_Click(object sender, EventArgs e)
+    private void OperationButton_Click(object sender, EventArgs e)
     {
-        WorkWithOperations('+');
-    }
-
-    private void SubtractButton_Click(object sender, EventArgs e)
-    {
-        WorkWithOperations('-');
-    }
-
-    private void MultiplyButton_Click(object sender, EventArgs e)
-    {
-        WorkWithOperations('*');
-    }
-
-    private void DivisionButton_Click(object sender, EventArgs e)
-    {
-        WorkWithOperations('/');
+        WorkWithOperations((sender as Button)?.Text[0] ?? throw new Exception());
     }
 
     private void EqualButton_Click(object sender, EventArgs e)
