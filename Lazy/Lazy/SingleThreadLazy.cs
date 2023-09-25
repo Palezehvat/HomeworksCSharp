@@ -5,7 +5,7 @@ public class SingleThreadLazy<T> : ILazy<T>
     private Func<T> functionForLazy;
     private bool flagForCounting = false;
     private T resultSuppiler;
-    private Exception exceptionFromSuppiler = null;
+    private Exception exceptionFromSuppiler = default;
     public SingleThreadLazy(Func<T> function)
     {
         functionForLazy = function;
@@ -15,6 +15,7 @@ public class SingleThreadLazy<T> : ILazy<T>
     {
         if (!flagForCounting)
         {
+            flagForCounting = true;
             try
             {
                 resultSuppiler = functionForLazy();
@@ -22,14 +23,16 @@ public class SingleThreadLazy<T> : ILazy<T>
             catch (Exception exception)
             {
                 exceptionFromSuppiler = exception;
+            }
+            if (exceptionFromSuppiler != default)
+            {
                 throw exceptionFromSuppiler;
             }
-            flagForCounting = true;
             return resultSuppiler;
         }
         else
         {
-            if (exceptionFromSuppiler != null)
+            if (exceptionFromSuppiler != default)
             {
                 throw exceptionFromSuppiler;
             }

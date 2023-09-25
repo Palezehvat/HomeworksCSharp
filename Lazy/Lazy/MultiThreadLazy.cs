@@ -8,7 +8,7 @@ public class MultiThreadLazy<T> : ILazy<T>
     private Object objectLock = new ();
     private volatile bool initialized = false;
     private T resultSuppiler;
-    private Exception exceptionSuppiler = null;
+    private Exception exceptionSuppiler = default;
 
     public MultiThreadLazy(Func<T> function)
     {
@@ -19,7 +19,7 @@ public class MultiThreadLazy<T> : ILazy<T>
     {
         if (initialized)
         {
-            if (exceptionSuppiler != null)
+            if (exceptionSuppiler != default)
             {
                 throw exceptionSuppiler;
             }
@@ -37,7 +37,10 @@ public class MultiThreadLazy<T> : ILazy<T>
                 catch (Exception ex)
                 {
                     exceptionSuppiler = ex;
-                    throw;
+                }
+                if (exceptionSuppiler != default)
+                {
+                    throw exceptionSuppiler;
                 }
                 initialized = true;
             }
