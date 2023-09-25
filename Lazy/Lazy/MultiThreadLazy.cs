@@ -1,6 +1,4 @@
-﻿using System.Reflection.Metadata.Ecma335;
-
-namespace Lazy;
+﻿namespace Lazy;
 
 public class MultiThreadLazy<T> : ILazy<T>
 {
@@ -10,6 +8,9 @@ public class MultiThreadLazy<T> : ILazy<T>
     private T resultSuppiler;
     private Exception exceptionSuppiler = default;
 
+    /// <summary>
+    /// Constructor for storing the object creation function
+    /// </summary>
     public MultiThreadLazy(Func<T> function)
     {
         functionForLazy = function;

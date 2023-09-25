@@ -6,6 +6,10 @@ public class SingleThreadLazy<T> : ILazy<T>
     private bool flagForCounting = false;
     private T resultSuppiler;
     private Exception exceptionFromSuppiler = default;
+
+    /// <summary>
+    /// Constructor for storing the object creation function
+    /// </summary>
     public SingleThreadLazy(Func<T> function)
     {
         functionForLazy = function;
