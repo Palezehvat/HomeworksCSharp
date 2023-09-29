@@ -16,7 +16,7 @@ if (tableFile == null)
 }
 if (resultFile == null)
 {
-    Console.WriteLine("Неверно прописан путь для firstFile");
+    Console.WriteLine("Неверно прописан путь для resulFile");
     return;
 }
 if (secondFile == null)
@@ -26,14 +26,14 @@ if (secondFile == null)
 }
 if (firstFile == null)
 {
-    Console.WriteLine("Неверно прописан путь для resultFile");
+    Console.WriteLine("Неверно прописан путь для firstFile");
     return;
 }
 
-Matrix.MatrixMultiplication(firstFile, secondFile, resultFile);
-GetStandartDeviationAndMinValue.CreateTableWithResults(tableFile);
+Matrix.Multiplication(firstFile, secondFile, resultFile);
+StandartDeviationAndMathExpectation.CreateTableWithResults(tableFile);
 
-var resultCompare = Matrix.CompareMatrixMultiplication(firstFile, secondFile);
+var resultCompare = Matrix.CompareMultiplication(firstFile, secondFile);
 if (resultCompare < 0)
 {
     Console.Write("Параллельное перемножение матриц медленнее, чем последовательное на ");

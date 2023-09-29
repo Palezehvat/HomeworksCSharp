@@ -44,7 +44,7 @@ public static class Matrix
     /// <summary>
     /// The function compares matrices
     /// </summary>
-    public static bool AreMatricesEquals(int[][] firstMatrix, int[][] secondMatrix)
+    public static bool AreEquals(int[][] firstMatrix, int[][] secondMatrix)
     {
         if (firstMatrix.Length != secondMatrix.Length)
         {
@@ -72,7 +72,7 @@ public static class Matrix
     /// Multiplies matrices by a sequential algorithm
     /// </summary>
     /// <returns>The resulting matrix</returns>
-    public static int[][] ConsistentMatrixMultiply(int[][] firstMatrix, int[][] secondMatrix)
+    public static int[][] ConsistentMultiply(int[][] firstMatrix, int[][] secondMatrix)
     {
         var resultMatrix = new int[firstMatrix.Length][];
 
@@ -94,7 +94,7 @@ public static class Matrix
         return resultMatrix;
     }
 
-    private static int[][] ConvertinMatrixToTransposedOne(int[][] matrix)
+    private static int[][] ConvertMatrixToTransposedOne(int[][] matrix)
     {
         var transposedMatrix = new int[matrix[0].Length][];
         for (int i = 0; i < matrix[0].Length; i++)
@@ -131,7 +131,7 @@ public static class Matrix
     /// Parallel matrix multiplication function
     /// </summary>
     /// <returns>Returns the calculated matrix</returns>
-    public static int[][] MatrixMultiplication(int[][] firstMatrix, int[][] secondMatrix)
+    public static int[][] Multiply(int[][] firstMatrix, int[][] secondMatrix)
     {
         var resultMatrix = new int[firstMatrix.Length][];
 
@@ -154,7 +154,7 @@ public static class Matrix
         int start = 0;
         int end = 0;
 
-        var transposedMatrix = ConvertinMatrixToTransposedOne(secondMatrix);
+        var transposedMatrix = ConvertMatrixToTransposedOne(secondMatrix);
 
         for (int i = 0; i < threadCounts; i++)
         {
@@ -179,7 +179,7 @@ public static class Matrix
         return resultMatrix;
     }
 
-    private static int[][] ReadFromFileMatrix(string filePath)
+    private static int[][] ReadFromFile(string filePath)
     {
         var allLines = File.ReadAllLines(filePath);
         var matrix = new int[allLines.Length][];
@@ -213,7 +213,7 @@ public static class Matrix
         return matrix;
     }
 
-    private static void WriteResultMatrixToFile(string filePath, int[][] matrix)
+    private static void WriteResultToFile(string filePath, int[][] matrix)
     {
         var streamForWrite = new StreamWriter(filePath);
         for (int i = 0; i < matrix.Length; ++i)
@@ -231,37 +231,37 @@ public static class Matrix
     /// <summary>
     /// A function that receives files with matrices at the input, and a calculated matrix at the output
     /// </summary>
-    public static void MatrixMultiplication(string firstFile, string secondFile, string resultFile)
+    public static void Multiplication(string firstFile, string secondFile, string resultFile)
     {
-        var firstMatrix = ReadFromFileMatrix(firstFile);
-        var secondMatrix = ReadFromFileMatrix(secondFile);
-        var resultMatrix = MatrixMultiplication(firstMatrix, secondMatrix);
-        WriteResultMatrixToFile(resultFile, resultMatrix);
+        var firstMatrix = ReadFromFile(firstFile);
+        var secondMatrix = ReadFromFile(secondFile);
+        var resultMatrix = Multiply(firstMatrix, secondMatrix);
+        WriteResultToFile(resultFile, resultMatrix);
     }
 
     /// <summary>
     /// Multiplies matrices by successive multiplication
     /// </summary>
-    public static long CompareMatrixMultiplication(string firstFile, string secondFile)
+    public static long CompareMultiplication(string firstFile, string secondFile)
     {
-        var firstMatrix = ReadFromFileMatrix(firstFile);
-        var secondMatrix = ReadFromFileMatrix(secondFile);
+        var firstMatrix = ReadFromFile(firstFile);
+        var secondMatrix = ReadFromFile(secondFile);
 
         var stopwatchParallelMultiplication = new Stopwatch();
         stopwatchParallelMultiplication.Start();
-        var resultMatrixFromParallelMultiplication = MatrixMultiplication(firstMatrix, secondMatrix);
+        var resultMatrixFromParallelMultiplication = Multiply(firstMatrix, secondMatrix);
         stopwatchParallelMultiplication.Stop();
         
         var result = stopwatchParallelMultiplication.ElapsedMilliseconds;
 
         var stopwatchConsistentMultiplication = new Stopwatch();
         stopwatchConsistentMultiplication.Start();
-        var resultMatrixFromConsistentMultipliaction = ConsistentMatrixMultiply(firstMatrix, secondMatrix);
+        var resultMatrixFromConsistentMultipliaction = ConsistentMultiply(firstMatrix, secondMatrix);
         stopwatchConsistentMultiplication.Stop();
 
         result -= stopwatchConsistentMultiplication.ElapsedMilliseconds;
 
-        if (!AreMatricesEquals(resultMatrixFromConsistentMultipliaction, resultMatrixFromParallelMultiplication))
+        if (!AreEquals(resultMatrixFromConsistentMultipliaction, resultMatrixFromParallelMultiplication))
         {
             throw new MultiplyException();
         }
