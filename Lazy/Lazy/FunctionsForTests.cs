@@ -3,24 +3,24 @@
 /// <summary>
 /// Class for checking Lazy
 /// </summary>
-public static class FunctionsForTests
+public class FunctionsForTests
 {
-    public static volatile int howMutchFunctionBeenCalled = 0;
+    public volatile int howMuchFunctionBeenCalled = 0;
 
     /// <summary>
     /// Function that counts how much it is caused by
     /// </summary>
-    public static int FunctionForLazyWithCounter()
+    public int FunctionForLazyWithCounter()
     {
-        howMutchFunctionBeenCalled++;
-        return howMutchFunctionBeenCalled;
+        howMuchFunctionBeenCalled++;
+        return howMuchFunctionBeenCalled;
     }
 
     /// <summary>
     /// Function that throws InvalidOperationException
     /// </summary>
     /// <returns></returns>
-    public static int FunctionWithInvalidOperationException()
+    public int FunctionWithInvalidOperationException()
     {
         throw new InvalidOperationException();
     }

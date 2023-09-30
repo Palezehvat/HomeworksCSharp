@@ -1,22 +1,24 @@
 namespace TestsForLazy;
 using Lazy;
-using Newtonsoft.Json.Linq;
 
 public class Tests
-{   
+{
+    private static FunctionsForTests globalFunctionsForTestsForSingleThread = new();
+    private static FunctionsForTests globalFunctionsForTestsForMultiThread = new();
+
     [Test]
-    public void SimpleExample()
+    public void SimpleExampleWithMultiThreadLazy()
     {
-        var singleThreadLazy = new SingleThreadLazy<int>(() => FunctionsForTests.FunctionForLazyWithCounter());
-        Assert.That(singleThreadLazy.Get(), Is.EqualTo(singleThreadLazy.Get()));
-        Assert.That(FunctionsForTests.FunctionForLazyWithCounter(), Is.Not.EqualTo(singleThreadLazy.Get()));
-        FunctionsForTests.howMutchFunctionBeenCalled = 0;
-        var multiThreadLazy = new MultiThreadLazy<int>(() => FunctionsForTests.FunctionForLazyWithCounter());
-        var arrayThreads = new Thread[Environment.ProcessorCount];
-        object value = null;
+        var functionsForTests = new FunctionsForTests();
+        var result = 1;
+        var multiThreadLazy = new MultiThreadLazy<int>(() => functionsForTests.FunctionForLazyWithCounter());
+        var arrayThreads = new Thread[10];
         for (int i = 0; i < arrayThreads.Length; i++)
         {
-            arrayThreads[i] = new Thread(() => { value = multiThreadLazy.Get(); });
+            arrayThreads[i] = new Thread(() => 
+            {
+                Assert.That(result, Is.EqualTo(multiThreadLazy.Get()));
+            });
         }
 
         foreach (var thread in arrayThreads)
@@ -28,35 +30,29 @@ public class Tests
         {
             element.Join();
         }
-        
-        foreach (var element in arrayThreads)
-        {
-            Assert.That(1, Is.EqualTo(value));
-        }
     }
 
     [Test]
-    public void ExampleWithException()
+    public void ExampleWithExceptionWithMultiThreadLazy()
     {
-        var singleThreadLazy = new SingleThreadLazy<int>(() => FunctionsForTests.FunctionWithInvalidOperationException());
-        Assert.Throws<InvalidOperationException>(() => singleThreadLazy.Get());
-        Assert.Throws<InvalidOperationException>(() => singleThreadLazy.Get());
-
-        var multiThreadLazy = new MultiThreadLazy<int>(() => FunctionsForTests.FunctionWithInvalidOperationException());
-        var arrayThreads = new Thread[Environment.ProcessorCount];
-        object value = null;
+        var functionsForTests = new FunctionsForTests();
+        var multiThreadLazy = new MultiThreadLazy<int>(() => functionsForTests.FunctionWithInvalidOperationException());
+        var arrayThreads = new Thread[10];
+        object? value = null;
         for (int i = 0;i < arrayThreads.Length; i++)
         {
             arrayThreads[i] = new Thread(() => 
             {
+                bool isExceptionWasThrown = false;
                 try
                 {
                     value =  multiThreadLazy.Get();
                 }
                 catch (InvalidOperationException)
                 {
-                    Assert.True(true);
+                    isExceptionWasThrown = true;
                 }
+                Assert.True(isExceptionWasThrown);
             });
         }
         
@@ -71,25 +67,39 @@ public class Tests
         }
     }
 
+    [TestCaseSource(nameof(LazyForTestWithFunctionWithCounter))]
+    public void SimpleExampleWithOneThread(ILazy<int> lazy)
+    {
+        var result = 1;
+        for (int i = 0; i < 10; ++i)
+        {
+            Assert.That(result, Is.EqualTo(lazy.Get()));
+        }
+    }
+
+    [TestCaseSource(nameof(LazyForTestWithFunctionWithException))]
+    public void ExampleWithExceptionWithOneThread(ILazy<int> lazy)
+    {
+        for (int i = 0; i < 10; ++i)
+        {
+            Assert.Throws<InvalidOperationException>(() => lazy.Get());
+        }
+    }
+
     [Test]
     public void ThreadRaceTest()
     {
-        var multiThreadLazy = new SingleThreadLazy<int>(() => FunctionsForTests.FunctionForLazyWithCounter());
-        var arrayThreads = new Thread[Environment.ProcessorCount];
-        object value = null;
+        var functionsForTests = new FunctionsForTests();
+        var multiThreadLazy = new MultiThreadLazy<int>(() => functionsForTests.FunctionForLazyWithCounter());
+        var arrayThreads = new Thread[10];
+
+        var correctResult = 1;
 
         for (int i = 0; i < arrayThreads.Length; i++)
         {
             arrayThreads[i] = new Thread(() => 
             { 
-                value = multiThreadLazy.Get(); 
-                lock (value)
-                {
-                    if ((int)value != 1)
-                    {
-                        Assert.IsTrue(true);
-                    }
-                }
+                Assert.That(correctResult, Is.EqualTo(multiThreadLazy.Get())); 
             });
         }
 
@@ -103,4 +113,18 @@ public class Tests
             element.Join();
         }
     }
+
+    private static IEnumerable<TestCaseData> LazyForTestWithFunctionWithCounter
+    => new TestCaseData[]
+    {
+        new TestCaseData(new MultiThreadLazy<int>(() => globalFunctionsForTestsForSingleThread.FunctionForLazyWithCounter())),
+        new TestCaseData(new SingleThreadLazy<int>(() => globalFunctionsForTestsForMultiThread.FunctionForLazyWithCounter())),
+    };
+
+    private static IEnumerable<TestCaseData> LazyForTestWithFunctionWithException
+    => new TestCaseData[]
+    {
+        new TestCaseData(new SingleThreadLazy<int>(() => globalFunctionsForTestsForSingleThread.FunctionWithInvalidOperationException())),
+        new TestCaseData(new MultiThreadLazy<int>(() => globalFunctionsForTestsForMultiThread.FunctionWithInvalidOperationException())),
+    };
 }
