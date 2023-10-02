@@ -1,5 +1,6 @@
 ﻿using parallelMatrixMultiplication;
 
+/*
 Console.WriteLine("Write first file name");
 var firstFile = Console.ReadLine();
 Console.WriteLine("Write second file name");
@@ -31,8 +32,11 @@ if (firstFile == null)
 }
 
 Matrix.Multiplication(firstFile, secondFile, resultFile);
+*/
+var tableFile = "C:\\Users\\User\\source\\repos\\HomeworksCSharp\\parallelMatrixMultiplication\\tableFile.txt";
 StandartDeviationAndMathExpectation.CreateTableWithResults(tableFile);
 
+/*
 var resultCompare = Matrix.CompareMultiplication(firstFile, secondFile);
 if (resultCompare < 0)
 {
@@ -46,3 +50,4 @@ if (resultCompare > 0)
     Console.Write(resultCompare);
     Console.WriteLine(" миллисекунд");
 }
+*/

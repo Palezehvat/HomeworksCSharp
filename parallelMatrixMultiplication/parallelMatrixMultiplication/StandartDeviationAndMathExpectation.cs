@@ -17,7 +17,7 @@ public static class StandartDeviationAndMathExpectation
             summaryForStandartDeviation += Math.Pow(arrayForStandardDeviation[i] - mathExpectation, 2);
         }
 
-        return Math.Sqrt(summaryForStandartDeviation / (n - 1));
+        return Math.Round(Math.Sqrt(summaryForStandartDeviation / (n - 1)), 7);
     }
 
     private static double GetMathExpectation(int[][] firstMatrix, int[][] secondMatrix, int[][] correctMatrix,
@@ -30,7 +30,7 @@ public static class StandartDeviationAndMathExpectation
             stopWatch.Start();
             var resultMatrix = Matrix.Multiply(firstMatrix, secondMatrix);
             stopWatch.Stop();
-            arrayForStandardDeviation[i] = (double)stopWatch.ElapsedMilliseconds / 1000;
+            arrayForStandardDeviation[i] = stopWatch.ElapsedMilliseconds;
             summary += arrayForStandardDeviation[i];
         }
         return summary / n;
@@ -62,11 +62,11 @@ public static class StandartDeviationAndMathExpectation
                                               arrayForStandardDeviation, n, sizeThreads);
         var standardDeviation = GetStandartDeviation(n, arrayForStandardDeviation, mathExpectation);
         var streamForWrite = new StreamWriter(filePath, true);
-        streamForWrite.WriteLine("Математическое ожидание и среднеквадратичное отклонение для матриц размера 3x3:");
-        streamForWrite.Write("Матемматическое ожидание: ");
+        streamForWrite.Write("3x3 и 3x3\t\t");
         streamForWrite.Write(mathExpectation);
-        streamForWrite.Write(" Среднеквадратичное отклонение: ");
+        streamForWrite.Write("\t\t");
         streamForWrite.WriteLine(standardDeviation);
+        streamForWrite.Write('\n');
         streamForWrite.Close();
     }
 
@@ -100,11 +100,11 @@ public static class StandartDeviationAndMathExpectation
                                               arrayForStandardDeviation, n, sizeThreads);
         var standardDeviation = GetStandartDeviation(n, arrayForStandardDeviation, mathExpectation);
         var streamForWrite = new StreamWriter(filePath, true);
-        streamForWrite.WriteLine("Математическое ожидание и среднеквадратичное отклонение для матриц размера 10000x10000 и 10000x1:");
-        streamForWrite.Write("Матемматическое ожидание: ");
+        streamForWrite.Write("10000x10000\nи 10000x1\t\t");
         streamForWrite.Write(mathExpectation);
-        streamForWrite.Write(" Среднеквадратичное отклонение: ");
+        streamForWrite.Write("\t\t");
         streamForWrite.WriteLine(standardDeviation);
+        streamForWrite.Write('\n');
         streamForWrite.Close();
     }
 
@@ -141,11 +141,11 @@ public static class StandartDeviationAndMathExpectation
                                               arrayForStandardDeviation, n, sizeThreads);
         var standardDeviation = GetStandartDeviation(n, arrayForStandardDeviation, mathExpectation);
         var streamForWrite = new StreamWriter(filePath, true);
-        streamForWrite.WriteLine("Математическое ожидание и среднеквадратичное отклонение для матриц размера 3x3 и 3x1:");
-        streamForWrite.Write("Матемматическое ожидание: ");
+        streamForWrite.Write("3x3 и 3x1\t\t");
         streamForWrite.Write(mathExpectation);
-        streamForWrite.Write(" Среднеквадратичное отклонение: ");
+        streamForWrite.Write("\t\t");
         streamForWrite.WriteLine(standardDeviation);
+        streamForWrite.Write('\n');
         streamForWrite.Close();
     }
 
@@ -183,11 +183,11 @@ public static class StandartDeviationAndMathExpectation
                                               arrayForStandardDeviation, n, sizeThreads);
         var standardDeviation = GetStandartDeviation(n, arrayForStandardDeviation, mathExpectation);
         var streamForWrite = new StreamWriter(filePath, true);
-        streamForWrite.WriteLine("Математическое ожидание и среднеквадратичное отклонение для матриц размера 2x5 и 5x1:");
-        streamForWrite.Write("Матемматическое ожидание: ");
+        streamForWrite.Write("2x5 и 5x1\t\t");
         streamForWrite.Write(mathExpectation);
-        streamForWrite.Write(" Среднеквадратичное отклонение: ");
+        streamForWrite.Write("\t\t");
         streamForWrite.WriteLine(standardDeviation);
+        streamForWrite.Write('\n');
         streamForWrite.Close();
     }
 
@@ -225,11 +225,11 @@ public static class StandartDeviationAndMathExpectation
                                               arrayForStandardDeviation, n, sizeThreads);
         var standardDeviation = GetStandartDeviation(n, arrayForStandardDeviation, mathExpectation);
         var streamForWrite = new StreamWriter(filePath, true);
-        streamForWrite.WriteLine("Математическое ожидание и среднеквадратичное отклонение для матриц размера 2x5 и 5x1 с отрицательными числами:");
-        streamForWrite.Write("Матемматическое ожидание: ");
+        streamForWrite.Write("2x5 и 5x1 с \nотрицательными\n числами\t\t");
         streamForWrite.Write(mathExpectation);
-        streamForWrite.Write(" Среднеквадратичное отклонение: ");
+        streamForWrite.Write("\t\t");
         streamForWrite.WriteLine(standardDeviation);
+        streamForWrite.Write('\n');
         streamForWrite.Close();
     }
 
@@ -266,11 +266,49 @@ public static class StandartDeviationAndMathExpectation
                                               arrayForStandardDeviation, n, sizeThreads);
         var standardDeviation = GetStandartDeviation(n, arrayForStandardDeviation, mathExpectation);
         var streamForWrite = new StreamWriter(filePath, true);
-        streamForWrite.WriteLine("Математическое ожидание и среднеквадратичное отклонение для матриц размера 2x5 и 5x1 с нулями:");
-        streamForWrite.Write("Матемматическое ожидание: ");
+        streamForWrite.Write("2x5 и 5x1 с\n нулями\t\t\t");
         streamForWrite.Write(mathExpectation);
-        streamForWrite.Write(" Среднеквадратичное отклонение: ");
+        streamForWrite.Write("\t\t");
         streamForWrite.WriteLine(standardDeviation);
+        streamForWrite.Write('\n');
+        streamForWrite.Close();
+    }
+
+    private static void MultiplyMatricesOfFiveHundredOnFiveHundredSize(string filePath)
+    {
+        var sizeThreads = Environment.ProcessorCount;
+
+        var listOfValuesFirstMatrix = new List<int[]> { };
+        var listOfValuesSecondMatrix = new List<int[]> { };
+        var listOfCorrectValues = new List<int[]> { };
+
+        for (int i = 0; i < 500; i++)
+        {
+            listOfValuesFirstMatrix.Add(new int[500]);
+            listOfValuesSecondMatrix.Add(new int[500]);
+            listOfCorrectValues.Add(new int[500]);
+            for (int j = 0; j < 500; ++j)
+            {
+                listOfValuesFirstMatrix[i][j] = 1;
+                listOfValuesSecondMatrix[i][j] = 1;
+                listOfCorrectValues[i][j] = 500;
+            }
+        }
+
+        var firstMatrix = Matrix.Create(500, 500, listOfValuesFirstMatrix);
+        var secondMatrix = Matrix.Create(500, 500, listOfValuesSecondMatrix);
+        var correctMatrix = Matrix.Create(500, 500, listOfCorrectValues);
+
+        var arrayForStandardDeviation = new double[n];
+        double mathExpectation = GetMathExpectation(firstMatrix, secondMatrix, correctMatrix,
+                                              arrayForStandardDeviation, n, sizeThreads);
+        var standardDeviation = GetStandartDeviation(n, arrayForStandardDeviation, mathExpectation);
+        var streamForWrite = new StreamWriter(filePath, true);
+        streamForWrite.Write("500x500\nи 500x500\t\t");
+        streamForWrite.Write(mathExpectation);
+        streamForWrite.Write("\t\t");
+        streamForWrite.WriteLine(standardDeviation);
+        streamForWrite.Write('\n');
         streamForWrite.Close();
     }
 
@@ -282,6 +320,9 @@ public static class StandartDeviationAndMathExpectation
     {
         var streamForWrite = new StreamWriter(filePath);
         streamForWrite.Write("В файле представлены: математическое ожидание и среднеквадратичное отклонение\n");
+        streamForWrite.WriteLine("--------------------------------------------------------------------------");
+        streamForWrite.Write("Размеры матриц\tМатематическое ожидание\tСреднеквадратичное отклонение\n");
+        streamForWrite.WriteLine("---------------------------------------------------------------------");
         streamForWrite.Close();
         MultiplyMatricesOfSizeThreeByThree(filePath);
         MultiplyMatricesOfBigSize(filePath);
@@ -289,5 +330,6 @@ public static class StandartDeviationAndMathExpectation
         MultiplyOfNotSquareMatrices(filePath);
         MultiplyMatricesWithNegativeNumbers(filePath);
         MultiplyMatricesWithZero(filePath);
+        MultiplyMatricesOfFiveHundredOnFiveHundredSize(filePath);
     }
 }
