@@ -1,5 +1,8 @@
 ﻿namespace MyThreadPool;
 
+/// <summary>
+/// A class for creating tasks
+/// </summary>
 public class MyTask<TResult> : IMyTask<TResult>
 {
     private Func<TResult>? suppiler;
@@ -10,6 +13,9 @@ public class MyTask<TResult> : IMyTask<TResult>
     private Queue<Action> queueWithTasks;
     private Object locker = new Object();
 
+    /// <summary>
+    /// Constructor for creating a task
+    /// </summary>
     public MyTask(Func<TResult> suppiler, MyThread[] arrayThreads, Queue<Action> queueWithTasks)
     {
         this.suppiler = suppiler;
@@ -18,7 +24,7 @@ public class MyTask<TResult> : IMyTask<TResult>
         this.queueWithTasks = queueWithTasks;
     }
 
-    public TResult Result
+    public TResult? Result
     {
         get
         {
@@ -34,11 +40,9 @@ public class MyTask<TResult> : IMyTask<TResult>
         }
     }
 
-    public Func<TResult> GetSupplier()
-    {
-        return suppiler;
-    }
-
+    /// <summary>
+    /// Task completion
+    /// </summary>
     public void StartSuppiler()
     {
         if (suppiler != null)
@@ -52,6 +56,9 @@ public class MyTask<TResult> : IMyTask<TResult>
         }
     }
 
+    /// <summary>
+    /// Checking that the task queue is empty
+    /// </summary>
     public bool IsQueueEmpty()
     { 
         return queueWithContinueWithTasks.Count == 0;
