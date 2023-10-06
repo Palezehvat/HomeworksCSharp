@@ -7,13 +7,18 @@ public class MyThreadPool
 {
     private static MyThread[]? arrayThreads;
     private static Queue<Action> tasks = new ();
-    private CancellationToken token = new CancellationToken();
+    private CancellationToken token = new ();
+    private Object lockerForThreads;
+    private Object lockerForTasks;
+    private volatile bool stopCount = false;
 
     /// <summary>
     /// Constructor for creating n number of threads for tasks
     /// </summary>
     public MyThreadPool(int sizeThreads)
     {
+        lockerForThreads = new ();
+        lockerForTasks = new ();
         if (sizeThreads <= 0)
         {
             throw new ArgumentOutOfRangeException();
@@ -21,7 +26,7 @@ public class MyThreadPool
         arrayThreads = new MyThread[sizeThreads];
         for (int i = 0; i < sizeThreads; i++)
         {
-            arrayThreads[i] = new MyThread(tasks, token);
+            arrayThreads[i] = new(tasks, token, lockerForThreads);
         }
     }
 
@@ -30,7 +35,7 @@ public class MyThreadPool
     /// </summary>
     public IMyTask<TResult> Submit<TResult>(Func<TResult> suppiler)
     {
-        var newTask = new MyTask<TResult>(suppiler, arrayThreads, tasks);
+        var newTask = new MyTask<TResult>(suppiler, arrayThreads, tasks, lockerForTasks, stopCount);
         tasks.Enqueue(() => newTask.StartSuppiler());
         return newTask;
     }
@@ -56,5 +61,10 @@ public class MyThreadPool
                 }
             }
         }
+        foreach(var thread in arrayThreads)
+        {
+            thread.Join();
+        }
+        stopCount = true;
     }
 }

@@ -9,18 +9,19 @@ public class MyThread
     private volatile bool isAlive = true;
     private Thread? thread;
     private volatile Queue<Action> tasks;
-    private Object locker = new Object();
+    private Object locker;
     private CancellationToken token;
 
     /// <summary>
     /// Task-based custom thread constructor
     /// </summary>
-    public MyThread(Queue<Action> tasks, CancellationToken token)
+    public MyThread(Queue<Action> tasks, CancellationToken token, object locker)
     {
-        thread = new Thread(() => EternalCycle());
-        thread.Start();
         this.tasks = tasks;
         this.token = token;
+        this.locker = locker;
+        thread = new Thread(() => EternalCycle());
+        thread.Start();
     }
 
     /// <summary>
@@ -39,27 +40,36 @@ public class MyThread
         Action? task = null;
         while (isAlive)
         {
-            while (tasks.Count == 0) { }
+            while (tasks.Count == 0 && isAlive) { }
             if (token.IsCancellationRequested)
             {
                 break;
             }
-            lock (locker)
+            if (isAlive)
             {
-                task = tasks.Dequeue();
-            }
-            if (task != null)
-            {
-                isActive = true;
-                try
-                { 
-                    task();
-                }
-                catch (Exception ex) 
+                lock (locker)
                 {
-                    throw new AggregateException(ex);
+                     if (tasks.Count != 0)
+                     {
+                        task = tasks.Dequeue();
+                     }
+                     isActive = true;
+                }
+                if (task != null)
+                {
+                    isActive = true;
+                    try
+                    { 
+                        task();
+                    }
+                    catch (Exception ex) 
+                    {
+                        throw new AggregateException(ex);
+                    }
+                    isActive = false;
                 }
                 isActive = false;
+                task = null;
             }
         }
     }
@@ -78,5 +88,14 @@ public class MyThread
     public bool IsAlive()
     {
         return isAlive;
+    }
+
+    /// <summary>
+    /// Suspends the current thread
+    /// </summary>
+    public void Join()
+    {
+        while (thread.IsAlive) { }
+        thread.Join();
     }
 }

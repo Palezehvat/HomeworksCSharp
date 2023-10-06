@@ -11,24 +11,27 @@ public class MyTask<TResult> : IMyTask<TResult>
     private Queue<Action> queueWithContinueWithTasks;
     private MyThread[] arrayThreads;
     private Queue<Action> queueWithTasks;
-    private Object locker = new Object();
+    private Object locker;
+    private volatile bool stopCount;
 
     /// <summary>
     /// Constructor for creating a task
     /// </summary>
-    public MyTask(Func<TResult> suppiler, MyThread[] arrayThreads, Queue<Action> queueWithTasks)
+    public MyTask(Func<TResult> suppiler, MyThread[] arrayThreads, Queue<Action> queueWithTasks, Object locker, bool stopCount)
     {
         this.suppiler = suppiler;
         queueWithContinueWithTasks = new ();
         this.arrayThreads = arrayThreads;
         this.queueWithTasks = queueWithTasks;
+        this.locker = locker;
+        this.stopCount = stopCount;
     }
 
     public TResult? Result
     {
         get
         {
-            while (!isCompleted) {}
+            while (!isCompleted && !stopCount) {}
             return result;
         }
     }
@@ -66,7 +69,7 @@ public class MyTask<TResult> : IMyTask<TResult>
 
     public IMyTask<TNewResult> ContinueWith<TNewResult>(Func<TResult, TNewResult> suppiler)
     {
-        var newTask = new MyTask<TNewResult>(() => suppiler(Result), arrayThreads, queueWithTasks);
+        var newTask = new MyTask<TNewResult>(() => suppiler(Result), arrayThreads, queueWithTasks, locker, stopCount);
         lock(locker)
         {
             if (IsCompleted)
