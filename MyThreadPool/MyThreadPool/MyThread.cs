@@ -1,18 +1,18 @@
-﻿using System.Reflection.Metadata.Ecma335;
+﻿namespace MyThreadPool;
 
-namespace MyThreadPool;
-
-public class MyThread<TResult>
+public class MyThread
 {
     private volatile bool isActive = false;
     private volatile bool isAlive = true;
     private Thread? thread;
-    private MyTask<TResult>? task;
+    private volatile Queue<Action> tasks;
+    private Object locker = new Object();
 
-    public MyThread()
+    public MyThread(Queue<Action> tasks)
     {
         thread = new Thread(() => EternalCycle());
         thread.Start();
+        this.tasks = tasks;
     }
 
     public bool IsActive()
@@ -22,20 +22,28 @@ public class MyThread<TResult>
 
     private void EternalCycle()
     {
+        Action? task = null;
         while (isAlive)
         {
-            while (task == null || task.IsCompleted) { }
-            isActive = true;
-            try
-            { 
-                task.StartSuppiler();
-            }
-            catch (Exception ex) 
+            while (tasks.Count == 0) { }
+            lock (locker)
             {
-                throw new AggregateException(ex);
+                task = tasks.Dequeue();
             }
+            if (task != null)
+            {
 
-            isActive = false;
+                isActive = true;
+                try
+                { 
+                    task();
+                }
+                catch (Exception ex) 
+                {
+                    throw new AggregateException(ex);
+                }
+                isActive = false;
+            }
         }
     }
 
@@ -47,13 +55,5 @@ public class MyThread<TResult>
     public bool IsAlive()
     {
         return isAlive;
-    }
-
-    public void GiveTask(MyTask<TResult> task)
-    {
-        if (isAlive)
-        {
-            this.task = task;
-        }
     }
 }

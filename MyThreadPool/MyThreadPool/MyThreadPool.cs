@@ -1,48 +1,35 @@
-﻿using System.IO;
+﻿namespace MyThreadPool;
 
-namespace MyThreadPool;
-
-public class MyThreadPool<TResult>
+public class MyThreadPool
 {
-    private static MyThread<TResult>[] arrayThread;
+    private static MyThread[]? arrayThreads;
+    private static Queue<Action> tasks = new ();
     public MyThreadPool(int sizeThreads)
     {
-        arrayThread = new MyThread<TResult>[sizeThreads];
+        arrayThreads = new MyThread[sizeThreads];
         for (int i = 0; i < sizeThreads; i++)
         {
-            arrayThread[i] = new MyThread<TResult>();
+            arrayThreads[i] = new MyThread(tasks);
         }
     }
 
-    public TResult GetTask(Func<TResult> suppiler)
+    public IMyTask<TResult> Submit<TResult>(Func<TResult> suppiler)
     {
-        TResult? result;
-        while (true)
-        {
-            for (int i = 0; i < arrayThread.Length; i++)
-            {
-                if (!arrayThread[i].IsActive())
-                {
-                    var newTask = new MyTask<TResult>(suppiler);
-                    arrayThread[i].GiveTask(newTask);
-                    result = newTask.Result;
-                    newTask = null;
-                    return result;  
-                }
-            }
-        }
+        var newTask = new MyTask<TResult>(suppiler, arrayThreads, tasks);
+        tasks.Enqueue(() => newTask.StartSuppiler());
+        return newTask;
     }
 
     public void Shutdown()
     {
         int disabledThreads = 0;
-        while (disabledThreads < arrayThread.Length)
+        while (disabledThreads < arrayThreads.Length)
         {
-            for (int i = 0; i < arrayThread.Length; ++i)
+            for (int i = 0; i < arrayThreads.Length; ++i)
             {
-                if (arrayThread[i].IsAlive() && !arrayThread[i].IsActive())
+                if (arrayThreads[i].IsAlive() && !arrayThreads[i].IsActive())
                 {
-                    arrayThread[i].KillThread();
+                    arrayThreads[i].KillThread();
                     ++disabledThreads;
                 }
             }
