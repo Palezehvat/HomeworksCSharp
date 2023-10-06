@@ -61,10 +61,10 @@ public class MyThreadPool
                 }
             }
         }
-        //foreach(var thread in arrayThreads)
-        //{
-          //  thread.Join();
-        //}
+        foreach(var thread in arrayThreads)
+        {
+            thread.Join();
+        }
         stopCount = true;
     }
 }

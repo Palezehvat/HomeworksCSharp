@@ -15,7 +15,6 @@ public class Tests
         myThreadPool.Shutdown(token);
     }
 
-    /*
     [Test]
     public void ATestWithTwoTasksForTenThreads()
     {
@@ -76,5 +75,4 @@ public class Tests
         token.ThrowIfCancellationRequested();
         myThreadPool.Shutdown(token);
     }
-    */
 }
