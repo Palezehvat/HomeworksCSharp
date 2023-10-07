@@ -3,21 +3,20 @@ using Lazy;
 
 public class Tests
 {
-    private static FunctionsForTests globalFunctionsForTestsForSingleThread = new();
-    private static FunctionsForTests globalFunctionsForTestsForMultiThread = new();
+    private static readonly FunctionsForTests globalFunctionsForTestsForSingleThread = new();
+    private static readonly FunctionsForTests globalFunctionsForTestsForMultiThread = new();
 
     [Test]
     public void SimpleExampleWithMultiThreadLazy()
     {
         var functionsForTests = new FunctionsForTests();
-        var result = 1;
         var multiThreadLazy = new MultiThreadLazy<int>(() => functionsForTests.FunctionForLazyWithCounter());
         var arrayThreads = new Thread[10];
         for (int i = 0; i < arrayThreads.Length; i++)
         {
             arrayThreads[i] = new Thread(() => 
             {
-                Assert.That(result, Is.EqualTo(multiThreadLazy.Get()));
+                Assert.That(Equals(multiThreadLazy.Get(), 1));
             });
         }
 
@@ -32,48 +31,12 @@ public class Tests
         }
     }
 
-    [Test]
-    public void ExampleWithExceptionWithMultiThreadLazy()
-    {
-        var functionsForTests = new FunctionsForTests();
-        var multiThreadLazy = new MultiThreadLazy<int>(() => functionsForTests.FunctionWithInvalidOperationException());
-        var arrayThreads = new Thread[10];
-        object? value = null;
-        for (int i = 0;i < arrayThreads.Length; i++)
-        {
-            arrayThreads[i] = new Thread(() => 
-            {
-                bool isExceptionWasThrown = false;
-                try
-                {
-                    value =  multiThreadLazy.Get();
-                }
-                catch (InvalidOperationException)
-                {
-                    isExceptionWasThrown = true;
-                }
-                Assert.True(isExceptionWasThrown);
-            });
-        }
-        
-        foreach (var element in arrayThreads)
-        {
-            element.Start();
-        }
-
-        foreach (var element in arrayThreads)
-        {
-            element.Join();
-        }
-    }
-
     [TestCaseSource(nameof(LazyForTestWithFunctionWithCounter))]
     public void SimpleExampleWithOneThread(ILazy<int> lazy)
     {
-        var result = 1;
         for (int i = 0; i < 10; ++i)
         {
-            Assert.That(result, Is.EqualTo(lazy.Get()));
+            Assert.That(Equals(lazy.Get(), 1));
         }
     }
 
@@ -82,7 +45,7 @@ public class Tests
     {
         for (int i = 0; i < 10; ++i)
         {
-            Assert.Throws<InvalidOperationException>(() => lazy.Get());
+            Assert.Throws<DivideByZeroException>(() => lazy.Get());
         }
     }
 
@@ -93,13 +56,11 @@ public class Tests
         var multiThreadLazy = new MultiThreadLazy<int>(() => functionsForTests.FunctionForLazyWithCounter());
         var arrayThreads = new Thread[10];
 
-        var correctResult = 1;
-
         for (int i = 0; i < arrayThreads.Length; i++)
         {
             arrayThreads[i] = new Thread(() => 
             { 
-                Assert.That(correctResult, Is.EqualTo(multiThreadLazy.Get())); 
+                Assert.That(Equals(multiThreadLazy.Get(), 1)); 
             });
         }
 

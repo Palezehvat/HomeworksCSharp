@@ -2,8 +2,8 @@
 
 public class MultiThreadLazy<T> : ILazy<T>
 {
-    private Func<T> supplier;
-    private Object objectLock = new ();
+    private Func<T>? supplier;
+    private readonly Object objectLock = new ();
     private volatile bool isCalculated = false;
     private T? resultSuppiler;
     private Exception? exceptionSuppiler = default;
@@ -26,16 +26,23 @@ public class MultiThreadLazy<T> : ILazy<T>
                 {
                     try
                     {
-                        resultSuppiler = supplier();
-                        supplier = null;
+                        if (supplier == null)
+                        {
+                            resultSuppiler = default;
+                        }
+                        else
+                        {
+                            resultSuppiler = supplier();
+                        }
                     }
                     catch (Exception ex)
                     {
                         exceptionSuppiler = ex;
                     }
-                    if (exceptionSuppiler != default)
+                    finally
                     {
-                        throw exceptionSuppiler;
+                        supplier = null;
+                        GC.Collect();
                     }
                     isCalculated = true;
                 }

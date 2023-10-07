@@ -2,7 +2,7 @@
 
 public class SingleThreadLazy<T> : ILazy<T>
 {
-    private Func<T> supplier;
+    private Func<T>? supplier;
     private bool isCalculated = false;
     private T? resultSuppiler;
     private Exception? exceptionFromSuppiler = default;
@@ -19,29 +19,32 @@ public class SingleThreadLazy<T> : ILazy<T>
     {
         if (!isCalculated)
         {
-            isCalculated = true;
             try
             {
-                resultSuppiler = supplier();
+                if (supplier == null)
+                {
+                    resultSuppiler = default;
+                }
+                else
+                {
+                    resultSuppiler = supplier();
+                }
+            }
+            catch (Exception ex)
+            {
+                exceptionFromSuppiler = ex;
+            }
+            finally
+            {
                 supplier = null;
+                GC.Collect();
             }
-            catch (Exception exception)
-            {
-                exceptionFromSuppiler = exception;
-            }
-            if (exceptionFromSuppiler != default)
-            {
-                throw exceptionFromSuppiler;
-            }
-            return resultSuppiler;
+            isCalculated = true;
         }
-        else
+        if (exceptionFromSuppiler != default)
         {
-            if (exceptionFromSuppiler != default)
-            {
-                throw exceptionFromSuppiler;
-            }
-            return resultSuppiler;
+            throw exceptionFromSuppiler;
         }
+        return resultSuppiler;
     }
 }

@@ -1,12 +1,12 @@
 ﻿namespace Lazy;
 
 /// <summary>
-/// The class implements, Gets the created object
+/// The class implements an object whose function is called only once.
 /// </summary>
 public interface ILazy<T>
 {
     /// <summary>
-    /// Getting the created object
+    /// Gets the created object.
     /// </summary>
     T? Get();
 }
