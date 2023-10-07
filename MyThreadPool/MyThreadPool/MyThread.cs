@@ -1,4 +1,6 @@
-﻿namespace MyThreadPool;
+﻿using System.Diagnostics;
+
+namespace MyThreadPool;
 
 /// <summary>
 /// A class of native threads responsible for executing tasks
@@ -51,7 +53,7 @@ public class MyThread
                 {
                      if (tasks.Count != 0)
                      {
-                        task = tasks.Dequeue();
+                        tasks.TryDequeue(out task);
                      }
                      isActive = true;
                 }
@@ -95,7 +97,7 @@ public class MyThread
     /// </summary>
     public void Join()
     {
-        while (thread.IsAlive) { }
+        while (isAlive) { }
         thread.Join();
     }
 }

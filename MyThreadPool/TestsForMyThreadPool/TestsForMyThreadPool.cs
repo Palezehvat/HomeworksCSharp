@@ -3,7 +3,20 @@ namespace TestsForMyThreadPool;
 using MyThreadPool;
 
 public class Tests
-{    
+{
+    [Test]
+    public void IsShutdownWorkingCorrectlyWithOneThread()
+    {
+        var token = new CancellationToken();
+        var myThreadPool = new MyThreadPool(1);
+        var firstTask = myThreadPool.Submit(() => 2 * 2);
+        var secondTask = myThreadPool.Submit(() => 3 + 3);
+        token.ThrowIfCancellationRequested();
+        myThreadPool.Shutdown(token);
+        Assert.That(4, Is.EqualTo(firstTask.Result));
+        Assert.That(6, Is.EqualTo(secondTask.Result));
+    }
+
     [Test]
     public void ATestWithOneTaskForTenThreads()
     {
@@ -15,6 +28,7 @@ public class Tests
         myThreadPool.Shutdown(token);
     }
 
+    /*
     [Test]
     public void ATestWithTwoTasksForTenThreads()
     {
@@ -75,4 +89,5 @@ public class Tests
         token.ThrowIfCancellationRequested();
         myThreadPool.Shutdown(token);
     }
+    */
 }

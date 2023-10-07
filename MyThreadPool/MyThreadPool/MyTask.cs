@@ -1,4 +1,6 @@
-﻿namespace MyThreadPool;
+﻿using System.Diagnostics;
+
+namespace MyThreadPool;
 
 /// <summary>
 /// A class for creating tasks
@@ -20,7 +22,7 @@ public class MyTask<TResult> : IMyTask<TResult>
     public MyTask(Func<TResult> suppiler, MyThread[] arrayThreads, Queue<Action> queueWithTasks, Object locker, bool stopCount)
     {
         this.suppiler = suppiler;
-        queueWithContinueWithTasks = new ();
+        queueWithContinueWithTasks = new();
         this.arrayThreads = arrayThreads;
         this.queueWithTasks = queueWithTasks;
         this.locker = locker;

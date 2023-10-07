@@ -6,8 +6,8 @@
 public class MyThreadPool
 {
     private static MyThread[]? arrayThreads;
-    private static Queue<Action> tasks = new ();
-    private CancellationToken token = new ();
+    private static Queue<Action> tasks = new();
+    private CancellationToken token = new();
     private Object lockerForThreads;
     private Object lockerForTasks;
     private volatile bool stopCount = false;
@@ -17,8 +17,8 @@ public class MyThreadPool
     /// </summary>
     public MyThreadPool(int sizeThreads)
     {
-        lockerForThreads = new ();
-        lockerForTasks = new ();
+        lockerForThreads = new();
+        lockerForTasks = new();
         if (sizeThreads <= 0)
         {
             throw new ArgumentOutOfRangeException();
