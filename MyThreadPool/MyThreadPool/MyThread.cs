@@ -8,21 +8,21 @@ namespace MyThreadPool;
 public class MyThread
 {
     private volatile bool isActive = false;
-    private volatile bool isAlive = true;
     private Thread? thread;
     private volatile Queue<Action> tasks;
+    private volatile bool isAlive = true;
     private Object locker;
-    private CancellationToken token;
+    private CancellationTokenSource token;
 
     /// <summary>
     /// Task-based custom thread constructor
     /// </summary>
-    public MyThread(Queue<Action> tasks, CancellationToken token, object locker)
+    public MyThread(Queue<Action> tasks, CancellationTokenSource token, object locker)
     {
         this.tasks = tasks;
         this.token = token;
         this.locker = locker;
-        thread = new Thread(() => EternalCycle());
+        thread = new Thread(EternalCycle);
         thread.Start();
     }
 
@@ -40,15 +40,18 @@ public class MyThread
     private void EternalCycle()
     {
         Action? task = null;
-        while (isAlive)
+        while (!token.IsCancellationRequested)
         {
-            while (tasks.Count == 0 && isAlive) { }
-            if (token.IsCancellationRequested)
+            while (!(tasks.Count == 0))
             {
-                break;
-            }
-            if (isAlive)
-            {
+                if (token.IsCancellationRequested)
+                {
+                    lock (locker)
+                    {
+                        isAlive = false;
+                        return;
+                    }
+                }
                 lock (locker)
                 {
                      if (tasks.Count != 0)
@@ -74,20 +77,14 @@ public class MyThread
                 task = null;
             }
         }
+        lock (locker)
+        {
+            isAlive = false;
+            return;
+        }
     }
 
-    /// <summary>
-    /// Eliminating threads
-    /// </summary>
-    public void KillThread()
-    {
-        isAlive = false;
-    }
-
-    /// <summary>
-    /// Checking whether the thread is alive
-    /// </summary>
-    public bool IsAlive()
+    public bool GetIsAlive()
     {
         return isAlive;
     }
@@ -97,7 +94,11 @@ public class MyThread
     /// </summary>
     public void Join()
     {
-        while (isAlive) { }
+        if (thread == null)
+        {
+            throw new ArgumentNullException(nameof(thread));
+        }
+        
         thread.Join();
     }
 }

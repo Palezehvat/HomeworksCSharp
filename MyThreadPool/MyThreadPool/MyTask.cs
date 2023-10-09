@@ -7,33 +7,33 @@ namespace MyThreadPool;
 /// </summary>
 public class MyTask<TResult> : IMyTask<TResult>
 {
-    private Func<TResult>? suppiler;
+    private readonly Func<TResult>? suppiler;
     private volatile bool isCompleted = false;
     private TResult? result;
-    private Queue<Action> queueWithContinueWithTasks;
-    private MyThread[] arrayThreads;
-    private Queue<Action> queueWithTasks;
-    private Object locker;
-    private volatile bool stopCount;
+    private readonly Queue<Action> queueWithContinueWithTasks;
+    private readonly MyThread[] arrayThreads;
+    private readonly Queue<Action> queueWithTasks;
+    private readonly Object locker;
+    private CancellationTokenSource token;
 
     /// <summary>
     /// Constructor for creating a task
     /// </summary>
-    public MyTask(Func<TResult> suppiler, MyThread[] arrayThreads, Queue<Action> queueWithTasks, Object locker, bool stopCount)
+    public MyTask(Func<TResult> suppiler, MyThread[] arrayThreads, Queue<Action> queueWithTasks, Object locker, CancellationTokenSource token)
     {
         this.suppiler = suppiler;
         queueWithContinueWithTasks = new();
         this.arrayThreads = arrayThreads;
         this.queueWithTasks = queueWithTasks;
         this.locker = locker;
-        this.stopCount = stopCount;
+        this.token = token;
     }
 
     public TResult? Result
     {
         get
         {
-            while (!isCompleted && !stopCount) {}
+            while (!isCompleted && !token.IsCancellationRequested) {}
             return result;
         }
     }
@@ -71,7 +71,7 @@ public class MyTask<TResult> : IMyTask<TResult>
 
     public IMyTask<TNewResult> ContinueWith<TNewResult>(Func<TResult, TNewResult> suppiler)
     {
-        var newTask = new MyTask<TNewResult>(() => suppiler(Result), arrayThreads, queueWithTasks, locker, stopCount);
+        var newTask = new MyTask<TNewResult>(() => suppiler(Result), arrayThreads, queueWithTasks, locker, token);
         lock(locker)
         {
             if (IsCompleted)

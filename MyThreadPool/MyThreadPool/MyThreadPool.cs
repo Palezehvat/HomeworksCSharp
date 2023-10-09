@@ -5,11 +5,11 @@
 /// </summary>
 public class MyThreadPool
 {
-    private static MyThread[]? arrayThreads;
-    private static Queue<Action> tasks = new();
-    private CancellationToken token = new();
-    private Object lockerForThreads;
-    private Object lockerForTasks;
+    private readonly MyThread[]? arrayThreads;
+    private readonly Queue<Action> tasks = new();
+    private readonly CancellationTokenSource token = new();
+    private readonly Object lockerForThreads;
+    private readonly Object lockerForTasks;
     private volatile bool stopCount = false;
 
     /// <summary>
@@ -35,7 +35,11 @@ public class MyThreadPool
     /// </summary>
     public IMyTask<TResult> Submit<TResult>(Func<TResult> suppiler)
     {
-        var newTask = new MyTask<TResult>(suppiler, arrayThreads, tasks, lockerForTasks, stopCount);
+        if (arrayThreads == null)
+        {
+            throw new ArgumentNullException();
+        }
+        var newTask = new MyTask<TResult>(suppiler, arrayThreads, tasks, lockerForTasks, token);
         tasks.Enqueue(() => newTask.StartSuppiler());
         return newTask;
     }
@@ -43,24 +47,24 @@ public class MyThreadPool
     /// <summary>
     /// Interrupts the processing of tasks that are not started do not begin, and those that are started are being completed
     /// </summary>
-    public void Shutdown(CancellationToken tokenFromUser)
+    public void Shutdown()
     {
-        if (tokenFromUser.IsCancellationRequested)
+        if (arrayThreads == null)
         {
-            token.ThrowIfCancellationRequested();
+            throw new ArgumentNullException(nameof(arrayThreads));
         }
-        int disabledThreads = 0;
-        while (disabledThreads < arrayThreads.Length)
+        token.Cancel();
+        
+        if (token.IsCancellationRequested)
         {
-            for (int i = 0; i < arrayThreads.Length; ++i)
-            {
-                if (arrayThreads[i].IsAlive() && !arrayThreads[i].IsActive())
-                {
-                    arrayThreads[i].KillThread();
-                    ++disabledThreads;
-                }
-            }
+            ;
         }
+
+        for (int i = 0; i < arrayThreads.Length; ++i)
+        {
+            while (arrayThreads[i].GetIsAlive()) {}
+        }
+
         foreach(var thread in arrayThreads)
         {
             thread.Join();
