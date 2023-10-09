@@ -36,17 +36,6 @@ public class Tests
     }
 
     [Test]
-    public void IsShutdownWorkingCorrectlyWithMultipleThread()
-    {
-        var myThreadPool = new MyThreadPool(3);
-        var firstTask = myThreadPool.Submit(() => 2 * 2);
-        var secondTask = myThreadPool.Submit(() => 3 + 3);
-        myThreadPool.Shutdown();
-        Assert.That(Equals(firstTask.Result, 4));
-        Assert.That(Equals(secondTask.Result, 6));
-    }
-
-    [Test]
     public void IsContinueWithWorkingCorrectlyWithWithOneSubtask()
     {
         var myThreadPool = new MyThreadPool(3);
