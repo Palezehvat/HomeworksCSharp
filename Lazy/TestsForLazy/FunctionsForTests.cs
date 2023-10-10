@@ -23,6 +23,6 @@ public class FunctionsForTests
     public int FunctionWithInvalidOperationException()
     {
         var firstNumber = 1;
-        return 1 / 0;
+        return firstNumber / 0;
     }
 }
