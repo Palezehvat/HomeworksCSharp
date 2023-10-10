@@ -21,11 +21,7 @@ public class SingleThreadLazy<T> : ILazy<T>
         {
             try
             {
-                if (supplier == null)
-                {
-                    resultSuppiler = default;
-                }
-                else
+                if (supplier != null)
                 {
                     resultSuppiler = supplier();
                 }
