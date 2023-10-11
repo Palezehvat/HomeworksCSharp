@@ -20,15 +20,22 @@ public static class StandartDeviationAndMathExpectation
         return Math.Round(Math.Sqrt(summaryForStandartDeviation / (n - 1)), 7);
     }
 
-    private static double GetMathExpectation(int[][] firstMatrix, int[][] secondMatrix, int[][] correctMatrix,
-                                       double[] arrayForStandardDeviation, int n, int sizeThreads)
+    private static double GetMathExpectation(int[][] firstMatrix, int[][] secondMatrix,
+                                       double[] arrayForStandardDeviation, int n, bool isConsistentMultiply)
     {
         double summary = 0;
         for (int i = 0; i < n; i++)
         {
             var stopWatch = new Stopwatch();
             stopWatch.Start();
-            var resultMatrix = Matrix.Multiply(firstMatrix, secondMatrix);
+            if (isConsistentMultiply)
+            {
+                var resultMatrix = Matrix.ConsistentMultiply(firstMatrix, secondMatrix);
+            }
+            else
+            {
+                var resultMatrix = Matrix.Multiply(firstMatrix, secondMatrix);
+            }
             stopWatch.Stop();
             arrayForStandardDeviation[i] = stopWatch.ElapsedMilliseconds;
             summary += arrayForStandardDeviation[i];
@@ -36,278 +43,122 @@ public static class StandartDeviationAndMathExpectation
         return summary / n;
     }
 
-    private static void MultiplyMatricesOfSizeThreeByThree(string filePath)
+    private static void MultiplyMatricesOfSizeTwoHundredAndFiftyByTwoHundredAndFifty(string filePath)
     {
-        var sizeThreads = Environment.ProcessorCount;
-        var listOfValues = new List<int[]> 
+        var listOfValuesFirstMatrix = new List<int[]> { };
+        var listOfValuesSecondMatrix = new List<int[]> { };
+
+        for (int i = 0; i < 250; i++)
         {
-            new int[3] { 1, 2, 3 },
-            new int[3] { 4, 5, 6 },
-            new int[3] { 7, 8, 9 },
-        };
+            listOfValuesFirstMatrix.Add(new int[250]);
+            listOfValuesSecondMatrix.Add(new int[250]);
+            for (int j = 0; j < 250; ++j)
+            {
+                listOfValuesFirstMatrix[i][j] = 1;
+                listOfValuesSecondMatrix[i][j] = 1;
+            }
+        }
 
-        var listOfCorrectValues = new List<int[]> 
-        {
-            new int[3] { 30, 36, 42 },
-            new int[3] { 66, 81, 96 },
-            new int[3] { 102, 126, 150 },
-        };
+        var firstMatrix = Matrix.Create(250, 250, listOfValuesFirstMatrix);
+        var secondMatrix = Matrix.Create(250, 250, listOfValuesSecondMatrix);
 
-        var firstMatrix = Matrix.Create(3, 3, listOfValues);
-        var secondMatrix = Matrix.Create(3, 3, listOfValues);
-        var correctMatrix = Matrix.Create(3, 3, listOfCorrectValues);
-
-        var arrayForStandardDeviation = new double[n];
-        double mathExpectation = GetMathExpectation(firstMatrix, secondMatrix, correctMatrix,
-                                              arrayForStandardDeviation, n, sizeThreads);
-        var standardDeviation = GetStandartDeviation(n, arrayForStandardDeviation, mathExpectation);
+        var arrayForStandardDeviationMultiThreaded = new double[n];
+        var arrayForStandardDeviationSingleThreaded = new double[n];
+        double mathExpectationMultiThreaded = GetMathExpectation(firstMatrix, secondMatrix,
+                                              arrayForStandardDeviationMultiThreaded, n, false);
+        double mathExpectationSingleThreaded = GetMathExpectation(firstMatrix, secondMatrix,
+                                              arrayForStandardDeviationSingleThreaded, n, true);
+        var standardDeviationMultiThreaded = GetStandartDeviation(n, arrayForStandardDeviationMultiThreaded, mathExpectationMultiThreaded);
+        var standardDeviationSingleThreaded = GetStandartDeviation(n, arrayForStandardDeviationSingleThreaded, mathExpectationSingleThreaded);
         var streamForWrite = new StreamWriter(filePath, true);
-        streamForWrite.Write("3x3 и 3x3\t\t");
-        streamForWrite.Write(mathExpectation);
-        streamForWrite.Write("\t\t");
-        streamForWrite.WriteLine(standardDeviation);
+        streamForWrite.Write("250x250\nи 250x250\t\t");
+        streamForWrite.Write(mathExpectationMultiThreaded);
+        streamForWrite.Write("\t\t\t\t\t\t\t\t\t\t");
+        streamForWrite.Write(standardDeviationMultiThreaded);
+        streamForWrite.Write("\t\t\t\t\t\t");
+        streamForWrite.Write(mathExpectationSingleThreaded);
+        streamForWrite.Write("\t\t\t\t\t\t\t");
+        streamForWrite.WriteLine(standardDeviationSingleThreaded);
         streamForWrite.Write('\n');
         streamForWrite.Close();
     }
 
     private static void MultiplyMatricesOfBigSize(string filePath)
     {
-        var sizeThreads = Environment.ProcessorCount;
-
         var listOfValuesFirstMatrix = new List<int[]> { };
         var listOfValuesSecondMatrix = new List<int[]> { };
-        var listOfCorrectValues = new List<int[]> { };
 
         for (int i = 0; i < 10000; i++)
         {
             listOfValuesFirstMatrix.Add(new int[10000]);
             listOfValuesSecondMatrix.Add(new int[1]);
-            listOfCorrectValues.Add(new int[1]);
             for (int j = 0; j < 10000; ++j)
             {
                 listOfValuesFirstMatrix[i][j] = 1;
             }
             listOfValuesSecondMatrix[i][0] = 1;
-            listOfCorrectValues[i][0] = 10000;
         }
 
         var firstMatrix = Matrix.Create(10000, 10000, listOfValuesFirstMatrix);
         var secondMatrix = Matrix.Create(10000, 1, listOfValuesSecondMatrix);
-        var correctMatrix = Matrix.Create(10000, 1, listOfCorrectValues);
 
-        var arrayForStandardDeviation = new double[n];
-        double mathExpectation = GetMathExpectation(firstMatrix, secondMatrix, correctMatrix,
-                                              arrayForStandardDeviation, n, sizeThreads);
-        var standardDeviation = GetStandartDeviation(n, arrayForStandardDeviation, mathExpectation);
+        var arrayForStandardDeviationMultiThreaded = new double[n];
+        var arrayForStandardDeviationSingleThreaded = new double[n];
+        double mathExpectationMultiThreaded = GetMathExpectation(firstMatrix, secondMatrix,
+                                              arrayForStandardDeviationMultiThreaded, n, false);
+        double mathExpectationSingleThreaded = GetMathExpectation(firstMatrix, secondMatrix,
+                                              arrayForStandardDeviationSingleThreaded, n, true);
+        var standardDeviationMultiThreaded = GetStandartDeviation(n, arrayForStandardDeviationMultiThreaded, mathExpectationMultiThreaded);
+        var standardDeviationSingleThreaded = GetStandartDeviation(n, arrayForStandardDeviationSingleThreaded, mathExpectationSingleThreaded);
         var streamForWrite = new StreamWriter(filePath, true);
         streamForWrite.Write("10000x10000\nи 10000x1\t\t");
-        streamForWrite.Write(mathExpectation);
-        streamForWrite.Write("\t\t");
-        streamForWrite.WriteLine(standardDeviation);
-        streamForWrite.Write('\n');
-        streamForWrite.Close();
-    }
-
-    private static void MultiplyMatricesOfDifferentSizes(string filePath)
-    {
-        var sizeThreads = Environment.ProcessorCount;
-        var listOfValuesFirstMatrix = new List<int[]>
-        {
-            new int[3] { 1, 2, 3 },
-            new int[3] { 4, 5, 6 },
-            new int[3] { 7, 8, 9 },
-        };
-
-        var listOfValuesSecondMatrix = new List<int[]>
-        {
-            new int[1] { 1 },
-            new int[1] { 2 },
-            new int[1] { 3 },
-        };
-
-        var listOfCorrectValues = new List<int[]>
-        {
-            new int[1] { 14 },
-            new int[1] { 32 },
-            new int[1] { 50 },
-        };
-
-        var firstMatrix = Matrix.Create(3, 3, listOfValuesFirstMatrix);
-        var secondMatrix = Matrix.Create(3, 1, listOfValuesSecondMatrix);
-        var correctMatrix = Matrix.Create(3, 1, listOfCorrectValues);
-
-        var arrayForStandardDeviation = new double[n];
-        double mathExpectation = GetMathExpectation(firstMatrix, secondMatrix, correctMatrix,
-                                              arrayForStandardDeviation, n, sizeThreads);
-        var standardDeviation = GetStandartDeviation(n, arrayForStandardDeviation, mathExpectation);
-        var streamForWrite = new StreamWriter(filePath, true);
-        streamForWrite.Write("3x3 и 3x1\t\t");
-        streamForWrite.Write(mathExpectation);
-        streamForWrite.Write("\t\t");
-        streamForWrite.WriteLine(standardDeviation);
-        streamForWrite.Write('\n');
-        streamForWrite.Close();
-    }
-
-    private static void MultiplyOfNotSquareMatrices(string filePath)
-    {
-        var sizeThreads = Environment.ProcessorCount;
-
-        var listOfValuesFirstMatrix = new List<int[]>
-        {
-            new int[5] { 1, 2, 3, 4, 5 },
-            new int[5] { 6, 7, 8, 9, 10 },
-        };
-
-        var listOfValuesSecondMatrix = new List<int[]>
-        {
-            new int[1] { 1 },
-            new int[1] { 2 },
-            new int[1] { 3 },
-            new int[1] { 4 },
-            new int[1] { 5 },
-        };
-
-        var listOfCorrectValues = new List<int[]>
-        {
-            new int[1] { 55 },
-            new int[1] { 130 },
-        };
-
-        var firstMatrix = Matrix.Create(2, 5, listOfValuesFirstMatrix);
-        var secondMatrix = Matrix.Create(5, 1, listOfValuesSecondMatrix);
-        var correctMatrix = Matrix.Create(2, 1, listOfCorrectValues);
-
-        var arrayForStandardDeviation = new double[n];
-        double mathExpectation = GetMathExpectation(firstMatrix, secondMatrix, correctMatrix,
-                                              arrayForStandardDeviation, n, sizeThreads);
-        var standardDeviation = GetStandartDeviation(n, arrayForStandardDeviation, mathExpectation);
-        var streamForWrite = new StreamWriter(filePath, true);
-        streamForWrite.Write("2x5 и 5x1\t\t");
-        streamForWrite.Write(mathExpectation);
-        streamForWrite.Write("\t\t");
-        streamForWrite.WriteLine(standardDeviation);
-        streamForWrite.Write('\n');
-        streamForWrite.Close();
-    }
-
-    private static void MultiplyMatricesWithNegativeNumbers(string filePath)
-    {
-        var sizeThreads = Environment.ProcessorCount;
-
-        var listOfValuesFirstMatrix = new List<int[]>
-        {
-            new int[5] { 1, 2, -3, 4, 5 },
-            new int[5] { 6, -7, 8, 9, 10 },
-        };
-
-        var listOfValuesSecondMatrix = new List<int[]>
-        {
-            new int[1] { 1 },
-            new int[1] { 2 },
-            new int[1] { 3 },
-            new int[1] { -4 },
-            new int[1] { 5 },
-        };
-
-        var listOfCorrectValues = new List<int[]>
-        {
-            new int[1] { 5 },
-            new int[1] { 30 },
-        };
-
-        var firstMatrix = Matrix.Create(2, 5, listOfValuesFirstMatrix);
-        var secondMatrix = Matrix.Create(5, 1, listOfValuesSecondMatrix);
-        var correctMatrix = Matrix.Create(2, 1, listOfCorrectValues);
-
-        var arrayForStandardDeviation = new double[n];
-        double mathExpectation = GetMathExpectation(firstMatrix, secondMatrix, correctMatrix,
-                                              arrayForStandardDeviation, n, sizeThreads);
-        var standardDeviation = GetStandartDeviation(n, arrayForStandardDeviation, mathExpectation);
-        var streamForWrite = new StreamWriter(filePath, true);
-        streamForWrite.Write("2x5 и 5x1 с \nотрицательными\n числами\t\t");
-        streamForWrite.Write(mathExpectation);
-        streamForWrite.Write("\t\t");
-        streamForWrite.WriteLine(standardDeviation);
-        streamForWrite.Write('\n');
-        streamForWrite.Close();
-    }
-
-    private static void MultiplyMatricesWithZero(string filePath)
-    {
-        var sizeThreads = Environment.ProcessorCount;
-        var listOfValuesFirstMatrix = new List<int[]> 
-        {
-            new int[5] { 1, 2, 0, 4, 5 },
-            new int[5] { 6, 0, 8, 9, 10 },
-        };
-
-        var listOfValuesSecondMatrix = new List<int[]>
-        {
-            new int[1] { 1 },
-            new int[1] { 2 },
-            new int[1] { 0 },
-            new int[1] { 0 },
-            new int[1] { 5 },
-        };
-
-        var listOfCorrectValues = new List<int[]> 
-        {
-            new int[1] { 30 },
-            new int[1] { 56 },
-        };
-
-        var firstMatrix = Matrix.Create(2, 5, listOfValuesFirstMatrix);
-        var secondMatrix = Matrix.Create(5, 1, listOfValuesSecondMatrix);
-        var correctMatrix = Matrix.Create(2, 1, listOfCorrectValues);
-
-        var arrayForStandardDeviation = new double[n];
-        double mathExpectation = GetMathExpectation(firstMatrix, secondMatrix, correctMatrix,
-                                              arrayForStandardDeviation, n, sizeThreads);
-        var standardDeviation = GetStandartDeviation(n, arrayForStandardDeviation, mathExpectation);
-        var streamForWrite = new StreamWriter(filePath, true);
-        streamForWrite.Write("2x5 и 5x1 с\n нулями\t\t\t");
-        streamForWrite.Write(mathExpectation);
-        streamForWrite.Write("\t\t");
-        streamForWrite.WriteLine(standardDeviation);
+        streamForWrite.Write(mathExpectationMultiThreaded);
+        streamForWrite.Write("\t\t\t\t\t\t\t\t\t\t");
+        streamForWrite.Write(standardDeviationMultiThreaded);
+        streamForWrite.Write("\t\t\t\t\t\t");
+        streamForWrite.Write(mathExpectationSingleThreaded);
+        streamForWrite.Write("\t\t\t\t\t\t\t");
+        streamForWrite.WriteLine(standardDeviationSingleThreaded);
         streamForWrite.Write('\n');
         streamForWrite.Close();
     }
 
     private static void MultiplyMatricesOfFiveHundredOnFiveHundredSize(string filePath)
     {
-        var sizeThreads = Environment.ProcessorCount;
-
         var listOfValuesFirstMatrix = new List<int[]> { };
         var listOfValuesSecondMatrix = new List<int[]> { };
-        var listOfCorrectValues = new List<int[]> { };
 
         for (int i = 0; i < 500; i++)
         {
             listOfValuesFirstMatrix.Add(new int[500]);
             listOfValuesSecondMatrix.Add(new int[500]);
-            listOfCorrectValues.Add(new int[500]);
             for (int j = 0; j < 500; ++j)
             {
                 listOfValuesFirstMatrix[i][j] = 1;
                 listOfValuesSecondMatrix[i][j] = 1;
-                listOfCorrectValues[i][j] = 500;
             }
         }
 
         var firstMatrix = Matrix.Create(500, 500, listOfValuesFirstMatrix);
         var secondMatrix = Matrix.Create(500, 500, listOfValuesSecondMatrix);
-        var correctMatrix = Matrix.Create(500, 500, listOfCorrectValues);
 
-        var arrayForStandardDeviation = new double[n];
-        double mathExpectation = GetMathExpectation(firstMatrix, secondMatrix, correctMatrix,
-                                              arrayForStandardDeviation, n, sizeThreads);
-        var standardDeviation = GetStandartDeviation(n, arrayForStandardDeviation, mathExpectation);
+        var arrayForStandardDeviationMultiThreaded = new double[n];
+        var arrayForStandardDeviationSingleThreaded = new double[n];
+        double mathExpectationMultiThreaded = GetMathExpectation(firstMatrix, secondMatrix,
+                                              arrayForStandardDeviationMultiThreaded, n, false);
+        double mathExpectationSingleThreaded = GetMathExpectation(firstMatrix, secondMatrix,
+                                              arrayForStandardDeviationSingleThreaded, n, true);
+        var standardDeviationMultiThreaded = GetStandartDeviation(n, arrayForStandardDeviationMultiThreaded, mathExpectationMultiThreaded);
+        var standardDeviationSingleThreaded = GetStandartDeviation(n, arrayForStandardDeviationSingleThreaded, mathExpectationSingleThreaded);
         var streamForWrite = new StreamWriter(filePath, true);
         streamForWrite.Write("500x500\nи 500x500\t\t");
-        streamForWrite.Write(mathExpectation);
-        streamForWrite.Write("\t\t");
-        streamForWrite.WriteLine(standardDeviation);
+        streamForWrite.Write(mathExpectationMultiThreaded);
+        streamForWrite.Write("\t\t\t\t\t\t\t\t\t\t");
+        streamForWrite.Write(standardDeviationMultiThreaded);
+        streamForWrite.Write("\t\t\t\t\t\t");
+        streamForWrite.Write(mathExpectationSingleThreaded);
+        streamForWrite.Write("\t\t\t\t\t\t\t");
+        streamForWrite.WriteLine(standardDeviationSingleThreaded);
         streamForWrite.Write('\n');
         streamForWrite.Close();
     }
@@ -320,16 +171,17 @@ public static class StandartDeviationAndMathExpectation
     {
         var streamForWrite = new StreamWriter(filePath);
         streamForWrite.Write("В файле представлены: математическое ожидание и среднеквадратичное отклонение\n");
-        streamForWrite.WriteLine("--------------------------------------------------------------------------");
-        streamForWrite.Write("Размеры матриц\tМатематическое ожидание\tСреднеквадратичное отклонение\n");
-        streamForWrite.WriteLine("---------------------------------------------------------------------");
+        streamForWrite.WriteLine("-----------------------------------------------------------------------------");
+        streamForWrite.Write("Размеры матриц\tМатематическое ожидание с использованием многопоточности\t" +
+                             "Среднеквадратичное отклонение с использованием многопотчности" +
+                             "\tМатематическое ожидание без использования\tСреднеквадратическое " +
+                             "отклонение без использования\n");
+        streamForWrite.WriteLine("--------------------------------------------------------------------------------" +
+                                 "--------------------------------------------------------------------------------" +
+                                 "---------------------------------------------------------------------------------");
         streamForWrite.Close();
-        MultiplyMatricesOfSizeThreeByThree(filePath);
+        MultiplyMatricesOfSizeTwoHundredAndFiftyByTwoHundredAndFifty(filePath);
         MultiplyMatricesOfBigSize(filePath);
-        MultiplyMatricesOfDifferentSizes(filePath);
-        MultiplyOfNotSquareMatrices(filePath);
-        MultiplyMatricesWithNegativeNumbers(filePath);
-        MultiplyMatricesWithZero(filePath);
         MultiplyMatricesOfFiveHundredOnFiveHundredSize(filePath);
     }
 }

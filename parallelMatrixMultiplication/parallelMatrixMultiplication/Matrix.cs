@@ -174,7 +174,6 @@ public static class Matrix
         {
             thread.Join();
         }
-       
 
         return resultMatrix;
     }
