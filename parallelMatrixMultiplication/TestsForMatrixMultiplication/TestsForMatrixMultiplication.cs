@@ -25,7 +25,7 @@ public class Tests
         var secondMatrix = Matrix.Create(3, 3, listOfValues);
         var correctMatrix = Matrix.Create(3, 3, listOfCorrectValues);
 
-        var resultMatrix = Matrix.Multiply(firstMatrix, secondMatrix);
+        var resultMatrix = Matrix.ParallelMultiply(firstMatrix, secondMatrix);
         Assert.True(Matrix.AreEquals(resultMatrix, correctMatrix));
     }
 
@@ -53,7 +53,7 @@ public class Tests
         var secondMatrix = Matrix.Create(10000, 1, listOfValuesSecondMatrix);
         var correctMatrix = Matrix.Create(10000, 1, listOfCorrectValues);
 
-        var resultMatrix = Matrix.Multiply(firstMatrix, secondMatrix);
+        var resultMatrix = Matrix.ParallelMultiply(firstMatrix, secondMatrix);
         Assert.True(Matrix.AreEquals(resultMatrix, correctMatrix));
     }
 
@@ -85,7 +85,7 @@ public class Tests
         var secondMatrix = Matrix.Create(3, 1, listOfValuesSecondMatrix);
         var correctMatrix = Matrix.Create(3, 1, listOfCorrectValues);
 
-        var resultMatrix = Matrix.Multiply(firstMatrix, secondMatrix);
+        var resultMatrix = Matrix.ParallelMultiply(firstMatrix, secondMatrix);
         Assert.True(Matrix.AreEquals(resultMatrix, correctMatrix));
     }
 
@@ -117,7 +117,7 @@ public class Tests
         var secondMatrix = Matrix.Create(5, 1, listOfValuesSecondMatrix);
         var correctMatrix = Matrix.Create(2, 1, listOfCorrectValues);
 
-        var resultMatrix = Matrix.Multiply(firstMatrix, secondMatrix);
+        var resultMatrix = Matrix.ParallelMultiply(firstMatrix, secondMatrix);
         Assert.True(Matrix.AreEquals(resultMatrix, correctMatrix));
     }
 
@@ -149,7 +149,7 @@ public class Tests
         var secondMatrix = Matrix.Create(5, 1, listOfValuesSecondMatrix);
         var correctMatrix = Matrix.Create(2, 1, listOfCorrectValues);
 
-        var resultMatrix = Matrix.Multiply(firstMatrix, secondMatrix);
+        var resultMatrix = Matrix.ParallelMultiply(firstMatrix, secondMatrix);
         Assert.True(Matrix.AreEquals(resultMatrix, correctMatrix));
     }
 
@@ -181,7 +181,7 @@ public class Tests
         var secondMatrix = Matrix.Create(5, 1, listOfValuesSecondMatrix);
         var correctMatrix = Matrix.Create(2, 1, listOfCorrectValues);
 
-        var resultMatrix = Matrix.Multiply(firstMatrix, secondMatrix);
+        var resultMatrix = Matrix.ParallelMultiply(firstMatrix, secondMatrix);
         Assert.True(Matrix.AreEquals(resultMatrix, correctMatrix));
     }
 
@@ -201,5 +201,23 @@ public class Tests
                                            "TestsForMatrix", "incorrectMatrix.txt"),
                                            Path.Combine(TestContext.CurrentContext.TestDirectory,
                                            "TestsForMatrix", "resultMatrix.txt")));
+    }
+
+    [Test]
+    public void CompareParalelAndConsistentMultiply()
+    {
+        var listOfValues = new List<int[]>
+        {
+            new int[3] { 1, 2, 3 },
+            new int[3] { 4, 5, 6 },
+            new int[3] { 7, 8, 9 },
+        };
+
+        var firstMatrix = Matrix.Create(3, 3, listOfValues);
+        var secondMatrix = Matrix.Create(3, 3, listOfValues);
+
+        var resultMatrixFromParallelMultiply = Matrix.ParallelMultiply(firstMatrix, secondMatrix);
+        var resultMatrixFromConsistentMultiply = Matrix.ConsistentMultiply(firstMatrix, secondMatrix);
+        Assert.True(Matrix.AreEquals(resultMatrixFromParallelMultiply, resultMatrixFromConsistentMultiply));
     }
 }

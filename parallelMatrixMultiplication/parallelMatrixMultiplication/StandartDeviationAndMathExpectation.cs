@@ -34,7 +34,7 @@ public static class StandartDeviationAndMathExpectation
             }
             else
             {
-                var resultMatrix = Matrix.Multiply(firstMatrix, secondMatrix);
+                var resultMatrix = Matrix.ParallelMultiply(firstMatrix, secondMatrix);
             }
             stopWatch.Stop();
             arrayForStandardDeviation[i] = stopWatch.ElapsedMilliseconds;

@@ -131,7 +131,7 @@ public static class Matrix
     /// Parallel matrix multiplication function
     /// </summary>
     /// <returns>Returns the calculated matrix</returns>
-    public static int[][] Multiply(int[][] firstMatrix, int[][] secondMatrix)
+    public static int[][] ParallelMultiply(int[][] firstMatrix, int[][] secondMatrix)
     {
         var resultMatrix = new int[firstMatrix.Length][];
 
@@ -234,7 +234,7 @@ public static class Matrix
     {
         var firstMatrix = ReadFromFile(firstFile);
         var secondMatrix = ReadFromFile(secondFile);
-        var resultMatrix = Multiply(firstMatrix, secondMatrix);
+        var resultMatrix = ParallelMultiply(firstMatrix, secondMatrix);
         WriteResultToFile(resultFile, resultMatrix);
     }
 
@@ -245,10 +245,10 @@ public static class Matrix
     {
         var firstMatrix = ReadFromFile(firstFile);
         var secondMatrix = ReadFromFile(secondFile);
-
+        
         var stopwatchParallelMultiplication = new Stopwatch();
         stopwatchParallelMultiplication.Start();
-        var resultMatrixFromParallelMultiplication = Multiply(firstMatrix, secondMatrix);
+        var resultMatrixFromParallelMultiplication = ParallelMultiply(firstMatrix, secondMatrix);
         stopwatchParallelMultiplication.Stop();
         
         var result = stopwatchParallelMultiplication.ElapsedMilliseconds;
