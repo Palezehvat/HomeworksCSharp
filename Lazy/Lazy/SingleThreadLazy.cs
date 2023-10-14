@@ -33,7 +33,6 @@ public class SingleThreadLazy<T> : ILazy<T>
             finally
             {
                 supplier = null;
-                GC.Collect();
             }
             isCalculated = true;
         }

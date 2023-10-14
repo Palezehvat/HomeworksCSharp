@@ -12,11 +12,18 @@ public class Tests
         var functionsForTests = new FunctionsForTests();
         var multiThreadLazy = new MultiThreadLazy<int>(() => functionsForTests.FunctionForLazyWithCounter());
         var arrayThreads = new Thread[10];
+
+        var arrayResult = new int[10];
+
         for (int i = 0; i < arrayThreads.Length; i++)
         {
+            var local = i;
             arrayThreads[i] = new Thread(() => 
             {
-                Assert.That(multiThreadLazy.Get(), Is.EqualTo(1));
+                for (var j = local; j < 10; j++)
+                {
+                    arrayResult[j] = multiThreadLazy.Get();
+                }
             });
         }
 
@@ -28,6 +35,11 @@ public class Tests
         foreach (var element in arrayThreads)
         {
             element.Join();
+        }
+
+        foreach (var element in arrayResult)
+        {
+            Assert.That(Equals(element, 1));
         }
     }
 
@@ -55,12 +67,17 @@ public class Tests
         var functionsForTests = new FunctionsForTests();
         var multiThreadLazy = new MultiThreadLazy<int>(() => functionsForTests.FunctionForLazyWithCounter());
         var arrayThreads = new Thread[10];
+        var arrayResult = new int[10];
 
         for (int i = 0; i < arrayThreads.Length; i++)
         {
+            var local = i;
             arrayThreads[i] = new Thread(() => 
-            { 
-                Assert.That(Equals(multiThreadLazy.Get(), 1)); 
+            {
+                for (var j = local; j < 10; j++)
+                {
+                    arrayResult[j] = multiThreadLazy.Get();
+                }
             });
         }
 
@@ -72,6 +89,11 @@ public class Tests
         foreach (var element in arrayThreads)
         {
             element.Join();
+        }
+
+        foreach (var element in arrayResult)
+        {
+            Assert.That(Equals(element, 1));
         }
     }
 
