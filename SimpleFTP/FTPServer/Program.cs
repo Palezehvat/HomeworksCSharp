@@ -1,9 +1,5 @@
-﻿namespace SimpleFTP;
+﻿using SimpleFTP;
 
-class Program
-{
-    static void Main()
-    {
-        var server = new SimpleFTP.Server("C:/", 8888);
-    }
-}
+Server server = new SimpleFTP.Server("C:/", 8888);
+        
+await server.Start();

@@ -1,11 +1,6 @@
-﻿using System.Diagnostics;
-using System.Diagnostics.Tracing;
-using System.Net;
-using System.Net.Http;
+﻿using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading.Tasks.Sources;
-using System.Transactions;
 
 namespace SimpleFTP;
 
@@ -14,7 +9,7 @@ public class Server
     private static string? _locate;
     private static TcpListener? _listener;
     private static List<TcpClient>? _clients;
-    private static CancellationToken _cancellationToken;
+    private static CancellationTokenSource _cancellationToken;
     private static List<Task> _tasks;
 
     public Server(string locate, int port)
@@ -25,38 +20,90 @@ public class Server
         }
         _locate = locate;
         _listener = new TcpListener(IPAddress.Any, port);
+        _cancellationToken = new CancellationTokenSource();
+        _tasks = new List<Task>();
         _clients = new List<TcpClient>();
-        _cancellationToken = new CancellationToken();
+        Console.WriteLine($"Server started on port: {port}");
     }
 
-    public static async Task<string> Start()
+    public async Task Start()
     {
+        if (_listener == null)
+        {
+            throw new ArgumentNullException(nameof(_listener));
+        }
+
+        if (_clients == null)
+        {
+            throw new ArgumentNullException(nameof(_clients));
+        }
+
+
         _listener.Start();
         try
         {
-            while (true)
+            while (!_cancellationToken.IsCancellationRequested)
             {
                 var client = await _listener.AcceptTcpClientAsync();
                 _clients.Add(client);
-                _tasks.Add(new Task(() => Listen(client)));
+                _tasks.Add(Listen(client));
             }
+
+            Task.WaitAll(_tasks.ToArray());
+            foreach (var client in _clients)
+            {
+                client.Dispose();
+                client.Close();
+            }
+
+            _tasks.Clear();
+
+            _listener.Stop();
         }
         finally
-        { 
-            _listener.Stop(); 
+        {
+            Stop(); 
         }
     }
 
-    private static async void Listen(TcpClient client)
+    private static Task Listen(TcpClient client)
     {
+        return Task.Run(async () =>
+            {
+                if (client == null)
+                {
+                    throw new ArgumentNullException("client");
+                }
 
+                var stream = client.GetStream();
+                var buffer = new byte[4096];
+                
+                if (!_cancellationToken.IsCancellationRequested)
+                {
+                    var sizeCommand = await stream.ReadAsync(buffer, 0, buffer.Length);
+                    var command = new StringBuilder();
+                    command.Append(Encoding.UTF8.GetString(buffer, 0, sizeCommand));
+                    
+                    var stringCommand = command.ToString();
+
+                    if (command[0] == '1')
+                    {
+                        List(stringCommand.TrimStart('1',' '), stream);
+                    }
+                    else
+                    {
+                        Get(stringCommand.TrimStart('2', ' '), stream);
+                    }
+                }
+            }
+        );
     }
 
     public void Stop()
     {
         if (_listener != null)
         {
-            _listener.Stop();
+            _cancellationToken.Cancel();
         }
     }
 
@@ -64,7 +111,12 @@ public class Server
     {
         Task.Run(async () =>
         {
-            var path = Path.Combine(_locate, directory);
+            if (_locate == null)
+            {
+                throw new NullReferenceException();
+            }
+
+            var path = Path.Combine(_locate, directory);//
             if (!File.Exists(path))
             {
                 await stream.WriteAsync(Encoding.UTF8.GetBytes("-1"));
@@ -80,7 +132,12 @@ public class Server
     {
         Task.Run(async () =>
         {
-            var path = Path.Combine(_locate, directory);
+            if (_locate == null)
+            {
+                throw new NullReferenceException();
+            }
+
+            var path = Path.GetFullPath(_locate, directory);
             if (!File.Exists(path))
             {
                 await stream.WriteAsync(Encoding.UTF8.GetBytes("-1"));
