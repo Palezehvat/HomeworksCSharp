@@ -1,17 +1,25 @@
-﻿using System.Net;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 
 namespace SimpleFTP;
 
+/// <summary>
+/// A class that implements an FTP server
+/// </summary>
 public class Server
 {
     private static string? _locate;
     private static TcpListener? _listener;
     private static List<TcpClient>? _clients;
-    private static CancellationTokenSource _cancellationToken;
-    private static List<Task> _tasks;
+    private static CancellationTokenSource? _cancellationToken;
+    private static List<Task>? _tasks;
 
+    /// <summary>
+    /// Class constructor
+    /// </summary>
+    /// <param name="locate">The absolute path of the server location</param>
     public Server(string locate, int port)
     {
         if (locate == null)
@@ -26,6 +34,9 @@ public class Server
         Console.WriteLine($"Server started on port: {port}");
     }
 
+    /// <summary>
+    /// Starting the server
+    /// </summary>
     public async Task Start()
     {
         if (_listener == null)
@@ -38,6 +49,15 @@ public class Server
             throw new ArgumentNullException(nameof(_clients));
         }
 
+        if (_tasks == null)
+        {
+            throw new ArgumentNullException(nameof(_tasks));
+        }
+
+        if (_cancellationToken == null)
+        {
+            throw new ArgumentNullException(nameof(_cancellationToken));
+        }
 
         _listener.Start();
         try
@@ -68,6 +88,11 @@ public class Server
 
     private static Task Listen(TcpClient client)
     {
+        if (_cancellationToken == null)
+        {
+            throw new ArgumentNullException(nameof(_cancellationToken));
+        }
+
         return Task.Run(async () =>
         {
             if (client == null)
@@ -88,20 +113,23 @@ public class Server
 
                 if (command[0] == '1')
                 {
-                    List(stringCommand.TrimStart('1', ' '), stream);
+                    List(stringCommand.TrimStart('1', ' ').TrimEnd('\n'), stream);
                 }
                 else
                 {
-                    Get(stringCommand.TrimStart('2', ' '), stream);
+                    Get(stringCommand.TrimStart('2', ' ').TrimEnd('\n'), stream);
                 }
             }
         }
         );
     }
 
+    /// <summary>
+    /// Server shutdown
+    /// </summary>
     public void Stop()
     {
-        if (_listener != null)
+        if (_listener != null && _cancellationToken != null)
         {
             _cancellationToken.Cancel();
         }
@@ -116,7 +144,10 @@ public class Server
                 throw new NullReferenceException();
             }
 
-            var path = Path.Combine(_locate, directory);//
+            string combinePath = Path.Combine(_locate, directory);
+            DirectoryInfo info = new DirectoryInfo(combinePath);
+            var path = info.FullName;
+
             if (!File.Exists(path))
             {
                 await stream.WriteAsync(Encoding.UTF8.GetBytes("-1"));
@@ -124,6 +155,7 @@ public class Server
             else
             {
                 var text = await File.ReadAllTextAsync(path);
+                text = text.Insert(0, text.Length.ToString() + " ");
                 await stream.WriteAsync(Encoding.UTF8.GetBytes(text));
             }
         });
@@ -136,22 +168,25 @@ public class Server
             {
                 throw new NullReferenceException();
             }
+            
+            string combinePath = Path.Combine(_locate, directory);
+            DirectoryInfo info = new DirectoryInfo(combinePath);
+            var path = info.FullName;
 
-            var path = Path.GetFullPath(_locate, directory);
-            if (!File.Exists(path))
+            if (!Directory.Exists(path))
             {
                 await stream.WriteAsync(Encoding.UTF8.GetBytes("-1"));
             }
             else
             {
                 var filesAndDirectories = new StringBuilder();
-                var directories = Directory.GetFiles(path);
+                var directories = Directory.GetDirectories(path);
 
                 var sizeFilesAndDirectories = directories.Length;
 
                 foreach (var directory in directories)
                 {
-                    filesAndDirectories.Append(" " + directory + " true");
+                    filesAndDirectories.Append(" " + directory.Substring(directory.LastIndexOf('\\') + 1)  + " true");
                 }
 
                 var files = Directory.GetFiles(path);
@@ -159,7 +194,7 @@ public class Server
 
                 foreach (var file in files)
                 {
-                    filesAndDirectories.Append(" " + file + "false");
+                    filesAndDirectories.Append(" " + file.Substring(file.LastIndexOf('\\') + 1) + " false");
                 }
 
                 filesAndDirectories.Append('\n');
@@ -169,24 +204,4 @@ public class Server
             }
         });
     }
-
-    /*
-    private static void Get(NetworkStream stream, TcpClient client)
-    {
-        Task.Run(async () => 
-        {
-            var writer = new StreamWriter(stream) { AutoFlush = true };
-            var allText = new StringBuilder();
-            byte[] data = new byte[512];
-            var socket = _listener.AcceptSocket();
-            int sizeData = 0;
-            do
-            {
-                sizeData = await stream.ReadAsync(data, _cancellationToken);
-                allText.Append(Encoding.UTF8.GetString(data, 0, sizeData));
-            } while (sizeData > 0);
-        });
-    }
-    */
-
 }

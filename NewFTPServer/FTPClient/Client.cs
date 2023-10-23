@@ -3,11 +3,17 @@ using System.Text;
 
 namespace SimpleFTP;
 
+/// <summary>
+/// FTP Client implementation class
+/// </summary>
 public class Client
 {
     private static int _port;
     private static string? _hostname;
 
+    /// <summary>
+    /// Class constructor
+    /// </summary>
     public Client(int port, string hostname)
     {
         _port = port;
@@ -15,6 +21,10 @@ public class Client
         Console.WriteLine("Client started!");
     }
 
+    /// <summary>
+    /// Downloading a file from the server
+    /// </summary>
+    /// <param name="filePath">The relative path of the file from the specified path on the server</param>
     public async Task<string> Get(string filePath)
     {
         if (_hostname == null)
@@ -33,6 +43,10 @@ public class Client
         return await GetResultFromStream(stream, "Get");
     }
 
+    /// <summary>
+    /// Listing files in a directory on the server
+    /// </summary>
+    /// <param name="directoryPath">The relative path of the directory from the specified path on the server</param>
     public async Task<string> List(string directoryPath)
     {
         if (_hostname == null)
@@ -40,7 +54,7 @@ public class Client
             throw new ArgumentNullException();
         }
 
-        var client = new TcpClient(directoryPath, _port);
+        var client = new TcpClient(_hostname, _port);
         var stream = client.GetStream();
 
         await stream.WriteAsync(Encoding.UTF8.GetBytes("1 " + directoryPath + "\n"));
