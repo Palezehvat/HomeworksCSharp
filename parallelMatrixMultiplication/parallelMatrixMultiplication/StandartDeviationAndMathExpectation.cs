@@ -17,7 +17,7 @@ public static class StandartDeviationAndMathExpectation
             summaryForStandartDeviation += Math.Pow(arrayForStandardDeviation[i] - mathExpectation, 2);
         }
 
-        return Math.Round(Math.Sqrt(summaryForStandartDeviation / (n - 1)), 7);
+        return Math.Round(Math.Sqrt(summaryForStandartDeviation / (n - 1)), 3);
     }
 
     private static double GetMathExpectation(int[][] firstMatrix, int[][] secondMatrix,
@@ -73,11 +73,11 @@ public static class StandartDeviationAndMathExpectation
         var streamForWrite = new StreamWriter(filePath, true);
         streamForWrite.Write("250x250\nи 250x250\t\t");
         streamForWrite.Write(mathExpectationMultiThreaded);
-        streamForWrite.Write("\t\t\t\t\t\t\t\t\t\t");
+        streamForWrite.Write("\t\t      ");
         streamForWrite.Write(standardDeviationMultiThreaded);
-        streamForWrite.Write("\t\t\t\t\t\t");
+        streamForWrite.Write("          ");
         streamForWrite.Write(mathExpectationSingleThreaded);
-        streamForWrite.Write("\t\t\t\t\t\t\t");
+        streamForWrite.Write("    ");
         streamForWrite.WriteLine(standardDeviationSingleThreaded);
         streamForWrite.Write('\n');
         streamForWrite.Close();
@@ -113,11 +113,11 @@ public static class StandartDeviationAndMathExpectation
         var streamForWrite = new StreamWriter(filePath, true);
         streamForWrite.Write("10000x10000\nи 10000x1\t\t");
         streamForWrite.Write(mathExpectationMultiThreaded);
-        streamForWrite.Write("\t\t\t\t\t\t\t\t\t\t");
+        streamForWrite.Write("\t\t      ");
         streamForWrite.Write(standardDeviationMultiThreaded);
-        streamForWrite.Write("\t\t\t\t\t\t");
+        streamForWrite.Write("         ");
         streamForWrite.Write(mathExpectationSingleThreaded);
-        streamForWrite.Write("\t\t\t\t\t\t\t");
+        streamForWrite.Write("   ");
         streamForWrite.WriteLine(standardDeviationSingleThreaded);
         streamForWrite.Write('\n');
         streamForWrite.Close();
@@ -153,11 +153,11 @@ public static class StandartDeviationAndMathExpectation
         var streamForWrite = new StreamWriter(filePath, true);
         streamForWrite.Write("500x500\nи 500x500\t\t");
         streamForWrite.Write(mathExpectationMultiThreaded);
-        streamForWrite.Write("\t\t\t\t\t\t\t\t\t\t");
+        streamForWrite.Write("\t\t      ");
         streamForWrite.Write(standardDeviationMultiThreaded);
-        streamForWrite.Write("\t\t\t\t\t\t");
+        streamForWrite.Write("         ");
         streamForWrite.Write(mathExpectationSingleThreaded);
-        streamForWrite.Write("\t\t\t\t\t\t\t");
+        streamForWrite.Write("    ");
         streamForWrite.WriteLine(standardDeviationSingleThreaded);
         streamForWrite.Write('\n');
         streamForWrite.Close();
@@ -172,13 +172,10 @@ public static class StandartDeviationAndMathExpectation
         var streamForWrite = new StreamWriter(filePath);
         streamForWrite.Write("В файле представлены: математическое ожидание и среднеквадратичное отклонение\n");
         streamForWrite.WriteLine("-----------------------------------------------------------------------------");
-        streamForWrite.Write("Размеры матриц\tМатематическое ожидание с использованием многопоточности\t" +
-                             "Среднеквадратичное отклонение с использованием многопотчности" +
-                             "\tМатематическое ожидание без использования\tСреднеквадратическое " +
-                             "отклонение без использования\n");
-        streamForWrite.WriteLine("--------------------------------------------------------------------------------" +
-                                 "--------------------------------------------------------------------------------" +
-                                 "---------------------------------------------------------------------------------");
+        streamForWrite.Write("Размеры матриц\tμ+parallelization\t" +
+                             "σ+parallelization" +
+                             "\tμ\tσ\n");
+        streamForWrite.WriteLine("-----------------------------------------------------------------------------");
         streamForWrite.Close();
         MultiplyMatricesOfSizeTwoHundredAndFiftyByTwoHundredAndFifty(filePath);
         MultiplyMatricesOfBigSize(filePath);
