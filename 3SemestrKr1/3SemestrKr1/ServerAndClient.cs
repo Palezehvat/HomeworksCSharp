@@ -12,7 +12,6 @@ public class ServerAndClient
     private static string? _ipAddress;
     private static Socket? _socket;
     private static NetworkStream? stream;
-    private static object locker = new object();
 
     public ServerAndClient(int port)
     {
@@ -65,10 +64,7 @@ public class ServerAndClient
             }
             Console.WriteLine(reader);
             var someText = Console.ReadLine();
-            lock (locker)
-            {
-                writer.WriteLine(someText);
-            }
+            writer.WriteLine(someText);
         }
     }
 }
