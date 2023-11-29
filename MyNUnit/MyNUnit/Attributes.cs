@@ -14,13 +14,13 @@ public class Test : Attribute
     public string? Ignored { get; set; }
 }
 
-[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+[AttributeUsage(AttributeTargets.All)]
 public class BeforeClass : Attribute
 {
 
 }
 
-[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+[AttributeUsage(AttributeTargets.All)]
 public class AfterClass : Attribute
 {
 
