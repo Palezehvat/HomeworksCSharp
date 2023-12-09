@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -10,11 +11,11 @@ namespace SimpleFTP;
 /// </summary>
 public class Server
 {
-    private static string? _locate;
-    private static TcpListener? _listener;
-    private static List<TcpClient>? _clients;
-    private static CancellationTokenSource? _cancellationToken;
-    private static List<Task>? _tasks;
+    private static string? locate;
+    private static TcpListener? listener;
+    private static List<TcpClient>? clients;
+    private static CancellationTokenSource? cancellationToken;
+    private static List<Task>? tasks;
 
     /// <summary>
     /// Class constructor
@@ -26,11 +27,11 @@ public class Server
         {
             throw new ArgumentNullException();
         }
-        _locate = locate;
-        _listener = new TcpListener(IPAddress.Any, port);
-        _cancellationToken = new CancellationTokenSource();
-        _tasks = new List<Task>();
-        _clients = new List<TcpClient>();
+        Server.locate = locate;
+        listener = new TcpListener(IPAddress.Any, port);
+        cancellationToken = new CancellationTokenSource();
+        tasks = new List<Task>();
+        clients = new List<TcpClient>();
         Console.WriteLine($"Server started on port: {port}");
     }
 
@@ -39,58 +40,36 @@ public class Server
     /// </summary>
     public async Task Start()
     {
-        if (_listener == null)
+        if (listener == null || clients == null
+            || tasks == null || cancellationToken == null)
         {
-            throw new ArgumentNullException(nameof(_listener));
+            throw new ArgumentNullException();
         }
 
-        if (_clients == null)
+        listener.Start();
+        while (!cancellationToken.IsCancellationRequested)
         {
-            throw new ArgumentNullException(nameof(_clients));
+            var client = await listener.AcceptTcpClientAsync(cancellationToken.Token);
+            clients.Add(client);
+            tasks.Add(Listen(client));
         }
 
-        if (_tasks == null)
+        Task.WaitAll(tasks.ToArray());
+        foreach (var client in clients)
         {
-            throw new ArgumentNullException(nameof(_tasks));
+            client.Close();
         }
 
-        if (_cancellationToken == null)
-        {
-            throw new ArgumentNullException(nameof(_cancellationToken));
-        }
+        tasks.Clear();
 
-        _listener.Start();
-        try
-        {
-            while (!_cancellationToken.IsCancellationRequested)
-            {
-                var client = await _listener.AcceptTcpClientAsync();
-                _clients.Add(client);
-                _tasks.Add(Listen(client));
-            }
-
-            Task.WaitAll(_tasks.ToArray());
-            foreach (var client in _clients)
-            {
-                client.Dispose();
-                client.Close();
-            }
-
-            _tasks.Clear();
-
-            _listener.Stop();
-        }
-        finally
-        {
-            Stop();
-        }
+        listener.Stop();
     }
 
     private static Task Listen(TcpClient client)
     {
-        if (_cancellationToken == null)
+        if (cancellationToken == null)
         {
-            throw new ArgumentNullException(nameof(_cancellationToken));
+            throw new ArgumentNullException(nameof(cancellationToken));
         }
 
         return Task.Run(async () =>
@@ -101,23 +80,24 @@ public class Server
             }
 
             var stream = client.GetStream();
-            var buffer = new byte[4096];
 
-            if (!_cancellationToken.IsCancellationRequested)
+            if (!cancellationToken.IsCancellationRequested)
             {
-                var sizeCommand = await stream.ReadAsync(buffer, 0, buffer.Length);
-                var command = new StringBuilder();
-                command.Append(Encoding.UTF8.GetString(buffer, 0, sizeCommand));
+                var reader = new StreamReader(stream, Encoding.UTF8);
+                var stringCommand = await reader.ReadLineAsync();
 
-                var stringCommand = command.ToString();
-
-                if (command[0] == '1')
+                if (stringCommand == null)
                 {
-                    List(stringCommand.TrimStart('1', ' ').TrimEnd('\n'), stream);
+                    throw new InvalidOperationException();
+                }
+
+                if (stringCommand[0] == '1')
+                {
+                    List(stringCommand.TrimStart('1', ' '), stream);
                 }
                 else
                 {
-                    Get(stringCommand.TrimStart('2', ' ').TrimEnd('\n'), stream);
+                    Get(stringCommand.TrimStart('2', ' '), stream);
                 }
             }
         }
@@ -129,9 +109,9 @@ public class Server
     /// </summary>
     public void Stop()
     {
-        if (_listener != null && _cancellationToken != null)
+        if (listener != null && cancellationToken != null)
         {
-            _cancellationToken.Cancel();
+            cancellationToken.Cancel();
         }
     }
 
@@ -139,12 +119,12 @@ public class Server
     {
         Task.Run(async () =>
         {
-            if (_locate == null)
+            if (locate == null)
             {
                 throw new NullReferenceException();
             }
 
-            string combinePath = Path.Combine(_locate, directory);
+            string combinePath = Path.Combine(locate, directory);
             DirectoryInfo info = new DirectoryInfo(combinePath);
             var path = info.FullName;
 
@@ -154,9 +134,10 @@ public class Server
             }
             else
             {
-                var text = await File.ReadAllTextAsync(path);
-                text = text.Insert(0, text.Length.ToString() + " ");
-                await stream.WriteAsync(Encoding.UTF8.GetBytes(text));
+                var textBytes = File.ReadAllBytes(path);
+                string text = Encoding.UTF8.GetString(textBytes);
+                string newText = $"{textBytes.Length} {text}";
+                await stream.WriteAsync(Encoding.UTF8.GetBytes(newText));
             }
         });
     }
@@ -164,18 +145,18 @@ public class Server
     {
         Task.Run(async () =>
         {
-            if (_locate == null)
+            if (locate == null)
             {
                 throw new NullReferenceException();
             }
             
-            string combinePath = Path.Combine(_locate, directory);
+            string combinePath = Path.Combine(locate, directory);
             DirectoryInfo info = new DirectoryInfo(combinePath);
             var path = info.FullName;
 
             if (!Directory.Exists(path))
             {
-                await stream.WriteAsync(Encoding.UTF8.GetBytes("-1"));
+                await stream.WriteAsync(Encoding.UTF8.GetBytes("-1\n"));
             }
             else
             {

@@ -8,16 +8,16 @@ namespace SimpleFTP;
 /// </summary>
 public class Client
 {
-    private static int _port;
-    private static string? _hostname;
+    private static int port;
+    private static string? hostname;
 
     /// <summary>
     /// Class constructor
     /// </summary>
     public Client(int port, string hostname)
     {
-        _port = port;
-        _hostname = hostname;
+        Client.port = port;
+        Client.hostname = hostname;
         Console.WriteLine("Client started!");
     }
 
@@ -27,43 +27,45 @@ public class Client
     /// <param name="filePath">The relative path of the file from the specified path on the server</param>
     public async Task<string> Get(string filePath)
     {
-        if (_hostname == null)
+        if (hostname == null)
         {
             throw new ArgumentNullException();
         }
 
-        var client = new TcpClient(_hostname, _port);
-
+        var client = new TcpClient();
+        await client.ConnectAsync(hostname, port);
 
         var stream = client.GetStream();
 
-        await stream.WriteAsync(Encoding.UTF8.GetBytes("2 " + filePath + "\n"));
+        await stream.WriteAsync(Encoding.UTF8.GetBytes($"2 {filePath}\n"));
         await stream.FlushAsync();
 
-        return await GetResultFromStream(stream, "Get");
+        return await GetResultFromStreamForGet(stream);
     }
 
     /// <summary>
     /// Listing files in a directory on the server
     /// </summary>
     /// <param name="directoryPath">The relative path of the directory from the specified path on the server</param>
-    public async Task<string> List(string directoryPath)
+    public async Task<string?> List(string directoryPath)
     {
-        if (_hostname == null)
+        if (hostname == null)
         {
             throw new ArgumentNullException();
         }
 
-        var client = new TcpClient(_hostname, _port);
+        var client = new TcpClient();
+        await client.ConnectAsync(hostname, port);
+
         var stream = client.GetStream();
 
-        await stream.WriteAsync(Encoding.UTF8.GetBytes("1 " + directoryPath + "\n"));
+        await stream.WriteAsync(Encoding.UTF8.GetBytes($"1 {directoryPath}\n"));
         await stream.FlushAsync();
 
-        return await GetResultFromStream(stream, "List");
+        return await GetResultFromStreamForList(stream);
     }
 
-    private static async Task<string> GetResultFromStream(NetworkStream stream, string method)
+    private static async Task<string> GetResultFromStreamForGet(NetworkStream stream)
     {
         var buffer = new byte[4096];
 
@@ -72,5 +74,16 @@ public class Client
         result.Append(Encoding.UTF8.GetString(buffer, 0, sizeResult));
 
         return result.ToString();
+    }
+
+    private static async Task<string?> GetResultFromStreamForList(NetworkStream stream)
+    {
+        var reader = new StreamReader(stream, Encoding.UTF8);
+        var result = await reader.ReadLineAsync();
+        if (result != null)
+        {
+            result.Append('\n');
+        }
+        return result;
     }
 }
