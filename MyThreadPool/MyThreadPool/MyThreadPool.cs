@@ -9,13 +9,14 @@ public class MyThreadPool
     private readonly Queue<Action> tasks = new();
     private readonly CancellationTokenSource token = new();
     private readonly Object lockerForThreads;
-    private EventWaitHandle waitHandle = new EventWaitHandle(false, EventResetMode.ManualReset);
+    private EventWaitHandle waitHandle;
 
     /// <summary>
     /// Constructor for creating n number of threads for tasks
     /// </summary>
     public MyThreadPool(int sizeThreads)
     {
+        waitHandle = new EventWaitHandle(false, EventResetMode.ManualReset);
         lockerForThreads = new();
         if (sizeThreads <= 0)
         {
@@ -85,19 +86,19 @@ public class MyThreadPool
         private volatile Queue<Action> tasks;
         private Object locker;
         private CancellationToken token;
-        private EventWaitHandle? waitHandle;
+        private EventWaitHandle waitHandle;
 
         /// <summary>
         /// Task-based custom thread constructor
         /// </summary>
-        public MyThread(Queue<Action> tasks, CancellationToken token, object locker, EventWaitHandle? waitHandle)
+        public MyThread(Queue<Action> tasks, CancellationToken token, object locker, EventWaitHandle waitHandle)
         {
+            this.waitHandle = waitHandle;
             this.tasks = tasks;
             this.token = token;
             this.locker = locker;
             thread = new Thread(EternalCycle);
             thread.Start();
-            this.waitHandle = waitHandle;
         }
 
         /// <summary>
@@ -105,10 +106,6 @@ public class MyThreadPool
         /// </summary>
         private void EternalCycle()
         {
-            if (waitHandle == null)
-            {
-                throw new NullReferenceException();
-            }
             Action? task = null;
             while (!token.IsCancellationRequested)
             {
