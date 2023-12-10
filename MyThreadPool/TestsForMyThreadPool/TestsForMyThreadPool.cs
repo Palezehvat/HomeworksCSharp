@@ -13,7 +13,6 @@ public class Tests
         myThreadPool.Shutdown();
     }
 
-    /*
     [Test]
     public void ATestWithTwoTasksForTenThreads()
     {
@@ -35,7 +34,7 @@ public class Tests
         Assert.That(secondTask.Result, Is.EqualTo(6));
         myThreadPool.Shutdown();
     }
-
+    
     [Test]
     public void IsContinueWithWorkingCorrectlyWithWithOneSubtask()
     {
@@ -44,7 +43,7 @@ public class Tests
         Assert.That(myTask.Result, Is.EqualTo("4"));
         myThreadPool.Shutdown();
     }
-
+    
     [Test]
     public void IsContinueWithWorkingCorrectlyWithWithSeveralSubtask()
     {
@@ -98,5 +97,4 @@ public class Tests
         Assert.That(firstTask.Result, Is.EqualTo(4));
         Assert.Throws<ShudownWasThrownException>(() => { var secondTask = myThreadPool.Submit(() => 3 + 3); });
     }
-    */
 }
