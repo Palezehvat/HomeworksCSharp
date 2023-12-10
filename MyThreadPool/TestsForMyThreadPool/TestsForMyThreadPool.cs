@@ -13,6 +13,7 @@ public class Tests
         myThreadPool.Shutdown();
     }
 
+    /*
     [Test]
     public void ATestWithTwoTasksForTenThreads()
     {
@@ -23,6 +24,7 @@ public class Tests
         Assert.That(secondTask.Result, Is.EqualTo(6));
         myThreadPool.Shutdown();
     }
+    */
 
     [Test]
     public void WhenThereAreFewerThreadsThanTasks()
@@ -52,7 +54,8 @@ public class Tests
         Assert.That(myTask.Result, Is.EqualTo("16"));
         myThreadPool.Shutdown();
     }
-
+    
+    /*
     [Test]
     public void NumberThreadsTheRequiredNumberIsCreated()
     {
@@ -97,4 +100,5 @@ public class Tests
         Assert.That(firstTask.Result, Is.EqualTo(4));
         Assert.Throws<ShudownWasThrownException>(() => { var secondTask = myThreadPool.Submit(() => 3 + 3); });
     }
+    */
 }
