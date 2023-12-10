@@ -9,8 +9,7 @@ public class MyThreadPool
     private readonly Queue<Action> tasks = new();
     private readonly CancellationTokenSource token = new();
     private readonly Object lockerForThreads;
-    private readonly Object lockerForTasks;
-    private volatile bool stopCount = false;
+    private EventWaitHandle waitHandle = new EventWaitHandle(false, EventResetMode.ManualReset);
 
     /// <summary>
     /// Constructor for creating n number of threads for tasks
@@ -18,7 +17,6 @@ public class MyThreadPool
     public MyThreadPool(int sizeThreads)
     {
         lockerForThreads = new();
-        lockerForTasks = new();
         if (sizeThreads <= 0)
         {
             throw new ArgumentOutOfRangeException();
@@ -26,21 +24,39 @@ public class MyThreadPool
         arrayThreads = new MyThread[sizeThreads];
         for (int i = 0; i < sizeThreads; i++)
         {
-            arrayThreads[i] = new(tasks, token, lockerForThreads);
+            arrayThreads[i] = new(tasks, token.Token, lockerForThreads, waitHandle);
         }
     }
 
     /// <summary>
-    /// Accepts a function, adds it as a task in the thread, and returns the created task
+    /// Get number of threads
     /// </summary>
-    public IMyTask<TResult> Submit<TResult>(Func<TResult> suppiler)
+    public int GetNumberOfThreads()
     {
         if (arrayThreads == null)
         {
             throw new ArgumentNullException();
         }
-        var newTask = new MyTask<TResult>(suppiler, arrayThreads, tasks, lockerForTasks, token);
-        tasks.Enqueue(() => newTask.StartSuppiler());
+        return arrayThreads.Length;
+    }
+
+    /// <summary>
+    /// Accepts a function, adds it as a task in the thread, and returns the created task
+    /// </summary>
+    public IMyTask<TResult> Submit<TResult>(Func<TResult> supplier)
+    {
+        if (token.IsCancellationRequested)
+        {
+            throw new ShudownWasThrownException();
+        }
+        if (arrayThreads == null)
+        {
+            throw new ArgumentNullException();
+        }
+        var newTask = new MyTask<TResult>(supplier, token, this);
+        tasks.Enqueue(() => newTask.StartSupplier());
+        waitHandle.Set();
+
         return newTask;
     }
 
@@ -53,22 +69,180 @@ public class MyThreadPool
         {
             throw new ArgumentNullException(nameof(arrayThreads));
         }
-        token.Cancel();
-        
-        if (token.IsCancellationRequested)
-        {
-            ;
-        }
 
-        for (int i = 0; i < arrayThreads.Length; ++i)
-        {
-            while (arrayThreads[i].GetIsAlive()) {}
-        }
+        token.Cancel();
+        waitHandle.Set();
 
         foreach(var thread in arrayThreads)
         {
             thread.Join();
         }
-        stopCount = true;
+    }
+
+    private class MyThread
+    {
+        private Thread? thread;
+        private volatile Queue<Action> tasks;
+        private Object locker;
+        private CancellationToken token;
+        private EventWaitHandle? waitHandle;
+
+        /// <summary>
+        /// Task-based custom thread constructor
+        /// </summary>
+        public MyThread(Queue<Action> tasks, CancellationToken token, object locker, EventWaitHandle? waitHandle)
+        {
+            this.tasks = tasks;
+            this.token = token;
+            this.locker = locker;
+            thread = new Thread(EternalCycle);
+            thread.Start();
+            this.waitHandle = waitHandle;
+        }
+
+        /// <summary>
+        /// Task waiting cycle
+        /// </summary>
+        private void EternalCycle()
+        {
+            if (waitHandle == null)
+            {
+                throw new NullReferenceException();
+            }
+            Action? task = null;
+            while (!token.IsCancellationRequested)
+            {
+                waitHandle.WaitOne();
+                if (!token.IsCancellationRequested)
+                {
+                    lock (locker)
+                    {
+                        if (tasks.Count != 0)
+                        {
+                            var isCorrect = tasks.TryDequeue(out task);
+                            if (!isCorrect)
+                            {
+                                throw new InvalidOperationException();
+                            }
+                        }
+                        if (tasks.Count == 0)
+                        {
+                            waitHandle.Reset();
+                        }
+                    }
+                    if (task != null)
+                    {
+                        task();
+                    }
+                    task = null;
+                    if (token.IsCancellationRequested)
+                    {
+                        return;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Suspends the current thread
+        /// </summary>
+        public void Join()
+        {
+            if (thread == null)
+            {
+                throw new ArgumentNullException(nameof(thread));
+            }
+
+            thread.Join();
+        }
+    }
+
+    private class MyTask<TResult> : IMyTask<TResult>
+    {
+        private readonly Func<TResult>? supplier;
+        private TResult? result;
+        private Exception? exception;
+        private CancellationTokenSource token;
+        private EventWaitHandle waitHandle = new EventWaitHandle(false, EventResetMode.ManualReset);
+        private MyThreadPool? pool;
+
+        /// <summary>
+        /// Constructor for creating a task
+        /// </summary>
+        public MyTask(Func<TResult> supplier, CancellationTokenSource token, MyThreadPool pool)
+        {
+            this.supplier = supplier;
+            this.token = token;
+            this.pool = pool;
+        }
+
+        /// <summary>
+        /// Get Result
+        /// </summary>
+        public TResult? Result
+        {
+            get
+            {
+                if (waitHandle == null)
+                {
+                    throw new InvalidOperationException();
+                }
+                waitHandle.WaitOne();
+                if (exception != null)
+                {
+                    throw new AggregateException(exception);
+                }
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// Check is completed Task and return result
+        /// </summary>
+        public bool IsCompleted { get; private set; }
+
+        /// <summary>
+        /// Task completion
+        /// </summary>
+        public void StartSupplier()
+        {
+            if (supplier != null)
+            {
+                try
+                {
+                    result = supplier();
+                }
+                catch (Exception ex)
+                {
+                    exception = ex;
+                }
+                
+                if (waitHandle == null)
+                {
+                    throw new InvalidOperationException();
+                }
+
+                waitHandle.Set();
+
+                IsCompleted = true;
+            }
+        }
+
+        /// <summary>
+        /// A method for solving subtasks from the results obtained from the tasks
+        /// </summary>
+        public IMyTask<TNewResult> ContinueWith<TNewResult>(Func<TResult, TNewResult> supplier)
+        {
+            if (pool == null) 
+            { 
+                throw new InvalidOperationException(); 
+            }
+            
+            if (!token.IsCancellationRequested)
+            {
+                return pool.Submit(() => supplier(Result));
+            }
+            throw new ShudownWasThrownException();
+        }
     }
 }
