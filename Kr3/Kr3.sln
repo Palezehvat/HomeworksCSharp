@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33403.182
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kr3", "Kr3\Kr3.csproj", "{5B9C8390-F227-4F23-81BA-AB1885C1DF32}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestsReflector", "TestsReflector\TestsReflector.csproj", "{15B74937-BD20-4D2E-BBC1-49BA7ABDCF10}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5B9C8390-F227-4F23-81BA-AB1885C1DF32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B9C8390-F227-4F23-81BA-AB1885C1DF32}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B9C8390-F227-4F23-81BA-AB1885C1DF32}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B9C8390-F227-4F23-81BA-AB1885C1DF32}.Release|Any CPU.Build.0 = Release|Any CPU
+		{15B74937-BD20-4D2E-BBC1-49BA7ABDCF10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15B74937-BD20-4D2E-BBC1-49BA7ABDCF10}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15B74937-BD20-4D2E-BBC1-49BA7ABDCF10}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15B74937-BD20-4D2E-BBC1-49BA7ABDCF10}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B0556365-C55B-4AF6-8ACA-ACBA1E439626}
+	EndGlobalSection
+EndGlobal
