@@ -1,14 +1,15 @@
-﻿using System.Reflection;
+﻿using System.Linq.Expressions;
+using System.Reflection;
 
 namespace Kr3;
 
 public class Reflector
 {
-    private string filePath;
+    private readonly string filePath;
 
     public Reflector(string filePath) => this.filePath = filePath;
 
-    private string GetVisibilityFromClass(Type someClass)
+    private static string GetVisibilityFromClass(Type someClass)
     {
         if (someClass.IsNestedPrivate)
         {
@@ -29,12 +30,12 @@ public class Reflector
         return "";
     }
 
-    private string GetStaticOrNotFromClass(Type someClass)
+    private static string GetStaticOrNotFromClass(Type someClass)
     {
         return someClass.IsAbstract && someClass.IsSealed ? "static " : "";
     }
 
-    private string GetVisibilityFromField(FieldInfo someField)
+    private static string GetVisibilityFromField(FieldInfo someField)
     {
         if (someField.IsPrivate)
         {
@@ -55,17 +56,17 @@ public class Reflector
         return "";
     }
 
-    private string GetStaticOrNotFromField(FieldInfo someField)
+    private static string GetStaticOrNotFromField(FieldInfo someField)
     {
         return someField.IsStatic ? "static " : "";
     }
 
-    private string GetStaticOrNotFromMethod(MethodInfo someMethod)
+    private static string GetStaticOrNotFromMethod(MethodInfo someMethod)
     {
         return someMethod.IsStatic ? "static " : "";
     }
 
-    private string GetVisibilityFromMethod(MethodInfo someMethod)
+    private static string GetVisibilityFromMethod(MethodInfo someMethod)
     {
         if (someMethod.IsPrivate)
         {
@@ -86,6 +87,44 @@ public class Reflector
         return "";
     }
 
+    private static string GetVisibilityFromConstructor(ConstructorInfo constructorInfo)
+    {
+        if (constructorInfo.IsPrivate)
+        {
+            return "private ";
+        }
+        else if (constructorInfo.IsPublic)
+        {
+            return "public ";
+        }
+        else if (constructorInfo.IsFamily)
+        {
+            return "protected ";
+        }
+        else if (constructorInfo.IsAssembly)
+        {
+            return "internal ";
+        }
+        return "";
+    }
+
+    private void WriteParameters(StreamWriter writer, ParameterInfo[] parameters)
+    {
+        var first = true;
+        foreach (var parameter in parameters)
+        {
+            if (first)
+            {
+                writer.Write($"{parameter.ParameterType} {parameter.Name}");
+                first = false;
+            }
+            else
+            {
+                writer.Write($" ,{parameter.Name}");
+            }
+        }
+    }
+
     public void PrintStructure(Type someClass)
     {
         string className = someClass.Name;
@@ -95,19 +134,50 @@ public class Reflector
 
         var visibility = GetVisibilityFromClass(someClass);
         var staticOrNotStatic = GetStaticOrNotFromClass(someClass);
-        writer.WriteLine($"{visibility}{staticOrNotStatic}class {className}");
-        writer.WriteLine("{");
+        var interfaces = someClass.GetInterfaces();
+        if (interfaces.Length == 0)
+        {
+            writer.Write($"{visibility}{staticOrNotStatic}class {className}\n");
+        }
+        else
+        {
+            writer.Write($"{visibility}{staticOrNotStatic}class {className} : ");
+            var first = true;
+            foreach (var element in interfaces)
+            {
+                if (first)
+                {
+                    writer.Write($"{element.Name}");
+                    first = false;
+                }
+                else
+                {
+                    writer.Write($" : {element.Name}");
+                }
+            }
+            writer.Write('\n');
+        }
+        writer.Write("{\n");
 
-        var fields = someClass.GetFields();
+        var constructors = someClass.GetConstructors();
+        foreach (var constructor in constructors)
+        {
+            writer.Write($"\t{GetVisibilityFromConstructor(constructor)}{className}(");
+            WriteParameters(writer, constructor.GetParameters());
+            writer.Write(") {}\n");
+        }
+        var fields = someClass.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
         foreach (var field in fields)
         {
-            writer.WriteLine($"\t{GetVisibilityFromField(field)}{GetStaticOrNotFromField(field)}{field.ToString()};");
+            writer.Write($"\t{GetVisibilityFromField(field)}{GetStaticOrNotFromField(field)}{field};\n");
         }
 
-        var methods = someClass.GetMethods();
+        var methods = someClass.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
         foreach (var method in methods)
         {
-            writer.WriteLine($"\t{GetVisibilityFromMethod(method)}{GetStaticOrNotFromMethod(method)}{method.ToString()} {{throw OperationCanceledException();}};");
+            writer.Write($"\t{GetVisibilityFromMethod(method)}{GetStaticOrNotFromMethod(method)}{method.Name} (");
+            WriteParameters(writer, method.GetParameters());
+            writer.Write(") {throw new OperationCanceledException()}\n");
         }
 
         var nestedClasses = someClass.GetNestedTypes();
@@ -116,48 +186,48 @@ public class Reflector
             PrintStructure(nestedClass);
         }
 
-        writer.WriteLine("}");
+        writer.Write("}\n");
     }
 
-    private bool CheckIfThereIsMethodFromOneClassInAnother(MethodInfo[] methodsB, MethodInfo methodA)
+    private static bool CheckIfThereIsMethodFromOneClassInAnother(MethodInfo[] methodsB, MethodInfo methodA)
     {
         var methodB = methodsB.FirstOrDefault(m => m.Name == methodA.Name && m.GetParameters().
             Select(p => p.ParameterType).SequenceEqual(methodA.GetParameters().Select(p => p.ParameterType)));
-        return methodB != null ? true : false;
+        return methodB != null;
     }
 
-    private void WriteDifferentMethods(StreamWriter writer, 
+    private static void WriteDifferentMethods(StreamWriter writer, 
         MethodInfo[] methodsFirst, MethodInfo[] methodsSecond)
     {
         foreach (var methodA in methodsFirst)
         {
             if (!CheckIfThereIsMethodFromOneClassInAnother(methodsSecond, methodA))
             {
-                writer.WriteLine($"{methodA.Name}");
+                writer.Write($"{methodA.Name}\n");
             }
         }
     }
-    private void WriteDifferentFields(StreamWriter writer,
+    private static void WriteDifferentFields(StreamWriter writer,
         FieldInfo[] fieldsFirst, FieldInfo[] fieldsSecond)
     {
         foreach (var fieldA in fieldsFirst)
         {
             if (!CheckIfThereIsFieldFromOneClassInAnother(fieldsSecond, fieldA))
             {
-                writer.WriteLine($"{fieldA.Name}");
+                writer.Write($"{fieldA.Name}\n");
             }
         }
     }
 
-    private bool CheckIfThereIsFieldFromOneClassInAnother(FieldInfo[] fieldsB, FieldInfo fieldA)
+    private static bool CheckIfThereIsFieldFromOneClassInAnother(FieldInfo[] fieldsB, FieldInfo fieldA)
     {
         var fieldB = fieldsB.FirstOrDefault(f => f.Name == fieldA.Name && f.FieldType == fieldA.FieldType);
-        return fieldB != null ? true : false;
+        return fieldB != null;
     }
 
     public void DiffClasses(Type a, Type b)
     {
-        string file = $"{filePath}/difference.cs";
+        string file = $"{filePath}/difference.txt";
 
         using var writer = new StreamWriter(file);
 

@@ -1,15 +1,15 @@
 ﻿namespace TestsReflector;
 
-public class TestClassSum
+public class AnotherSum
 {
     private int val;
 
-    public TestClassSum(int value)
+    public AnotherSum(int value)
     {
         val = value;
     }
 
-    public void Add(int num)
+    public void AddToSum(int num)
     {
         val += num;
     }
