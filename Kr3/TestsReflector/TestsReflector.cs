@@ -1,6 +1,7 @@
 namespace TestsReflector;
 
 using Kr3;
+using System.Net.WebSockets;
 
 public class Tests
 {
@@ -14,13 +15,23 @@ public class Tests
         using var reader = new StreamReader((Path.Combine(TestContext.CurrentContext.TestDirectory, "forTests", "CheckTestClassSum.cs")));
         var linesForCheck = reader.ReadToEnd().Split('\n');
         using var anotherReader = new StreamReader((Path.Combine(TestContext.CurrentContext.TestDirectory, "forTests", "TestClassSum.cs")));
-        var linesFromReflector = anotherReader.ReadToEnd().Split('\n');
+        var linesFromReflector = anotherReader.ReadToEnd().Split('\r');
+
+        var arrayStringsWithoutSpecialSymbols = new string[linesFromReflector.Length];
 
         var i = 0;
-        var j = 0;
-        while (i < linesForCheck.Length || j < linesFromReflector.Length)
+        foreach (var line in linesFromReflector)
         {
-            Assert.That(linesForCheck[i], Is.EqualTo(linesFromReflector[j]));
+            var newLine = line.Replace("\n", "");
+            arrayStringsWithoutSpecialSymbols[i] = newLine;
+            i++;
+        }
+
+        i = 0;
+        var j = 0;
+        while (i < linesForCheck.Length || j < arrayStringsWithoutSpecialSymbols.Length)
+        {
+            Assert.That(linesForCheck[i], Is.EqualTo(arrayStringsWithoutSpecialSymbols[j]));
             ++i;
             ++j;
         }

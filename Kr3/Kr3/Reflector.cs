@@ -137,7 +137,7 @@ public class Reflector
         var interfaces = someClass.GetInterfaces();
         if (interfaces.Length == 0)
         {
-            writer.Write($"{visibility}{staticOrNotStatic}class {className}\n");
+            writer.WriteLine($"{visibility}{staticOrNotStatic}class {className}");
         }
         else
         {
@@ -155,21 +155,21 @@ public class Reflector
                     writer.Write($" : {element.Name}");
                 }
             }
-            writer.Write('\n');
+            writer.WriteLine();
         }
-        writer.Write("{\n");
+        writer.WriteLine("{");
 
         var constructors = someClass.GetConstructors();
         foreach (var constructor in constructors)
         {
             writer.Write($"\t{GetVisibilityFromConstructor(constructor)}{className}(");
             WriteParameters(writer, constructor.GetParameters());
-            writer.Write(") {}\n");
+            writer.WriteLine(") {}");
         }
         var fields = someClass.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
         foreach (var field in fields)
         {
-            writer.Write($"\t{GetVisibilityFromField(field)}{GetStaticOrNotFromField(field)}{field};\n");
+            writer.WriteLine($"\t{GetVisibilityFromField(field)}{GetStaticOrNotFromField(field)}{field};");
         }
 
         var methods = someClass.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
@@ -177,7 +177,7 @@ public class Reflector
         {
             writer.Write($"\t{GetVisibilityFromMethod(method)}{GetStaticOrNotFromMethod(method)}{method.Name} (");
             WriteParameters(writer, method.GetParameters());
-            writer.Write(") {throw new OperationCanceledException()}\n");
+            writer.WriteLine(") {throw new OperationCanceledException()}");
         }
 
         var nestedClasses = someClass.GetNestedTypes();
@@ -186,7 +186,7 @@ public class Reflector
             PrintStructure(nestedClass);
         }
 
-        writer.Write("}\n");
+        writer.WriteLine("}");
     }
 
     private static bool CheckIfThereIsMethodFromOneClassInAnother(MethodInfo[] methodsB, MethodInfo methodA)
