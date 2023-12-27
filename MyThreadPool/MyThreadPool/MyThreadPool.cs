@@ -132,10 +132,6 @@ public class MyThreadPool
                         task();
                     }
                     task = null;
-                    if (token.IsCancellationRequested)
-                    {
-                        return;
-                    }
                 }
             }
         }
@@ -160,7 +156,7 @@ public class MyThreadPool
         private TResult? result;
         private Exception? exception;
         private CancellationTokenSource token;
-        private EventWaitHandle waitHandle = new EventWaitHandle(false, EventResetMode.ManualReset);
+        private ManualResetEvent resetEvent = new ManualResetEvent(false);
         private MyThreadPool? pool;
 
         /// <summary>
@@ -171,12 +167,13 @@ public class MyThreadPool
             this.supplier = supplier;
             this.token = token;
             this.pool = pool;
+            this.result = default;
         }
 
         /// <summary>
         /// Get Result
         /// </summary>
-        public TResult? Result
+        public TResult Result
         {
             get
             {
@@ -189,7 +186,7 @@ public class MyThreadPool
                 {
                     throw new AggregateException(exception);
                 }
-                return result;
+                return result!;
             }
         }
 
