@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Diagnostics.CodeAnalysis;
-using System.Net;
+﻿using System.Net;
 using System.Net.Sockets;
 using System.Text;
 
@@ -49,6 +47,7 @@ public class Server
         listener.Start();
         while (!cancellationToken.IsCancellationRequested)
         {
+            Console.WriteLine("Жду клиента");
             var client = await listener.AcceptTcpClientAsync(cancellationToken.Token);
             clients.Add(client);
             tasks.Add(Listen(client));
