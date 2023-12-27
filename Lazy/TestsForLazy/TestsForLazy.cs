@@ -39,7 +39,7 @@ public class Tests
 
         foreach (var element in arrayResult)
         {
-            Assert.That(Equals(element, 1));
+            Assert.That(element, Is.EqualTo(1));
         }
     }
 
@@ -93,7 +93,7 @@ public class Tests
 
         foreach (var element in arrayResult)
         {
-            Assert.That(Equals(element, 1));
+            Assert.That(element, Is.EqualTo(1));
         }
     }
 
@@ -107,7 +107,7 @@ public class Tests
     private static IEnumerable<TestCaseData> LazyForTestWithFunctionWithException
     => new TestCaseData[]
     {
-        new TestCaseData(new SingleThreadLazy<int>(() => globalFunctionsForTestsForSingleThread.FunctionWithInvalidOperationException())),
-        new TestCaseData(new MultiThreadLazy<int>(() => globalFunctionsForTestsForMultiThread.FunctionWithInvalidOperationException())),
+        new TestCaseData(new SingleThreadLazy<int>(() => globalFunctionsForTestsForSingleThread.DivideByZeroException())),
+        new TestCaseData(new MultiThreadLazy<int>(() => globalFunctionsForTestsForMultiThread.DivideByZeroException())),
     };
 }

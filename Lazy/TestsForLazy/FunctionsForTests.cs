@@ -17,10 +17,10 @@ public class FunctionsForTests
     }
 
     /// <summary>
-    /// Function that throws InvalidOperationException
+    /// Function that throws DivideByZeroException
     /// </summary>
     /// <returns></returns>
-    public int FunctionWithInvalidOperationException()
+    public int DivideByZeroException()
     {
         var firstNumber = 1;
         return firstNumber / 0;
