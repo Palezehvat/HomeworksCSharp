@@ -26,11 +26,10 @@ public class Server
             throw new ArgumentNullException();
         }
         Server.locate = locate;
-        listener = new TcpListener(IPAddress.Any, port);
-        cancellationToken = new CancellationTokenSource();
-        tasks = new List<Task>();
-        clients = new List<TcpClient>();
-        Console.WriteLine($"Server started on port: {port}");
+        listener = new(IPAddress.Any, port);
+        cancellationToken = new();
+        tasks = new();
+        clients = new();
     }
 
     /// <summary>
@@ -45,9 +44,10 @@ public class Server
         }
 
         listener.Start();
+        Console.WriteLine("Server started working");
         while (!cancellationToken.IsCancellationRequested)
         {
-            Console.WriteLine("Жду клиента");
+            Console.WriteLine("Waiting a client");
             var client = await listener.AcceptTcpClientAsync(cancellationToken.Token);
             clients.Add(client);
             tasks.Add(Listen(client));

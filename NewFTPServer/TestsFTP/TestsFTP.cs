@@ -3,8 +3,8 @@ using SimpleFTP;
 
 public class Tests
 {
-    Server server = new SimpleFTP.Server(Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsFTP"), 8888);
-    Client client = new Client(8888, "localhost");
+    Server server = new SimpleFTP.Server(Path.Combine(TestContext.CurrentContext.TestDirectory, "TestsFTP"), 7777);
+    Client client = new Client(7777, "localhost");
     
     [SetUp]
     public void SetUp()
