@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Diagnostics;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 
@@ -68,6 +69,7 @@ public class Server
     {
         if (cancellationToken == null)
         {
+            Stop();
             throw new ArgumentNullException(nameof(cancellationToken));
         }
 
@@ -75,6 +77,7 @@ public class Server
         {
             if (client == null)
             {
+                Stop();
                 throw new ArgumentNullException("client");
             }
 
@@ -87,6 +90,8 @@ public class Server
 
                 if (stringCommand == null)
                 {
+                    stream.Close();
+                    Stop();
                     throw new InvalidOperationException();
                 }
 
@@ -106,7 +111,7 @@ public class Server
     /// <summary>
     /// Server shutdown
     /// </summary>
-    public void Stop()
+    public static void Stop()
     {
         if (listener != null && cancellationToken != null)
         {
@@ -120,6 +125,8 @@ public class Server
         {
             if (locate == null)
             {
+                stream.Close();
+                Stop();
                 throw new NullReferenceException();
             }
 
@@ -134,10 +141,10 @@ public class Server
             else
             {
                 var textBytes = File.ReadAllBytes(path);
-                string text = Encoding.UTF8.GetString(textBytes);
-                string newText = $"{textBytes.Length} {text}";
-                await stream.WriteAsync(Encoding.UTF8.GetBytes(newText));
+                await stream.WriteAsync(Encoding.UTF8.GetBytes($"{textBytes.Length} "));
+                await stream.WriteAsync(textBytes);
             }
+            stream.Close();
         });
     }
     private static void List(string directory, NetworkStream stream)
@@ -146,6 +153,8 @@ public class Server
         {
             if (locate == null)
             {
+                stream.Close();
+                Stop();
                 throw new NullReferenceException();
             }
             
@@ -182,6 +191,7 @@ public class Server
 
                 await stream.WriteAsync(Encoding.UTF8.GetBytes(filesAndDirectories.ToString()));
             }
+            stream.Close();
         });
     }
 }
