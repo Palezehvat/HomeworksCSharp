@@ -1,60 +1,60 @@
 ﻿namespace ProjectForTest;
 
-using Attributes;
+using MyNUnit.Atributes;
 
 public class ClassForTests
 {
     public int counter = 0;
 
-    [Test]
+    [TestAtribute]
     public void InvalidMethod()
     {
         throw new NotImplementedException();
     }
 
-    [Test]
+    [TestAtribute]
     public int CorrectMethod()
     {
         return 1;
     }
 
-    [BeforeClass]
+    [BeforeClassAtribute]
     public void BeforeClass()
     {
         counter += 1;
     }
 
-    [AfterClass]
+    [AfterClassAtribute]
     public void AfterClass()
     {
         counter += 1;
     }
 
-    [After]
+    [AfterAtribute]
     public void BeforeMethod()
     {
         counter += 1;
     }
 
-    [Before]
+    [BeforeAtribute]
     public void AfterMethod()
     {
         counter += 1;
     }
 
-    [Test(Ignored = "Ignore")]
+    [TestAtribute(Ignored = "Ignore")]
     public void IgnoreTest()
     {
         ;
     }
 
-    [Test(Expected = typeof(InvalidCastException))]
+    [TestAtribute(Expected = typeof(InvalidCastException))]
     public void InvalidCastException()
     {
         throw new InvalidCastException();
     }
 
-    [Test(Expected = typeof(InvalidOperationException))]
+    [TestAtribute(Expected = typeof(InvalidOperationException))]
     public void InvalidException()
     {
         throw new InvalidProgramException();
