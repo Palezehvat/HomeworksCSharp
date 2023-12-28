@@ -4,58 +4,58 @@ using MyNUnit.Atributes;
 
 public class ClassForTests
 {
-    public int counter = 0;
+    public static int counter = 0;
 
-    [TestAtribute]
+    [TestAttribute(Expected = typeof(IndexOutOfRangeException))]
     public void InvalidMethod()
     {
         throw new NotImplementedException();
     }
 
-    [TestAtribute]
+    [TestAttribute(Expected = typeof(FileNotFoundException))]
     public int CorrectMethod()
     {
-        return 1;
+        throw new FileNotFoundException();
     }
 
-    [BeforeClassAtribute]
-    public void BeforeClass()
+    [BeforeClassAttribute]
+    public static void BeforeClass()
     {
         counter += 1;
     }
 
-    [AfterClassAtribute]
-    public void AfterClass()
+    [AfterClassAttribute]
+    public static void AfterClass()
     {
         counter += 1;
     }
 
-    [AfterAtribute]
+    [AfterAttribute]
     public void BeforeMethod()
     {
         counter += 1;
     }
 
-    [BeforeAtribute]
+    [BeforeAttribute]
     public void AfterMethod()
     {
         counter += 1;
     }
 
-    [TestAtribute(Ignored = "Ignore")]
+    [TestAttribute(Ignored = "Ignore")]
     public void IgnoreTest()
     {
         ;
     }
 
-    [TestAtribute(Expected = typeof(InvalidCastException))]
-    public void InvalidCastException()
+    [TestAttribute(Expected = typeof(InvalidCastException))]
+    public void OneMoreCorrectMethod()
     {
         throw new InvalidCastException();
     }
 
-    [TestAtribute(Expected = typeof(InvalidOperationException))]
-    public void InvalidException()
+    [TestAttribute(Expected = typeof(InvalidOperationException))]
+    public void OneMoreIncorrectMethod()
     {
         throw new InvalidProgramException();
     }

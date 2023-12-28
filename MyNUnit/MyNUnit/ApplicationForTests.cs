@@ -7,22 +7,23 @@ namespace MyNUnit;
 
 public class ApplicationForTests
 {
-    public readonly List<ResultsTests>? listOfResults;
+    public readonly List<ResultsTests>? listOfResults = new();
     private readonly object locker = new();
 
-    public ApplicationForTests(string path)
+    public ApplicationForTests(Assembly assembly)
     {
-        var listOfResults = new List<ResultsTests>();
-        var files = Directory.EnumerateFiles(path, "*.dll", SearchOption.AllDirectories);
-        var classes = files.Select(Assembly.Load)
-                           .SelectMany(a => a.ExportedTypes)
-                           .Where(t => t.IsClass)
-                           .Where(t => t.GetMethods()
-                           .Where(t => t.GetCustomAttributes(true)
-                           .Any(a => a is TestAtribute))
-                           .Any());
+        var classes = assembly.GetExportedTypes()
+                              .Where(t => t.IsClass)
+                              .Where(t => t.GetMethods()
+                              .Where(m => m.GetCustomAttributes(true)
+                              .Any(a => a is TestAttribute))
+                              .Any());
 
-        Parallel.ForEach(classes, StartTests);
+        //Parallel.ForEach(classes, StartTests);
+        foreach (var _class in classes)
+        {
+            StartTests(_class);
+        }
     }
 
     private static MethodInfo[]? GetMethodsByAtributeAndClass(Type _class, Type atribute)
@@ -41,12 +42,12 @@ public class ApplicationForTests
     private void WorkWithTestMethods(Type _class)
     {
         var instance = Activator.CreateInstance(_class);
-        var methodsBefore = GetMethodsByAtributeAndClass(_class, typeof(BeforeAtribute));
-        var methodsAfter = GetMethodsByAtributeAndClass(_class, typeof(AfterAtribute));
+        var methodsBefore = GetMethodsByAtributeAndClass(_class, typeof(BeforeAttribute));
+        var methodsAfter = GetMethodsByAtributeAndClass(_class, typeof(AfterAttribute));
         var methods = _class.GetMethods();
         foreach(var method in methods)
         {
-            if (method.IsDefined(typeof(TestAtribute), true))
+            if (method.IsDefined(typeof(TestAttribute), true))
             {
                 RunMethodsBeforeAndAfter(methodsBefore, instance);
                 RunMethod(_class, method);
@@ -56,9 +57,9 @@ public class ApplicationForTests
     }
     private void StartTests(Type _class)
     {
-        WorkWithClassMethods(_class, typeof(BeforeClassAtribute));
+        WorkWithClassMethods(_class, typeof(BeforeClassAttribute));
         WorkWithTestMethods(_class);
-        WorkWithClassMethods(_class, typeof(AfterClassAtribute));
+        WorkWithClassMethods(_class, typeof(AfterClassAttribute));
     }
 
     private static void LaunchMethods(Type _class, MethodInfo[]? methods)
@@ -93,21 +94,21 @@ public class ApplicationForTests
 
     private void RunMethod(object? instance, MethodInfo? method)
     {
-        if (instance == null || method == null || locker == null || listOfResults == null)
+        if (instance == null || method == null || locker == null)
         {
             throw new InvalidOperationException();
         }
         
-        var atribute = Attribute.GetCustomAttribute(method, typeof(TestAtribute));
+        var atribute = Attribute.GetCustomAttribute(method, typeof(TestAttribute));
 
         if (atribute == null)
         {
             throw new InvalidOperationException();
         }
 
-        var testAtribute = (TestAtribute)atribute;
+        var testAttribute = (TestAttribute)atribute;
 
-        if (testAtribute.Ignored != null)
+        if (testAttribute.Ignored != null)
         {
             lock (locker)
             {
@@ -120,13 +121,28 @@ public class ApplicationForTests
 
         try
         {
-             stopWatch.Start();
-             method.Invoke(instance, null);
+            stopWatch.Start();
+            method.Invoke(instance, null);
+            stopWatch.Stop();
+            lock (locker)
+            {
+                if (testAttribute != null && testAttribute.Expected != null)
+                {
+                    listOfResults.Add(new ResultsTests(method.Name, stopWatch.ElapsedMilliseconds, ResultsTests.Status.Failed));
+                }
+                else
+                {
+                    listOfResults.Add(new ResultsTests(method.Name, stopWatch.ElapsedMilliseconds, ResultsTests.Status.Passed));
+                }
+            }
         }
         catch(Exception ex)
         {
             stopWatch.Stop();
-            if (ex.InnerException != null && testAtribute != null && ex.InnerException.GetType() == testAtribute.Expected)
+            var exceptionType = ex.GetType();
+
+            if (testAttribute != null && testAttribute.Expected.IsAssignableFrom(exceptionType) ||
+               (ex.InnerException != null && testAttribute != null && testAttribute.Expected.IsAssignableFrom(ex.InnerException.GetType())))
             {
                 lock (locker)
                 {
@@ -141,18 +157,6 @@ public class ApplicationForTests
                 }
             }
             return;
-        }
-        stopWatch.Stop();
-        lock (locker)
-        {
-            if (testAtribute != null && testAtribute.Expected != null)
-            {
-                listOfResults.Add(new ResultsTests(method.Name, stopWatch.ElapsedMilliseconds, ResultsTests.Status.Failed));
-            }
-            else 
-            {
-                listOfResults.Add(new ResultsTests(method.Name, stopWatch.ElapsedMilliseconds, ResultsTests.Status.Passed));
-            }
         }
     }
 
