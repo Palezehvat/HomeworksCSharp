@@ -7,7 +7,7 @@ namespace MyNUnit;
 
 public class ApplicationForTests
 {
-    public readonly List<ResultsTests>? listOfResults = new();
+    public readonly List<ResultsTests> listOfResults = new();
     private readonly object locker = new();
 
     public ApplicationForTests(Assembly assembly)
@@ -19,11 +19,7 @@ public class ApplicationForTests
                               .Any(a => a is TestAttribute))
                               .Any());
 
-        //Parallel.ForEach(classes, StartTests);
-        foreach (var _class in classes)
-        {
-            StartTests(_class);
-        }
+        Parallel.ForEach(classes, StartTests);
     }
 
     private static MethodInfo[]? GetMethodsByAtributeAndClass(Type _class, Type atribute)
@@ -141,8 +137,8 @@ public class ApplicationForTests
             stopWatch.Stop();
             var exceptionType = ex.GetType();
 
-            if (testAttribute != null && testAttribute.Expected.IsAssignableFrom(exceptionType) ||
-               (ex.InnerException != null && testAttribute != null && testAttribute.Expected.IsAssignableFrom(ex.InnerException.GetType())))
+            if (testAttribute != null && testAttribute.Expected != null && testAttribute.Expected.IsAssignableFrom(exceptionType) ||
+               (ex.InnerException != null && testAttribute != null && testAttribute.Expected != null && testAttribute.Expected.IsAssignableFrom(ex.InnerException.GetType())))
             {
                 lock (locker)
                 {
@@ -156,7 +152,6 @@ public class ApplicationForTests
                     listOfResults.Add(new ResultsTests(method.Name, stopWatch.ElapsedMilliseconds, ex, ResultsTests.Status.Failed));
                 }
             }
-            return;
         }
     }
 
